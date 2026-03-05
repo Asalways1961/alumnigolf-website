@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Participating Schools — Alumni Schools Golf Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--navy:#1B3A6B;--navy-dark:#0f2347;--gold:#C9A84C;--white:#fff;--off-white:#f8f6f0;--text:#1a1a2e;--text2:#555;--border:rgba(27,58,107,0.12);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);}
+nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:70px;border-bottom:2px solid var(--gold);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-logo span{font-family:'Cormorant Garamond',serif;color:var(--white);font-size:20px;font-weight:600;}
+.nav-links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:500;margin-left:28px;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);}
+.nav-cta{background:var(--gold);color:var(--navy-dark);padding:9px 22px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;}
+.hero{background:linear-gradient(135deg,var(--navy-dark),var(--navy));padding:60px 20px;text-align:center;}
+.hero h1{font-family:'Cormorant Garamond',serif;color:white;font-size:48px;font-weight:700;margin-bottom:12px;}
+.hero p{color:rgba(255,255,255,0.65);font-size:16px;}
+.gold-line{width:60px;height:3px;background:var(--gold);margin:16px auto;border-radius:2px;}
+.main{max-width:1000px;margin:0 auto;padding:48px 20px 80px;}
+.search-wrap{position:relative;margin-bottom:32px;}
+.search-input{width:100%;padding:14px 20px 14px 48px;background:var(--white);border:2px solid var(--border);border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text);transition:border-color 0.2s;}
+.search-input:focus{outline:none;border-color:var(--gold);}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;}
+.stats-bar{display:flex;gap:24px;margin-bottom:32px;flex-wrap:wrap;}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 24px;flex:1;min-width:140px;text-align:center;}
+.stat .num{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--gold);font-weight:700;}
+.stat .lbl{font-size:11px;color:var(--text2);font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+.alpha-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:28px;}
+.alpha-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--white);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+.alpha-btn:hover,.alpha-btn.active{background:var(--gold);color:var(--navy-dark);border-color:var(--gold);}
+.schools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.school-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;transition:all 0.2s;}
+.school-card:hover{border-color:var(--gold);transform:translateY(-2px);}
+.school-card h3{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.school-card p{font-size:12px;color:var(--text2);}
+.no-results{text-align:center;padding:60px 20px;color:var(--text2);}
+footer{background:var(--navy-dark);color:rgba(255,255,255,0.5);text-align:center;padding:24px;font-size:12px;border-top:2px solid var(--gold);}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>Alumni Schools Golf Challenge</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a><a href="how-it-works.html">How It Works</a>
+    <a href="schools.html" class="active">Schools</a><a href="register.html">Register</a><a href="contact.html">Contact</a>
+  </div>
+  <a href="register.html" class="nav-cta">Register Now</a>
+</nav>
+<div class="hero">
+  <h1>Participating Schools</h1>
+  <div class="gold-line"></div>
+  <p>All South African schools represented in the Alumni Schools Golf Challenge</p>
+</div>
+<div class="main">
+  <div class="stats-bar">
+    <div class="stat"><div class="num" id="total-schools">—</div><div class="lbl">Schools Listed</div></div>
+    <div class="stat"><div class="num" id="total-registered">—</div><div class="lbl">Schools Registered</div></div>
+    <div class="stat"><div class="num" id="total-teams">—</div><div class="lbl">Teams Entered</div></div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="school-search" placeholder="Search schools..." oninput="filterSchools()" />
+  </div>
+  <div class="alpha-nav" id="alpha-nav"></div>
+  <div class="schools-grid" id="schools-grid"></div>
+</div>
+<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="mailto:admin@alumnigolf.net">admin@alumnigolf.net</a></p></footer>
+<script>
+const SUPABASE_URL='https://weztrzuxwycypheyiixr.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+const {createClient}=supabase;const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const SA_SCHOOLS=["Adelaide HS","Afrikaans Hoër Meisieskool","Afrikaanse Hoër Seunskool (Affies)","Afrikaanse Hoërskool Kroonstad","Albertinia HS","Alberton HS","Alexander Road HS","Aliwal Noord HS","Amsterdam HS","Augsburg Landbougimnasium","Barkly East HS","Bastion HS","Beaconsfield HS","Bellville HS","Ben Viljoen HS","Ben Vorster HS","Benoni High School","Brackenfell HS","Brits HS","Cambridge HS","Centurion HS","Dale College","Diocesan College (Bishops)","Durban HS","Durbanville HS","Fish Hoek HS","Framesby HS","Franschhoek HS","Garsfontein HS","George HS","Gill College","Glenwood HS","Grey College Bloemfontein","Grey College PE","Helpmekaar Kollege","Hilton College","HTS Daniel Pienaar","Kearsney College","Kimberley Boys' High","King Edward VII School (KES)","Kingswood College","Maritzburg College","Menlopark HS","Michaelhouse","Milnerton HS","Monument HS","Northwood HS","Outeniqua HS","Paarl Boys High","Paarl Gimnasium","Parktown Boys' High","Paul Roos Gimnasium","Pearson HS","Pretoria Boys High","Rondebosch Boys' High","Royal Cape","SACS","Selborne College","St Stithians College","Stellenbosch HS","Waterkloof HS","Westerford HS","Wynberg Boys' High"];
+
+let allSchools = [...SA_SCHOOLS];
+let registeredSchools = [];
+let currentLetter = '';
+
+async function loadData() {
+  const {data:players} = await sb.from('players').select('school').not('school','is',null);
+  const schoolCounts = {};
+  (players||[]).forEach(p => { if(p.school) schoolCounts[p.school] = (schoolCounts[p.school]||0)+1; });
+  registeredSchools = Object.keys(schoolCounts);
+  registeredSchools.forEach(s => { if(!allSchools.includes(s)) allSchools.push(s); });
+  allSchools.sort();
+  document.getElementById('total-schools').textContent = allSchools.length;
+  document.getElementById('total-registered').textContent = registeredSchools.length;
+  const {count} = await sb.from('players').select('team_number',{count:'exact',head:true}).not('team_number','is',null);
+  document.getElementById('total-teams').textContent = Math.floor((count||0)/2);
+  buildAlphaNav();
+  renderSchools(allSchools);
+}
+
+function buildAlphaNav() {
+  const letters = [...new Set(allSchools.map(s=>s[0].toUpperCase()))].sort();
+  document.getElementById('alpha-nav').innerHTML =
+    '<button class="alpha-btn active" onclick="filterByLetter(\'\',this)">All</button>' +
+    letters.map(l=>`<button class="alpha-btn" onclick="filterByLetter('${l}',this)">${l}</button>`).join('');
+}
+
+function filterByLetter(letter, btn) {
+  currentLetter = letter;
+  document.querySelectorAll('.alpha-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filterSchools();
+}
+
+function filterSchools() {
+  const q = document.getElementById('school-search').value.toLowerCase();
+  const filtered = allSchools.filter(s => {
+    const matchQ = !q || s.toLowerCase().includes(q);
+    const matchL = !currentLetter || s[0].toUpperCase() === currentLetter;
+    return matchQ && matchL;
+  });
+  renderSchools(filtered);
+}
+
+function renderSchools(list) {
+  if(list.length===0) { document.getElementById('schools-grid').innerHTML='<div class="no-results" style="grid-column:1/-1">No schools found</div>'; return; }
+  document.getElementById('schools-grid').innerHTML = list.map(s => {
+    const isReg = registeredSchools.includes(s);
+    return `<div class="school-card">
+      <h3>${s}</h3>
+      ${isReg ? '<p style="color:var(--gold);font-weight:600;font-size:11px;">⛳ Registered</p>' : '<p>Not yet registered</p>'}
+    </div>`;
+  }).join('');
+}
+
+loadData();
+</script>
+</body>
+</html>

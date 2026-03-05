@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Portal — Alumni Schools Golf Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--navy:#1B3A6B;--navy-dark:#0f2347;--gold:#C9A84C;--gold-dim:rgba(201,168,76,0.15);--white:#fff;--off-white:#f8f6f0;--text:#1a1a2e;--text2:#555;--border:rgba(27,58,107,0.12);--green:#27ae60;--red:#c0392b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);min-height:100vh;}
+nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:70px;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-logo span{font-family:'Cormorant Garamond',serif;color:var(--white);font-size:20px;font-weight:600;}
+.nav-links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:500;margin-left:28px;transition:color 0.2s;}
+.nav-links a:hover{color:var(--gold);}
+.main{max-width:800px;margin:0 auto;padding:40px 20px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px;box-shadow:0 4px 20px rgba(27,58,107,0.08);}
+.card h2{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--navy);margin-bottom:8px;}
+.login-box{max-width:420px;margin:60px auto;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--navy);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.form-group input{width:100%;padding:12px 16px;background:var(--off-white);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color 0.2s;}
+.form-group input:focus{outline:none;border-color:var(--gold);}
+.btn-primary{width:100%;padding:14px;background:var(--gold);color:var(--navy-dark);border:none;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;}
+.btn-outline{width:100%;padding:12px;background:transparent;color:var(--navy);border:2px solid var(--navy);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-green{background:rgba(39,174,96,0.15);color:var(--green);}
+.badge-red{background:rgba(192,57,43,0.15);color:var(--red);}
+.badge-gold{background:var(--gold-dim);color:var(--gold);}
+.badge-grey{background:rgba(0,0,0,0.08);color:var(--text2);}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.info-row:last-child{border-bottom:none;}
+.info-row .label{color:var(--text2);font-size:12px;}
+.info-row .value{font-weight:600;}
+.section{display:none;}.section.active{display:block;}
+.alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;}
+.alert-error{background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:var(--red);}
+.contact-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.contact-btn{padding:14px;border-radius:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.2s;display:block;}
+.contact-email{background:var(--navy);color:white;}
+.contact-whatsapp{background:#25D366;color:white;}
+.contact-email:hover,.contact-whatsapp:hover{opacity:0.9;transform:translateY(-1px);}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(0,0,0,0.2);border-top-color:var(--navy);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+footer{background:var(--navy-dark);color:rgba(255,255,255,0.5);text-align:center;padding:24px;font-size:12px;border-top:2px solid var(--gold);}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>Alumni Schools Golf Challenge</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="register.html">Register</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="main">
+  <!-- LOGIN -->
+  <div class="section active" id="sec-login">
+    <div class="card login-box">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:48px;margin-bottom:12px;">🏌️</div>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--navy);">Player Portal</h2>
+        <p style="color:var(--text2);font-size:13px;margin-top:4px;">Log in with your registered email</p>
+      </div>
+      <div id="login-error" class="alert alert-error" style="display:none;"></div>
+      <div class="form-group"><label>Email Address</label><input type="email" id="login-email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+      <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+      <button class="btn-primary" onclick="doLogin()">Sign In to Portal</button>
+      <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--text2);">
+        Not registered? <a href="register.html" style="color:var(--navy);font-weight:600;">Register here</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="section" id="sec-dashboard">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
+        <div>
+          <h2 id="dash-name">Welcome back!</h2>
+          <p style="color:var(--text2);font-size:13px;" id="dash-school"></p>
+        </div>
+        <button class="btn-outline" style="width:auto;padding:8px 20px;" onclick="doLogout()">Sign Out</button>
+      </div>
+      <div id="dash-info"></div>
+    </div>
+
+    <!-- PAYMENT SECTION -->
+    <div class="card" id="payment-card" style="display:none;">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--navy);margin-bottom:16px;">💳 Complete Payment</h2>
+      <p style="font-size:14px;color:var(--text2);margin-bottom:20px;">Your spot is on hold. Please complete payment to officially confirm your entry.</p>
+      <div style="background:var(--navy-dark);border-radius:12px;padding:24px;">
+        <div style="color:var(--gold);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;">Banking Details — EFT</div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="color:rgba(255,255,255,0.5);font-size:12px;">Account Name</span><span style="color:white;font-weight:600;font-size:13px;">LEGACY EVENT VENTURES (PTY) LTD</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="color:rgba(255,255,255,0.5);font-size:12px;">Bank</span><span style="color:white;font-weight:600;font-size:13px;">FNB — Cape Gate</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="color:rgba(255,255,255,0.5);font-size:12px;">Account Number</span><span style="color:white;font-weight:600;font-size:13px;">63192217123</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="color:rgba(255,255,255,0.5);font-size:12px;">Branch Code</span><span style="color:white;font-weight:600;font-size:13px;">251945</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;"><span style="color:rgba(255,255,255,0.5);font-size:12px;">Amount</span><span style="color:var(--gold);font-weight:700;font-size:18px;">R1,500.00</span></div>
+      </div>
+      <div style="margin-top:16px;">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--navy);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Upload Proof of Payment</label>
+        <div style="border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;" onclick="document.getElementById('portal-pop').click()">
+          <div style="font-size:24px;">📎</div>
+          <p style="color:var(--text2);font-size:13px;margin-top:8px;">Click to upload proof of payment</p>
+          <p id="portal-pop-name" style="color:var(--navy);font-weight:600;margin-top:6px;"></p>
+        </div>
+        <input type="file" id="portal-pop" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="this.nextElementSibling.style.display='block';document.getElementById('portal-pop-name').textContent='✅ '+this.files[0].name;" />
+        <button class="btn-primary" id="portal-pay-btn" style="display:none;" onclick="submitPortalPayment()">Submit Proof of Payment</button>
+      </div>
+    </div>
+
+    <!-- MATCHES -->
+    <div class="card" id="matches-card" style="display:none;">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--navy);margin-bottom:16px;">🎯 My Matches</h2>
+      <div id="matches-list"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Alumni Schools Golf Challenge | <a href="mailto:admin@alumnigolf.net">admin@alumnigolf.net</a></p>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentPlayer = null;
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pass = document.getElementById('login-password').value;
+  const err = document.getElementById('login-error');
+  err.style.display = 'none';
+  if (!email || !pass) { err.textContent = 'Please enter your email and password.'; err.style.display='block'; return; }
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) { err.textContent = 'Invalid email or password. If you registered via the web form, please check your email for your login details.'; err.style.display='block'; return; }
+  await loadDashboard(email);
+}
+
+async function loadDashboard(email) {
+  const { data: player } = await sb.from('players').select('*').eq('email', email).maybeSingle();
+  if (!player) return;
+  currentPlayer = player;
+  document.getElementById('sec-login').classList.remove('active');
+  document.getElementById('sec-dashboard').classList.add('active');
+  document.getElementById('dash-name').textContent = 'Welcome, ' + (player.full_name || 'Player') + '!';
+  document.getElementById('dash-school').textContent = (player.school || '') + (player.team_number ? ' · Team: ' + player.team_number : '');
+
+  const payBadge = player.payment_status === 'paid' ? '<span class="badge badge-green">✅ Paid</span>' :
+    player.payment_status === 'pending_verification' ? '<span class="badge badge-gold">⏳ Pending Verification</span>' :
+    '<span class="badge badge-red">❌ Unpaid</span>';
+  const eligBadge = player.eligibility_status === 'eligible' ? '<span class="badge badge-green">✅ Eligible</span>' : '<span class="badge badge-grey">⏳ Pending</span>';
+
+  document.getElementById('dash-info').innerHTML = `
+    <div class="info-row"><span class="label">Email</span><span class="value">${player.email}</span></div>
+    <div class="info-row"><span class="label">Mobile</span><span class="value">${player.mobile||'—'}</span></div>
+    <div class="info-row"><span class="label">School</span><span class="value">${player.school||'—'}</span></div>
+    <div class="info-row"><span class="label">Golf Club</span><span class="value">${player.golf_club||'—'}</span></div>
+    <div class="info-row"><span class="label">HNA Number</span><span class="value">${player.hna_number||'—'}</span></div>
+    <div class="info-row"><span class="label">Handicap Index</span><span class="value">${player.handicap_index||'—'}</span></div>
+    <div class="info-row"><span class="label">Team</span><span class="value">${player.team_number||'—'}</span></div>
+    <div class="info-row"><span class="label">Division</span><span class="value">${player.division_name||'Not yet assigned'}</span></div>
+    <div class="info-row"><span class="label">Payment</span><span class="value">${payBadge}</span></div>
+    <div class="info-row"><span class="label">Eligibility</span><span class="value">${eligBadge}</span></div>
+  `;
+
+  if (player.payment_status === 'unpaid') document.getElementById('payment-card').style.display = 'block';
+
+  // Load matches
+  if (player.team_number) {
+    const { data: matches } = await sb.from('matches').select('*')
+      .or(`home_team.eq.${player.team_number},away_team.eq.${player.team_number}`)
+      .order('round_number');
+    if (matches && matches.length > 0) {
+      document.getElementById('matches-card').style.display = 'block';
+      document.getElementById('matches-list').innerHTML = matches.map(m => {
+        const isHome = m.home_team === player.team_number;
+        const opponent = isHome ? m.away_team : m.home_team;
+        const statusBadge = m.match_status === 'completed' ? '<span class="badge badge-green">Completed</span>' :
+          m.match_status === 'pending' ? '<span class="badge badge-grey">Pending</span>' : '<span class="badge badge-gold">In Progress</span>';
+        return `<div style="padding:16px 0;border-bottom:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div><span style="font-size:11px;color:var(--text2);font-weight:700;letter-spacing:1px;">ROUND ${m.round_number}</span></div>
+            ${statusBadge}
+          </div>
+          <div style="font-size:15px;font-weight:600;margin-bottom:4px;">vs <span style="color:var(--navy)">${opponent}</span> ${isHome ? '<span style="font-size:11px;color:var(--gold);">(HOME)</span>' : '<span style="font-size:11px;color:var(--text2);">(AWAY)</span>'}</div>
+          ${m.winner ? `<div style="font-size:13px;color:${m.winner===player.team_number?'var(--green)':'var(--red)'};">Winner: ${m.winner}</div>` : ''}
+          <div class="contact-options" style="margin-top:12px;">
+            <a href="mailto:?subject=Alumni Golf - Round ${m.round_number} Scheduling&body=Hi, I am reaching out to schedule our Round ${m.round_number} match in the Alumni Schools Golf Challenge. Please let me know your availability." class="contact-btn contact-email">📧 Email Opponent</a>
+            <a href="https://wa.me/?text=Hi! I'm reaching out about our Round ${m.round_number} Alumni Schools Golf Challenge match. When are you available?" target="_blank" class="contact-btn contact-whatsapp">💬 WhatsApp</a>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+async function submitPortalPayment() {
+  const file = document.getElementById('portal-pop').files[0];
+  if (!file) return;
+  const btn = document.getElementById('portal-pay-btn');
+  btn.innerHTML = '<span class="spinner"></span>Uploading...';
+  btn.disabled = true;
+  const ext = file.name.split('.').pop();
+  const fileName = `pop/${currentPlayer.email}-${Date.now()}.${ext}`;
+  await sb.storage.from('proofs').upload(fileName, file, { upsert: true });
+  await sb.from('players').update({ payment_status: 'pending_verification', payment_proof_url: `${SUPABASE_URL}/storage/v1/object/public/proofs/${fileName}` }).eq('email', currentPlayer.email);
+  document.getElementById('payment-card').innerHTML = '<div style="text-align:center;padding:20px;"><div style="font-size:48px;margin-bottom:12px;">✅</div><h3 style="color:var(--navy);font-family:Cormorant Garamond,serif;font-size:24px;">Proof of Payment Submitted!</h3><p style="color:var(--text2);font-size:14px;margin-top:8px;">We will verify your payment and confirm your entry shortly.</p></div>';
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  document.getElementById('sec-dashboard').classList.remove('active');
+  document.getElementById('sec-login').classList.add('active');
+}
+
+sb.auth.getSession().then(({data:{session}}) => {
+  if (session) loadDashboard(session.user.email);
+});
+</script>
+</body>
+</html>
