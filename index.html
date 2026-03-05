@@ -275,12 +275,12 @@ footer a{color:var(--gold);text-decoration:none;}
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Password is stored as a simple hash - change 'ASCGolf2026' to whatever you want
-const CORRECT_PASSWORD = 'ASCGolf2026';
+const CORRECT_PASSWORD = 'golf2026';
 
 function checkPassword() {
   const input = document.getElementById('pw-input').value;
   const error = document.getElementById('pw-error');
-  if (input === CORRECT_PASSWORD) {
+  if (input.toLowerCase() === CORRECT_PASSWORD) {
     // Store in session so they don't have to re-enter on refresh
     sessionStorage.setItem('asc-auth', 'true');
     document.getElementById('password-screen').style.display = 'none';
