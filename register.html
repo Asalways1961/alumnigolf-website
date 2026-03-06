@@ -353,15 +353,16 @@ footer a { color:var(--gold); text-decoration:none; }
       <div class="form-group">
         <label>Gender <span class="req">*</span></label>
         <div class="gender-group">
-          <button class="gender-btn" onclick="selectGender('p1','Male')" id="p1-male">⚤ Male</button>
-          <button class="gender-btn" onclick="selectGender('p1','Female')" id="p1-female">⚤ Female</button>
+          <div class="gender-btn" id="p1-male" onclick="selectGender('p1','Male')">♂ Male</div>
+          <div class="gender-btn" id="p1-female" onclick="selectGender('p1','Female')">♀ Female</div>
         </div>
         <input type="hidden" id="p1-gender" />
+        <div id="gender-error" style="color:var(--red);font-size:11px;margin-top:4px;display:none;">⚠️ Please select your gender</div>
       </div>
 
       <div class="form-group autocomplete-wrap">
         <label>School <span class="req">*</span></label>
-        <input type="text" id="p1-school" placeholder="Type your school name..." autocomplete="off" oninput="acSearch('p1-school', SA_SCHOOLS, 'p1-school-list', 'p1-school-hidden')" />
+        <input type="text" id="p1-school" placeholder="Type your school name..." autocomplete="off" oninput="acSearch('p1-school', SA_SCHOOLS, 'p1-school-list', 'p1-school-hidden')" onkeyup="acSearch('p1-school', SA_SCHOOLS, 'p1-school-list', 'p1-school-hidden')" />
         <input type="hidden" id="p1-school-hidden" />
         <div class="autocomplete-list" id="p1-school-list"></div>
         <div class="hint">Type 1+ letters. If your school is not listed, type the full name and it will be added.</div>
@@ -654,15 +655,21 @@ function goToStep(n) {
 function selectGender(player, gender) {
   selectedGender[player] = gender;
   document.getElementById(player + '-gender').value = gender;
-  document.getElementById(player + '-male').classList.toggle('selected', gender === 'Male');
-  document.getElementById(player + '-female').classList.toggle('selected', gender === 'Female');
+  var maleBtn = document.getElementById(player + '-male');
+  var femaleBtn = document.getElementById(player + '-female');
+  maleBtn.classList.remove('selected');
+  femaleBtn.classList.remove('selected');
+  if (gender === 'Male') maleBtn.classList.add('selected');
+  if (gender === 'Female') femaleBtn.classList.add('selected');
+  var errEl = document.getElementById('gender-error');
+  if (errEl) errEl.style.display = 'none';
 }
 
 // ── AUTOCOMPLETE ──────────────────────────────────────────────────────────────
 function acSearch(inputId, list, listId, hiddenId) {
   const q = document.getElementById(inputId).value.trim().toLowerCase();
   const dropdown = document.getElementById(listId);
-  if (q.length < 1) { dropdown.style.display = 'none'; return; }
+  if (q.length < 1) { dropdown.style.display = 'none'; document.getElementById(hiddenId).value = ''; return; }
   const matches = list.filter(item => item.toLowerCase().includes(q)).slice(0, 8);
   if (matches.length === 0) {
     dropdown.style.display = 'none';
@@ -741,7 +748,7 @@ async function checkEligibilityEarly() {
   if (!fn || !sn) return showError('step1-error', 'Please enter your first name and surname.');
   if (!email || !email.includes('@')) return showError('step1-error', 'Please enter a valid email address.');
   if (!mobile) return showError('step1-error', 'Please enter your mobile number.');
-  if (!gender) return showError('step1-error', 'Please select your gender.');
+  if (!gender) { var ge = document.getElementById('gender-error'); if(ge) ge.style.display='block'; return showError('step1-error', 'Please select your gender by clicking Male or Female above.'); }
   if (!school) return showError('step1-error', 'Please enter your school name.');
   if (!city) return showError('step1-error', 'Please enter your city or town.');
   if (!postal || postal.length < 4) return showError('step1-error', 'Please enter a valid 4-digit postal code.');
