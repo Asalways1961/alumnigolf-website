@@ -122,10 +122,10 @@ footer a{color:var(--gold);text-decoration:none;}
 </div>
 
 <footer>
-  <p>© 2026 Alumni Schools Golf Challenge | <a href="mailto:admin@alumnigolf.net">admin@alumnigolf.net</a></p>
+  <p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#650401080c0b25040910080b0c020a09034b0b0011"><span class="__cf_email__" data-cfemail="9dfcf9f0f4f3ddfcf1e8f0f3f4faf2f1fbb3f3f8e9">[email&#160;protected]</span></a></p>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const { createClient } = supabase;
@@ -216,13 +216,4 @@ async function submitPortalPayment() {
 
 async function doLogout() {
   await sb.auth.signOut();
-  document.getElementById('sec-dashboard').classList.remove('active');
-  document.getElementById('sec-login').classList.add('active');
-}
-
-sb.auth.getSession().then(({data:{session}}) => {
-  if (session) loadDashboard(session.user.email);
-});
-</script>
-</body>
-</html>
+  document.getElementBy

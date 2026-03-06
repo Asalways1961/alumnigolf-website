@@ -343,7 +343,11 @@ footer a { color:var(--gold); text-decoration:none; }
 
       <div class="form-group">
         <label>South African Mobile Number <span class="req">*</span></label>
-        <input type="tel" id="p1-mobile" placeholder="+27 81 234 5678" />
+        <div style="display:flex;gap:0;">
+          <div style="padding:12px 14px;background:#e8e4dc;border:1.5px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-weight:700;color:var(--navy);font-size:14px;white-space:nowrap;">+27</div>
+          <input type="tel" id="p1-mobile" placeholder="81 234 5678" style="border-radius:0 10px 10px 0;" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="9" />
+        </div>
+        <div class="hint">Enter your number without the leading 0 — e.g. 821234567</div>
       </div>
 
       <div class="form-group">
@@ -360,26 +364,7 @@ footer a { color:var(--gold); text-decoration:none; }
         <input type="text" id="p1-school" placeholder="Type your school name..." autocomplete="off" oninput="acSearch('p1-school', SA_SCHOOLS, 'p1-school-list', 'p1-school-hidden')" />
         <input type="hidden" id="p1-school-hidden" />
         <div class="autocomplete-list" id="p1-school-list"></div>
-        <div class="hint">Type 3+ letters. If your school is not listed, type the full name and it will be added.</div>
-      </div>
-
-      <div class="form-group autocomplete-wrap">
-        <label>Golf Club <span class="req">*</span></label>
-        <input type="text" id="p1-club" placeholder="Type your club name..." autocomplete="off" oninput="acSearch('p1-club', GOLF_CLUBS, 'p1-club-list', 'p1-club-hidden')" />
-        <input type="hidden" id="p1-club-hidden" />
-        <div class="autocomplete-list" id="p1-club-list"></div>
-      </div>
-
-      <div class="form-group">
-        <label>HNA Handicap Number <span class="req">*</span></label>
-        <input type="text" id="p1-hna" placeholder="2700XXXXXX" />
-        <div class="hint">Your Golf RSA Handicapping Network Africa number (starts with 2700)</div>
-      </div>
-
-      <div class="form-group">
-        <label>Handicap Index <span class="req">*</span></label>
-        <input type="number" id="p1-handicap" placeholder="e.g. 12.4" step="0.1" min="0" max="54" />
-        <div class="hint">Men: max 36 | Women: max 54 (Playing cap limited to 24/28 per rules)</div>
+        <div class="hint">Type 1+ letters. If your school is not listed, type the full name and it will be added.</div>
       </div>
 
       <div class="form-row">
@@ -389,14 +374,43 @@ footer a { color:var(--gold); text-decoration:none; }
         </div>
         <div class="form-group">
           <label>Postal Code <span class="req">*</span></label>
-          <input type="text" id="p1-postal" placeholder="e.g. 7550" maxlength="4" />
+          <input type="text" id="p1-postal" placeholder="e.g. 7550" maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
         </div>
       </div>
       <div class="info-box" style="margin-top:-8px;margin-bottom:20px;">
         ⚠️ <strong>Important:</strong> Your postal code is used for geo-plotting into your division. Please ensure it is 100% accurate — an incorrect postal code may result in incorrect grouping.
       </div>
 
-      <button class="btn-primary" onclick="submitStep1()">Continue to Eligibility →</button>
+      <button class="btn-primary" onclick="checkEligibilityEarly()">Continue to Eligibility Check →</button>
+
+      <div id="golf-details-section" style="display:none;margin-top:24px;">
+        <div style="border-top:2px solid var(--border);padding-top:24px;margin-bottom:20px;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:4px;">✅ Eligibility Confirmed</div>
+          <div style="font-size:13px;color:var(--text2);">Please complete your golf membership details below.</div>
+        </div>
+
+        <div class="form-group autocomplete-wrap">
+          <label>Golf Club <span class="req">*</span></label>
+          <input type="text" id="p1-club" placeholder="Type your club name..." autocomplete="off" oninput="acSearch('p1-club', GOLF_CLUBS, 'p1-club-list', 'p1-club-hidden')" />
+          <input type="hidden" id="p1-club-hidden" />
+          <div class="autocomplete-list" id="p1-club-list"></div>
+        </div>
+
+        <div class="form-group">
+          <label>HNA Handicap Number <span class="req">*</span></label>
+          <input type="text" id="p1-hna" placeholder="2700XXXXXX" oninput="validateHNA(this)" />
+          <div class="hint">Your Golf RSA Handicapping Network Africa number — must start with 2700</div>
+          <div id="hna-error" style="color:var(--red);font-size:11px;margin-top:4px;display:none;">⚠️ HNA number must start with 2700</div>
+        </div>
+
+        <div class="form-group">
+          <label>Handicap Index <span class="req">*</span></label>
+          <input type="number" id="p1-handicap" placeholder="e.g. 12.4" step="0.1" min="0" max="54" />
+          <div class="hint">Men: max 36 | Women: max 54 (Playing cap limited to 24/28 per rules)</div>
+        </div>
+
+        <button class="btn-primary" onclick="submitStep1()">Continue to Partner & Payment →</button>
+      </div>
       <div class="login-link">Already registered? <a href="portal.html">Log in to your portal</a></div>
     </div>
   </div>
@@ -604,11 +618,11 @@ footer a { color:var(--gold); text-decoration:none; }
 </div><!-- /main -->
 
 <footer>
-  <p>© 2026 Alumni Schools Golf Challenge — Legacy Event Ventures (Pty) Ltd | <a href="mailto:admin@alumnigolf.net">admin@alumnigolf.net</a></p>
+  <p>© 2026 Alumni Schools Golf Challenge — Legacy Event Ventures (Pty) Ltd | <a href="/cdn-cgi/l/email-protection#2243464f4b4c62434e574f4c4b454d4e440c4c4756"><span class="__cf_email__" data-cfemail="650401080c0b25040910080b0c020a09034b0b0011">[email&#160;protected]</span></a></p>
   <p style="margin-top:6px;">Honouring tradition. Celebrating excellence.</p>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── SUPABASE ──────────────────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
@@ -648,7 +662,7 @@ function selectGender(player, gender) {
 function acSearch(inputId, list, listId, hiddenId) {
   const q = document.getElementById(inputId).value.trim().toLowerCase();
   const dropdown = document.getElementById(listId);
-  if (q.length < 2) { dropdown.style.display = 'none'; return; }
+  if (q.length < 1) { dropdown.style.display = 'none'; return; }
   const matches = list.filter(item => item.toLowerCase().includes(q)).slice(0, 8);
   if (matches.length === 0) {
     dropdown.style.display = 'none';
@@ -699,6 +713,62 @@ function showError(sectionId, msg) {
   el.scrollIntoView({behavior:'smooth', block:'center'});
 }
 
+// ── HNA VALIDATOR ────────────────────────────────────────────────────────────
+function validateHNA(input) {
+  const val = input.value.replace(/[^0-9]/g, '');
+  input.value = val;
+  const errEl = document.getElementById('hna-error');
+  if (val.length > 0 && !val.startsWith('2700')) {
+    errEl.style.display = 'block';
+    input.style.borderColor = 'var(--red)';
+  } else {
+    errEl.style.display = 'none';
+    input.style.borderColor = '';
+  }
+}
+
+// ── EARLY ELIGIBILITY CHECK ───────────────────────────────────────────────────
+async function checkEligibilityEarly() {
+  const fn = document.getElementById('p1-firstname').value.trim();
+  const sn = document.getElementById('p1-surname').value.trim();
+  const email = document.getElementById('p1-email').value.trim().toLowerCase();
+  const mobile = document.getElementById('p1-mobile').value.trim();
+  const gender = document.getElementById('p1-gender').value;
+  const school = document.getElementById('p1-school-hidden').value || document.getElementById('p1-school').value.trim();
+  const city = document.getElementById('p1-city').value.trim();
+  const postal = document.getElementById('p1-postal').value.trim();
+
+  if (!fn || !sn) return showError('step1-error', 'Please enter your first name and surname.');
+  if (!email || !email.includes('@')) return showError('step1-error', 'Please enter a valid email address.');
+  if (!mobile) return showError('step1-error', 'Please enter your mobile number.');
+  if (!gender) return showError('step1-error', 'Please select your gender.');
+  if (!school) return showError('step1-error', 'Please enter your school name.');
+  if (!city) return showError('step1-error', 'Please enter your city or town.');
+  if (!postal || postal.length < 4) return showError('step1-error', 'Please enter a valid 4-digit postal code.');
+
+  document.getElementById('step1-error').className = 'alert';
+
+  // Save partial data to Supabase immediately
+  try {
+    await sb.from('players').upsert({
+      full_name: fn + ' ' + sn,
+      email: email,
+      mobile: '+27' + mobile,
+      gender: gender,
+      school_name: school,
+      city: city,
+      postal_code: postal,
+      eligibility_status: 'pending',
+      payment_status: 'unpaid',
+      registration_source: 'web_partial',
+    }, { onConflict: 'email' });
+  } catch(e) { console.log('Partial save error:', e); }
+
+  // Show golf details section
+  document.getElementById('golf-details-section').style.display = 'block';
+  document.getElementById('golf-details-section').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
 // ── STEP 1 SUBMIT ─────────────────────────────────────────────────────────────
 async function submitStep1() {
   const fn = document.getElementById('p1-firstname').value.trim();
@@ -713,20 +783,13 @@ async function submitStep1() {
   const city = document.getElementById('p1-city').value.trim();
   const postal = document.getElementById('p1-postal').value.trim();
 
-  if (!fn || !sn) return showError('step1-error', 'Please enter your first name and surname.');
-  if (!email || !email.includes('@')) return showError('step1-error', 'Please enter a valid email address.');
-  if (!mobile) return showError('step1-error', 'Please enter your mobile number.');
-  if (!gender) return showError('step1-error', 'Please select your gender.');
-  if (!school) return showError('step1-error', 'Please enter your school name.');
-  if (!club) return showError('step1-error', 'Please enter your golf club.');
-  if (!hna || !hna.startsWith('2700')) return showError('step1-error', 'Please enter a valid HNA number starting with 2700.');
+  if (!club) return showError('step1-error', 'Please enter your golf club name.');
+  if (!hna || !hna.startsWith('2700')) return showError('step1-error', 'Please enter a valid HNA number — it must start with 2700.');
   if (!handicap) return showError('step1-error', 'Please enter your handicap index.');
-  if (!city) return showError('step1-error', 'Please enter your city or town.');
-  if (!postal || postal.length < 4) return showError('step1-error', 'Please enter a valid 4-digit postal code.');
 
   document.getElementById('step1-error').className = 'alert';
 
-  regData.player1 = { full_name: fn + ' ' + sn, first_name: fn, surname: sn, email, mobile, gender, school, club, hna_number: hna, handicap_index: parseFloat(handicap), city, postal_code: postal };
+  regData.player1 = { full_name: fn + ' ' + sn, first_name: fn, surname: sn, email, mobile: '+27' + mobile, gender, school, club, hna_number: hna, handicap_index: parseFloat(handicap), city, postal_code: postal };
   goToStep(2);
 }
 
@@ -858,7 +921,7 @@ async function saveRegistration(paymentStatus, popUrl) {
   const { error: e1 } = await sb.from('players').upsert({
     full_name: p1.full_name,
     email: p1.email,
-    mobile: p1.mobile,
+    mobile: '+27' + p1.mobile,
     gender: p1.gender,
     school: p1.school,
     golf_club: p1.club,
@@ -897,15 +960,4 @@ async function saveRegistration(paymentStatus, popUrl) {
     await fetch(`${SUPABASE_URL}/functions/v1/send-registration-email`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
-      body: JSON.stringify({
-        player: p1, partner: p2,
-        paymentStatus, teamNumber: teamNum,
-        paymentRef: regData.paymentRef,
-        payNowAmount,
-      })
-    });
-  } catch(e) { console.log('Email error:', e); }
-}
-</script>
-</body>
-</html>
+      body: JSON.

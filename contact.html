@@ -57,9 +57,9 @@ footer a{color:var(--gold);text-decoration:none;}
   <div class="two-col">
     <div class="card">
       <h2>Get In Touch</h2>
-      <div class="info-item"><div class="icon">📧</div><div><h4>Email</h4><p><a href="mailto:admin@alumnigolf.net">admin@alumnigolf.net</a></p></div></div>
+      <div class="info-item"><div class="icon">📧</div><div><h4>Email</h4><p><a href="/cdn-cgi/l/email-protection#056461686c6b45646970686b6c626a69632b6b6071"><span class="__cf_email__" data-cfemail="69080d0400072908051c0407000e06050f47070c1d">[email&#160;protected]</span></a></p></div></div>
       <div class="info-item"><div class="icon">🌐</div><div><h4>Website</h4><p><a href="https://alumnigolf.net">alumnigolf.net</a></p></div></div>
-      <div class="info-item"><div class="icon">📱</div><div><h4>App</h4><p>Launching 2 April 2026 on iOS and Android</p></div></div>
+      <div class="info-item"><div class="icon">📱</div><div><h4>App</h4><p>Launching soon on iOS and Android</p></div></div>
       <div class="info-item"><div class="icon">🤝</div><div><h4>Sponsorship</h4><p>Division naming and sponsorship opportunities available. Contact us to get involved!</p></div></div>
       <div class="info-item"><div class="icon">🏆</div><div><h4>Tournament Info</h4><p>Inaugural Season 2026/27<br>Registration closes 31 July 2026</p></div></div>
     </div>
@@ -85,8 +85,8 @@ footer a{color:var(--gold);text-decoration:none;}
     </div>
   </div>
 </div>
-<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="mailto:admin@alumnigolf.net">admin@alumnigolf.net</a></p></footer>
-<script>
+<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#ceafaaa3a7a08eafa2bba3a0a7a9a1a2a8e0a0abba"><span class="__cf_email__" data-cfemail="78191c1511163819140d1516111f17141e56161d0c">[email&#160;protected]</span></a></p></footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const SUPABASE_URL='https://weztrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const {createClient}=supabase;const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -95,12 +95,4 @@ async function sendMessage() {
   const email=document.getElementById('c-email').value.trim();
   const subject=document.getElementById('c-subject').value;
   const message=document.getElementById('c-message').value.trim();
-  if(!name||!email||!subject||!message){alert('Please fill in all fields.');return;}
-  await sb.from('contact_messages').insert({name,email,subject,message});
-  document.getElementById('contact-success').style.display='block';
-  document.getElementById('c-name').value='';document.getElementById('c-email').value='';
-  document.getElementById('c-subject').value='';document.getElementById('c-message').value='';
-}
-</script>
-</body>
-</html>
+  if(!name||!email||!subject||!message){alert('Please fill
