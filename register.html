@@ -355,12 +355,12 @@ footer a { color:var(--gold); text-decoration:none; }
 
       <div class="form-group">
         <label>Gender <span class="req">*</span></label>
-        <div class="gender-group">
-          <div class="gender-btn" id="p1-male" onclick="selectGender('p1','Male')">♂ Male</div>
-          <div class="gender-btn" id="p1-female" onclick="selectGender('p1','Female')">♀ Female</div>
+        <div style="display:flex;gap:12px;">
+          <div id="p1-male" onclick="selectGender('p1','Male')" style="flex:1;padding:12px;border:2px solid #ccc;border-radius:10px;background:#f8f6f0;color:#555;font-size:14px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;user-select:none;">♂ Male</div>
+          <div id="p1-female" onclick="selectGender('p1','Female')" style="flex:1;padding:12px;border:2px solid #ccc;border-radius:10px;background:#f8f6f0;color:#555;font-size:14px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;user-select:none;">♀ Female</div>
         </div>
         <input type="hidden" id="p1-gender" />
-        <div id="gender-error" style="color:var(--red);font-size:11px;margin-top:4px;display:none;">⚠️ Please select your gender</div>
+        <div id="gender-error" style="color:#c0392b;font-size:11px;margin-top:4px;display:none;">⚠️ Please select your gender</div>
       </div>
 
       <div class="form-group autocomplete-wrap">
@@ -658,42 +658,48 @@ function goToStep(n) {
 function selectGender(player, gender) {
   selectedGender[player] = gender;
   document.getElementById(player + '-gender').value = gender;
-  document.getElementById(player + '-male').className = 'gender-btn' + (gender === 'Male' ? ' selected' : '');
-  document.getElementById(player + '-female').className = 'gender-btn' + (gender === 'Female' ? ' selected' : '');
+  var maleEl = document.getElementById(player + '-male');
+  var femaleEl = document.getElementById(player + '-female');
+  var unsel = 'flex:1;padding:12px;border:2px solid #ccc;border-radius:10px;background:#f8f6f0;color:#555;font-size:14px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;user-select:none;';
+  var sel = 'flex:1;padding:12px;border:2px solid #1B3A6B;border-radius:10px;background:#1B3A6B;color:white;font-size:14px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;user-select:none;';
+  maleEl.style.cssText = (gender === 'Male') ? sel : unsel;
+  femaleEl.style.cssText = (gender === 'Female') ? sel : unsel;
   var ge = document.getElementById('gender-error');
   if (ge) ge.style.display = 'none';
 }
 
 // ── AUTOCOMPLETE ──────────────────────────────────────────────────────────────
+var acSelected = {};
+
 function acSearch(inputId, list, listId, hiddenId) {
-  var q = document.getElementById(inputId).value.trim().toLowerCase();
+  var inputEl = document.getElementById(inputId);
   var dropdown = document.getElementById(listId);
+  var q = inputEl.value.trim().toLowerCase();
   if (q.length < 1) { dropdown.style.display = 'none'; return; }
-  var matches = list.filter(function(item) { return item.toLowerCase().indexOf(q) !== -1; }).slice(0, 10);
+  var matches = [];
+  for (var i = 0; i < list.length; i++) {
+    if (list[i].toLowerCase().indexOf(q) !== -1) { matches.push(list[i]); }
+    if (matches.length >= 10) break;
+  }
   if (matches.length === 0) {
-    dropdown.innerHTML = '<div class="autocomplete-item" style="color:var(--green);font-weight:600;" onclick="addNewSchool('' + inputId + '','' + listId + '','' + hiddenId + '')">➕ Add "' + document.getElementById(inputId).value.trim() + '" as new school</div>';
-    dropdown.style.display = 'block';
-    document.getElementById(hiddenId).value = document.getElementById(inputId).value.trim();
+    dropdown.style.display = 'none';
+    document.getElementById(hiddenId).value = inputEl.value.trim();
     return;
   }
-  var html = '';
-  for (var i = 0; i < matches.length; i++) {
-    var m = matches[i];
-    var highlighted = m.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\]/g,'\$&'), 'gi'), '<strong>$&</strong>');
-    html += '<div class="autocomplete-item" onclick="selectAC('' + inputId + '','' + listId + '','' + hiddenId + '','' + m.replace(/'/g,"\'") + '')">' + highlighted + '</div>';
+  var rows = '';
+  for (var j = 0; j < matches.length; j++) {
+    rows += '<div class="autocomplete-item" data-val="' + matches[j].replace(/"/g,'&quot;') + '" data-input="' + inputId + '" data-list="' + listId + '" data-hidden="' + hiddenId + '" onmousedown="pickAC(this)">' + matches[j] + '</div>';
   }
-  dropdown.innerHTML = html;
+  dropdown.innerHTML = rows;
   dropdown.style.display = 'block';
 }
 
-function selectAC(inputId, listId, hiddenId, value) {
-  document.getElementById(inputId).value = value;
-  document.getElementById(hiddenId).value = value;
-  document.getElementById(listId).style.display = 'none';
-}
-
-function addNewSchool(inputId, listId, hiddenId) {
-  var val = document.getElementById(inputId).value.trim();
+function pickAC(el) {
+  var val = el.getAttribute('data-val');
+  var inputId = el.getAttribute('data-input');
+  var listId = el.getAttribute('data-list');
+  var hiddenId = el.getAttribute('data-hidden');
+  document.getElementById(inputId).value = val;
   document.getElementById(hiddenId).value = val;
   document.getElementById(listId).style.display = 'none';
 }
@@ -702,7 +708,6 @@ document.addEventListener('click', function(e) {
   document.querySelectorAll('.autocomplete-list').forEach(function(l) {
     if (!l.parentElement.contains(e.target)) l.style.display = 'none';
   });
-});
 });
 
 // ── ELIGIBILITY CHECKBOXES ────────────────────────────────────────────────────
