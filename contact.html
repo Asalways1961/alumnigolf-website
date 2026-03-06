@@ -18,6 +18,8 @@ nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;j
 .hero h1{font-family:'Cormorant Garamond',serif;color:white;font-size:48px;font-weight:700;margin-bottom:12px;}
 .hero p{color:rgba(255,255,255,0.65);font-size:16px;}
 .gold-line{width:60px;height:3px;background:var(--gold);margin:16px auto;border-radius:2px;}
+.tagline-text{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,26px);color:rgba(255,255,255,0.9);font-style:italic;font-weight:600;letter-spacing:1px;margin-bottom:8px;}
+.tagline-rule{width:180px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 14px;border-radius:2px;}
 .main{max-width:800px;margin:0 auto;padding:48px 20px 80px;}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
 @media(max-width:640px){.two-col{grid-template-columns:1fr;}}
@@ -51,10 +53,9 @@ footer a{color:var(--gold);text-decoration:none;}
 <div class="hero">
   <h1>Contact Us</h1>
   <div class="gold-line"></div>
-  <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,26px);color:rgba(255,255,255,0.9);font-style:italic;font-weight:600;letter-spacing:1px;margin-bottom:10px;">Honouring tradition. Celebrating excellence.</p>
-  <div style="width:180px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 12px;"></div>="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,26px);color:rgba(255,255,255,0.9);font-style:italic;font-weight:600;letter-spacing:1px;margin-bottom:10px;">Honouring tradition. Celebrating excellence.</p>
-  <div style="width:180px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 12px;"></div>
-  <p — queries, sponsorship or general enquiries</p>
+  <p class="tagline-text">Honouring tradition. Celebrating excellence.</p>
+  <div class="tagline-rule"></div>
+  <p>Reach out for registration queries, sponsorship or general enquiries</p>
 </div>
 <div class="main">
   <div class="two-col">

@@ -655,36 +655,31 @@ function goToStep(n) {
 function selectGender(player, gender) {
   selectedGender[player] = gender;
   document.getElementById(player + '-gender').value = gender;
-  var maleBtn = document.getElementById(player + '-male');
-  var femaleBtn = document.getElementById(player + '-female');
-  maleBtn.classList.remove('selected');
-  femaleBtn.classList.remove('selected');
-  if (gender === 'Male') maleBtn.classList.add('selected');
-  if (gender === 'Female') femaleBtn.classList.add('selected');
-  var errEl = document.getElementById('gender-error');
-  if (errEl) errEl.style.display = 'none';
+  document.getElementById(player + '-male').className = 'gender-btn' + (gender === 'Male' ? ' selected' : '');
+  document.getElementById(player + '-female').className = 'gender-btn' + (gender === 'Female' ? ' selected' : '');
+  var ge = document.getElementById('gender-error');
+  if (ge) ge.style.display = 'none';
 }
 
 // ── AUTOCOMPLETE ──────────────────────────────────────────────────────────────
 function acSearch(inputId, list, listId, hiddenId) {
-  const q = document.getElementById(inputId).value.trim().toLowerCase();
-  const dropdown = document.getElementById(listId);
-  if (q.length < 1) { dropdown.style.display = 'none'; document.getElementById(hiddenId).value = ''; return; }
-  const matches = list.filter(item => item.toLowerCase().includes(q)).slice(0, 8);
+  var q = document.getElementById(inputId).value.trim().toLowerCase();
+  var dropdown = document.getElementById(listId);
+  if (q.length < 1) { dropdown.style.display = 'none'; return; }
+  var matches = list.filter(function(item) { return item.toLowerCase().indexOf(q) !== -1; }).slice(0, 10);
   if (matches.length === 0) {
-    dropdown.style.display = 'none';
-    document.getElementById(hiddenId).value = document.getElementById(inputId).value;
+    dropdown.innerHTML = '<div class="autocomplete-item" style="color:var(--green);font-weight:600;" onclick="addNewSchool('' + inputId + '','' + listId + '','' + hiddenId + '')">➕ Add "' + document.getElementById(inputId).value.trim() + '" as new school</div>';
+    dropdown.style.display = 'block';
+    document.getElementById(hiddenId).value = document.getElementById(inputId).value.trim();
     return;
   }
-  const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-  dropdown.innerHTML = matches.map(m =>
-    `<div class="autocomplete-item" onclick="selectAC('${inputId}','${listId}','${hiddenId}','${m.replace(/'/g,"\\'")}')">
-      ${m.replace(re, '<mark>$1</mark>')}
-    </div>`
-  ).join('') + (q.length >= 3 && !matches.some(m => m.toLowerCase() === q) ?
-    `<div class="autocomplete-item" style="color:var(--green);font-weight:600;" onclick="addNewItem('${inputId}','${listId}','${hiddenId}')">
-      ➕ Add "${document.getElementById(inputId).value}" as new entry
-    </div>` : '');
+  var html = '';
+  for (var i = 0; i < matches.length; i++) {
+    var m = matches[i];
+    var highlighted = m.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\]/g,'\$&'), 'gi'), '<strong>$&</strong>');
+    html += '<div class="autocomplete-item" onclick="selectAC('' + inputId + '','' + listId + '','' + hiddenId + '','' + m.replace(/'/g,"\'") + '')">' + highlighted + '</div>';
+  }
+  dropdown.innerHTML = html;
   dropdown.style.display = 'block';
 }
 
@@ -694,16 +689,17 @@ function selectAC(inputId, listId, hiddenId, value) {
   document.getElementById(listId).style.display = 'none';
 }
 
-function addNewItem(inputId, listId, hiddenId) {
-  const val = document.getElementById(inputId).value.trim();
+function addNewSchool(inputId, listId, hiddenId) {
+  var val = document.getElementById(inputId).value.trim();
   document.getElementById(hiddenId).value = val;
   document.getElementById(listId).style.display = 'none';
 }
 
-document.addEventListener('click', e => {
-  document.querySelectorAll('.autocomplete-list').forEach(l => {
+document.addEventListener('click', function(e) {
+  document.querySelectorAll('.autocomplete-list').forEach(function(l) {
     if (!l.parentElement.contains(e.target)) l.style.display = 'none';
   });
+});
 });
 
 // ── ELIGIBILITY CHECKBOXES ────────────────────────────────────────────────────
