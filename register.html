@@ -4,271 +4,117 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alumni Schools Golf Challenge — Register</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root {
-  --navy: #1B3A6B;
-  --navy-dark: #0f2347;
-  --navy-light: #2a4f8f;
-  --gold: #C9A84C;
-  --gold-light: #e8c96a;
-  --gold-dim: rgba(201,168,76,0.15);
-  --white: #ffffff;
-  --off-white: #f8f6f0;
-  --text: #1a1a2e;
-  --text2: #555;
-  --border: rgba(27,58,107,0.15);
-  --red: #c0392b;
-  --green: #27ae60;
-  --radius: 12px;
-  --shadow: 0 8px 32px rgba(27,58,107,0.12);
+  --navy:#1B3A6B; --navy-dark:#0f2347; --navy-light:#2a4f8f;
+  --gold:#C9A84C; --gold-light:#e8c96a; --gold-dim:rgba(201,168,76,0.15);
+  --white:#fff; --off-white:#f8f6f0; --text:#1a1a2e; --text2:#555;
+  --border:rgba(27,58,107,0.15); --red:#c0392b; --green:#27ae60;
+  --radius:12px; --shadow:0 8px 32px rgba(27,58,107,0.12);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'DM Sans',sans-serif; background:var(--off-white); color:var(--text); min-height:100vh; }
-
-/* NAV */
-nav {
-  background:var(--navy-dark);
-  padding:0 40px;
-  display:flex; align-items:center; justify-content:space-between;
-  height:70px; position:sticky; top:0; z-index:100;
-  border-bottom:2px solid var(--gold);
-}
+nav { background:var(--navy-dark); padding:0 40px; display:flex; align-items:center; justify-content:space-between; height:70px; position:sticky; top:0; z-index:100; border-bottom:2px solid var(--gold); }
 .nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; }
 .nav-logo img { height:40px; }
-.nav-logo span { font-family:'Cormorant Garamond',serif; color:var(--white); font-size:20px; font-weight:600; }
+.nav-logo span { font-family:'Cormorant Garamond',serif; color:#fff; font-size:20px; font-weight:600; }
 .nav-links { display:flex; gap:28px; }
-.nav-links a { color:rgba(255,255,255,0.75); text-decoration:none; font-size:13px; font-weight:500; letter-spacing:0.5px; transition:color 0.2s; }
-.nav-links a:hover { color:var(--gold); }
-.nav-links a.active { color:var(--gold); }
-.nav-cta { background:var(--gold); color:var(--navy-dark); padding:9px 22px; border-radius:6px; font-size:13px; font-weight:700; text-decoration:none; letter-spacing:0.5px; transition:opacity 0.2s; }
-.nav-cta:hover { opacity:0.9; }
-
-/* HERO */
-.page-hero {
-  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, var(--navy-light) 100%);
-  padding:60px 40px 50px;
-  text-align:center;
-  position:relative;
-  overflow:hidden;
-}
-.page-hero::before {
-  content:'';position:absolute;inset:0;
-  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A84C' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
-.page-hero h1 { font-family:'Cormorant Garamond',serif; color:var(--white); font-size:42px; font-weight:700; margin-bottom:12px; position:relative; }
-.page-hero p { color:rgba(255,255,255,0.7); font-size:16px; position:relative; }
-.gold-line { width:60px; height:3px; background:var(--gold); margin:16px auto; border-radius:2px; position:relative; }
-
-/* STEPS */
-.steps-bar {
-  background:var(--white);
-  border-bottom:1px solid var(--border);
-  padding:20px 40px;
-  display:flex; justify-content:center; gap:0;
-}
-.step { display:flex; align-items:center; gap:10px; }
-.step-num {
-  width:32px; height:32px; border-radius:50%;
-  background:var(--border); color:var(--text2);
-  display:flex; align-items:center; justify-content:center;
-  font-size:13px; font-weight:700; transition:all 0.3s;
-}
+.nav-links a { color:rgba(255,255,255,0.75); text-decoration:none; font-size:13px; font-weight:500; transition:color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color:var(--gold); }
+.nav-cta { background:var(--gold); color:var(--navy-dark); padding:9px 22px; border-radius:6px; font-size:13px; font-weight:700; text-decoration:none; }
+@media(max-width:700px) { .nav-links { display:none; } nav { padding:0 16px; } }
+.page-hero { background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 60%,var(--navy-light) 100%); padding:50px 20px 40px; text-align:center; }
+.page-hero h1 { font-family:'Cormorant Garamond',serif; color:#fff; font-size:42px; font-weight:700; margin-bottom:10px; }
+.gold-line { width:60px; height:3px; background:var(--gold); margin:12px auto; border-radius:2px; }
+.tagline { font-family:'Cormorant Garamond',serif; font-size:22px; color:rgba(255,255,255,0.92); font-style:italic; font-weight:600; letter-spacing:1px; margin-bottom:8px; }
+.tagline-rule { width:180px; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:0 auto 14px; }
+.hero-sub { color:rgba(255,255,255,0.7); font-size:15px; }
+.steps-bar { background:#fff; border-bottom:1px solid var(--border); padding:16px 20px; display:flex; justify-content:center; }
+.step { display:flex; align-items:center; gap:8px; }
+.step-num { width:30px; height:30px; border-radius:50%; background:var(--border); color:var(--text2); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; transition:all 0.3s; }
 .step.active .step-num { background:var(--gold); color:var(--navy-dark); }
-.step.done .step-num { background:var(--green); color:white; }
-.step-label { font-size:12px; font-weight:600; color:var(--text2); letter-spacing:0.5px; text-transform:uppercase; }
+.step.done .step-num { background:var(--green); color:#fff; }
+.step-label { font-size:11px; font-weight:600; color:var(--text2); letter-spacing:0.5px; text-transform:uppercase; }
 .step.active .step-label { color:var(--navy); }
-.step-sep { width:40px; height:2px; background:var(--border); margin:0 8px; }
+.step-sep { width:32px; height:2px; background:var(--border); margin:0 6px; }
 .step.done + .step-sep { background:var(--green); }
-
-/* MAIN */
-.main { max-width:780px; margin:0 auto; padding:40px 20px 80px; }
-
-/* CARDS */
-.form-card {
-  background:var(--white); border:1px solid var(--border); border-radius:16px;
-  padding:36px; margin-bottom:24px; box-shadow:var(--shadow);
-}
-.card-header {
-  display:flex; align-items:center; gap:14px; margin-bottom:28px;
-  padding-bottom:20px; border-bottom:1px solid var(--border);
-}
+.main { max-width:720px; margin:0 auto; padding:32px 16px 80px; }
+.form-card { background:#fff; border:1px solid var(--border); border-radius:16px; padding:32px; margin-bottom:20px; box-shadow:var(--shadow); }
+.card-header { display:flex; align-items:center; gap:14px; margin-bottom:24px; padding-bottom:18px; border-bottom:1px solid var(--border); }
 .card-icon { font-size:28px; }
 .card-header h2 { font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--navy); }
 .card-header p { font-size:13px; color:var(--text2); margin-top:2px; }
-
-/* FORM */
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
-@media(max-width:600px) { .form-row { grid-template-columns:1fr; } }
-.form-group { margin-bottom:16px; }
-.form-group label {
-  display:block; font-size:11px; font-weight:700; color:var(--navy);
-  letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+@media(max-width:540px) { .form-row { grid-template-columns:1fr; } }
+.fg { margin-bottom:14px; }
+.fg label { display:block; font-size:11px; font-weight:700; color:var(--navy); letter-spacing:1px; text-transform:uppercase; margin-bottom:5px; }
+.fg label .req { color:var(--gold); margin-left:2px; }
+.fg input, .fg select, .fg textarea {
+  width:100%; padding:11px 14px; background:var(--off-white);
+  border:1.5px solid var(--border); border-radius:10px; color:var(--text);
+  font-size:14px; font-family:'DM Sans',sans-serif; transition:border-color 0.2s;
 }
-.form-group label span.req { color:var(--gold); margin-left:2px; }
-.form-group input, .form-group select {
-  width:100%; padding:12px 16px;
-  background:var(--off-white); border:1.5px solid var(--border);
-  border-radius:10px; color:var(--text); font-size:14px;
-  font-family:'DM Sans',sans-serif; transition:border-color 0.2s, box-shadow 0.2s;
-}
-.form-group input:focus, .form-group select:focus {
-  outline:none; border-color:var(--gold);
-  box-shadow:0 0 0 3px rgba(201,168,76,0.15);
-}
-.form-group input.error { border-color:var(--red); }
-.form-group .hint { font-size:11px; color:var(--text2); margin-top:5px; }
-.form-group .hint.important { color:var(--red); font-weight:600; }
-
-/* AUTOCOMPLETE */
-.autocomplete-wrap { position:relative; }
-.autocomplete-list {
-  position:absolute; top:100%; left:0; right:0; z-index:200;
-  background:var(--white); border:1.5px solid var(--gold);
-  border-radius:10px; max-height:200px; overflow-y:auto;
-  box-shadow:0 8px 24px rgba(0,0,0,0.12); display:none;
-}
-.autocomplete-item {
-  padding:10px 16px; font-size:13px; cursor:pointer;
-  border-bottom:1px solid var(--border); transition:background 0.15s;
-}
-.autocomplete-item:hover { background:var(--gold-dim); color:var(--navy); }
-.autocomplete-item:last-child { border-bottom:none; }
-.autocomplete-item mark { background:none; color:var(--gold); font-weight:700; }
-
-/* GENDER TOGGLE */
-.gender-group { display:flex; gap:12px; }
-.gender-btn {
-  flex:1; padding:11px; border:2px solid var(--border); border-radius:10px;
-  background:var(--off-white); color:var(--text2); font-size:13px; font-weight:700;
-  cursor:pointer; transition:all 0.2s; text-align:center; font-family:'DM Sans',sans-serif;
-  user-select:none;
-}
-.gender-btn.selected { border-color:var(--navy) !important; background:var(--navy) !important; color:white !important; box-shadow: 0 0 0 3px rgba(27,58,107,0.3); }
-
-/* ELIGIBILITY */
-.eligibility-box {
-  background:var(--navy-dark); border-radius:12px; padding:24px; margin-bottom:20px;
-}
-.eligibility-box h3 { color:var(--gold); font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:16px; }
-.check-item {
-  display:flex; align-items:flex-start; gap:12px; margin-bottom:14px; cursor:pointer;
-}
-.check-item input[type=checkbox] { display:none; }
-.check-box {
-  width:22px; height:22px; border-radius:5px; border:2px solid rgba(255,255,255,0.3);
-  background:transparent; flex-shrink:0; display:flex; align-items:center;
-  justify-content:center; transition:all 0.2s; margin-top:1px;
-}
-.check-item.checked .check-box { background:var(--gold); border-color:var(--gold); }
-.check-item.checked .check-box::after { content:'✓'; color:var(--navy-dark); font-weight:900; font-size:13px; }
-.check-label { color:rgba(255,255,255,0.85); font-size:13px; line-height:1.5; }
-.check-label a { color:var(--gold); }
-
-/* BUTTONS */
-.btn-primary {
-  width:100%; padding:16px; background:var(--gold);
-  color:var(--navy-dark); border:none; border-radius:10px;
-  font-size:15px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
-  cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif;
-  margin-top:8px;
-}
-.btn-primary:hover { background:var(--gold-light); transform:translateY(-1px); box-shadow:0 4px 16px rgba(201,168,76,0.4); }
-.btn-outline {
-  width:100%; padding:14px; background:transparent;
-  color:var(--navy); border:2px solid var(--navy); border-radius:10px;
-  font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s;
-  font-family:'DM Sans',sans-serif; margin-top:8px;
-}
-.btn-outline:hover { background:var(--navy); color:white; }
-
-/* INFO BOX */
-.info-box {
-  background:rgba(27,58,107,0.06); border:1px solid var(--border);
-  border-left:3px solid var(--gold); border-radius:8px;
-  padding:14px 16px; font-size:13px; color:var(--text2); margin-bottom:20px;
-}
+.fg input:focus, .fg select:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.12); }
+.fg .hint { font-size:11px; color:var(--text2); margin-top:4px; }
+.phone-wrap { display:flex; }
+.phone-prefix { padding:11px 13px; background:#e8e4dc; border:1.5px solid var(--border); border-right:none; border-radius:10px 0 0 10px; font-weight:700; color:var(--navy); font-size:14px; white-space:nowrap; }
+.phone-wrap input { border-radius:0 10px 10px 0; }
+.error-box { background:rgba(192,57,43,0.1); border:1.5px solid rgba(192,57,43,0.4); color:var(--red); border-radius:8px; padding:11px 14px; font-size:13px; margin-bottom:14px; display:none; }
+.error-box.show { display:block; }
+.info-box { background:rgba(27,58,107,0.06); border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:8px; padding:12px 14px; font-size:13px; color:var(--text2); margin-bottom:16px; }
 .info-box strong { color:var(--navy); }
-
-/* PAYMENT PAGE */
-.payment-options { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
-@media(max-width:500px) { .payment-options { grid-template-columns:1fr; } }
-.payment-option {
-  border:2px solid var(--border); border-radius:14px; padding:24px;
-  cursor:pointer; transition:all 0.2s; text-align:center; background:var(--white);
-}
-.payment-option:hover { border-color:var(--gold); transform:translateY(-2px); box-shadow:var(--shadow); }
-.payment-option.selected { border-color:var(--navy); background:rgba(27,58,107,0.04); }
-.payment-option .opt-icon { font-size:36px; margin-bottom:12px; }
-.payment-option h3 { font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--navy); margin-bottom:6px; }
-.payment-option .price { font-size:28px; font-weight:700; color:var(--gold); margin:8px 0; }
-.payment-option .save { font-size:12px; color:var(--green); font-weight:600; }
-.payment-option p { font-size:12px; color:var(--text2); }
-
-.banking-details {
-  background:var(--navy-dark); border-radius:12px; padding:24px; margin:20px 0;
-}
-.banking-details h3 { color:var(--gold); font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:16px; }
-.banking-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.08); }
-.banking-row:last-child { border-bottom:none; }
-.banking-row .label { color:rgba(255,255,255,0.5); font-size:12px; }
-.banking-row .value { color:white; font-size:14px; font-weight:600; }
-.banking-row .copy-btn { background:rgba(201,168,76,0.2); border:1px solid var(--gold); color:var(--gold); padding:4px 10px; border-radius:6px; font-size:11px; cursor:pointer; font-family:'DM Sans',sans-serif; }
-
-/* SUCCESS */
-.success-screen { text-align:center; padding:20px; }
-.success-icon { font-size:64px; margin-bottom:20px; animation:bounce 0.6s ease; }
-@keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
-.success-screen h2 { font-family:'Cormorant Garamond',serif; font-size:36px; color:var(--navy); margin-bottom:12px; }
-.success-screen p { color:var(--text2); font-size:15px; line-height:1.6; max-width:500px; margin:0 auto 24px; }
-
-/* UPLOAD */
-.upload-area {
-  border:2px dashed var(--border); border-radius:10px; padding:28px;
-  text-align:center; cursor:pointer; transition:border-color 0.2s; margin-top:12px;
-}
-.upload-area:hover { border-color:var(--gold); }
-.upload-area p { color:var(--text2); font-size:13px; margin-top:8px; }
-.upload-area .upload-icon { font-size:28px; }
-#pop-file { display:none; }
-
-/* ALERT */
-.alert { padding:12px 16px; border-radius:8px; font-size:13px; margin-bottom:16px; display:none; }
-.alert-error { background:rgba(192,57,43,0.1); border:1px solid rgba(192,57,43,0.3); color:var(--red); display:block; }
-.alert-success { background:rgba(39,174,96,0.1); border:1px solid rgba(39,174,96,0.3); color:var(--green); display:block; }
-
-/* LOADING */
-.spinner { display:inline-block; width:20px; height:20px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:8px; }
-@keyframes spin { to { transform:rotate(360deg); } }
-
-/* FOOTER */
-footer {
-  background:var(--navy-dark); color:rgba(255,255,255,0.5);
-  text-align:center; padding:24px; font-size:12px;
-  border-top:2px solid var(--gold);
-}
-footer a { color:var(--gold); text-decoration:none; }
-
-/* SECTIONS */
+.btn { width:100%; padding:15px; border:none; border-radius:10px; font-size:15px; font-weight:700; letter-spacing:0.5px; cursor:pointer; font-family:'DM Sans',sans-serif; margin-top:6px; transition:all 0.2s; }
+.btn-gold { background:var(--gold); color:var(--navy-dark); }
+.btn-gold:hover { background:var(--gold-light); transform:translateY(-1px); }
+.btn-outline { background:transparent; color:var(--navy); border:2px solid var(--navy); }
+.btn-outline:hover { background:var(--navy); color:#fff; }
 .section { display:none; }
 .section.active { display:block; }
-
-/* ALREADY REGISTERED */
-.login-link { text-align:center; margin-top:16px; font-size:13px; color:var(--text2); }
+.elig-box { background:var(--navy-dark); border-radius:12px; padding:22px; margin-bottom:18px; }
+.elig-box h3 { color:var(--gold); font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:14px; }
+.check-item { display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; cursor:pointer; user-select:none; }
+.check-box { width:22px; height:22px; min-width:22px; border-radius:5px; border:2px solid rgba(255,255,255,0.3); background:transparent; display:flex; align-items:center; justify-content:center; transition:all 0.2s; margin-top:1px; }
+.check-item.ticked .check-box { background:var(--gold); border-color:var(--gold); }
+.check-item.ticked .check-box::after { content:"✓"; color:var(--navy-dark); font-weight:900; font-size:13px; }
+.check-label { color:rgba(255,255,255,0.82); font-size:13px; line-height:1.5; }
+.pay-opts { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+@media(max-width:480px) { .pay-opts { grid-template-columns:1fr; } }
+.pay-opt { border:2px solid var(--border); border-radius:12px; padding:20px; cursor:pointer; text-align:center; background:#fff; transition:all 0.2s; }
+.pay-opt:hover { border-color:var(--gold); transform:translateY(-2px); }
+.pay-opt.sel { border-color:var(--navy); background:rgba(27,58,107,0.04); }
+.pay-opt .opt-icon { font-size:32px; margin-bottom:10px; }
+.pay-opt h3 { font-family:'Cormorant Garamond',serif; font-size:20px; color:var(--navy); }
+.pay-opt .price { font-size:26px; font-weight:700; color:var(--gold); margin:6px 0; }
+.pay-opt p { font-size:12px; color:var(--text2); }
+.bank-block { background:var(--navy-dark); border-radius:12px; padding:22px; margin:16px 0; }
+.bank-block h3 { color:var(--gold); font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:14px; }
+.bank-row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.07); }
+.bank-row:last-child { border:none; }
+.bank-row .lbl { color:rgba(255,255,255,0.5); font-size:12px; }
+.bank-row .val { color:#fff; font-size:14px; font-weight:600; }
+.copy-btn { background:rgba(201,168,76,0.2); border:1px solid var(--gold); color:var(--gold); padding:3px 9px; border-radius:5px; font-size:11px; cursor:pointer; font-family:'DM Sans',sans-serif; }
+.upload-area { border:2px dashed var(--border); border-radius:10px; padding:26px; text-align:center; cursor:pointer; transition:border-color 0.2s; margin-top:10px; }
+.upload-area:hover { border-color:var(--gold); }
+.upload-area p { color:var(--text2); font-size:13px; margin-top:6px; }
+.success-screen { text-align:center; padding:16px; }
+.success-icon { font-size:60px; margin-bottom:16px; }
+.success-screen h2 { font-family:'Cormorant Garamond',serif; font-size:34px; color:var(--navy); margin-bottom:10px; }
+.success-screen p { color:var(--text2); font-size:15px; line-height:1.6; max-width:480px; margin:0 auto 20px; }
+.spinner { display:inline-block; width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:7px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+footer { background:var(--navy-dark); color:rgba(255,255,255,0.5); text-align:center; padding:22px; font-size:12px; border-top:2px solid var(--gold); }
+footer a { color:var(--gold); text-decoration:none; }
+.login-link { text-align:center; margin-top:14px; font-size:13px; color:var(--text2); }
 .login-link a { color:var(--navy); font-weight:600; text-decoration:underline; }
-
-/* SCHOOL ADDED BADGE */
-.new-badge { background:var(--green); color:white; font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; margin-left:8px; vertical-align:middle; }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">
-    <img src="logo.png" alt="Alumni Schools Golf Challenge" onerror="this.style.display='none'" />
+    <img src="logo.png" alt="Alumni Schools Golf" onerror="this.style.display='none'" />
     <span>Alumni Schools Golf Challenge</span>
   </a>
   <div class="nav-links">
@@ -281,1110 +127,924 @@ footer a { color:var(--gold); text-decoration:none; }
   <a href="portal.html" class="nav-cta">My Portal</a>
 </nav>
 
-<!-- HERO -->
 <div class="page-hero">
   <h1>Register Your Team</h1>
   <div class="gold-line"></div>
-  <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,26px);color:rgba(255,255,255,0.95);font-style:italic;font-weight:600;letter-spacing:1px;margin-bottom:8px;">Honouring tradition. Celebrating excellence.</p>
-  <div style="width:180px;height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent);margin:0 auto 14px;"></div>
-  <p style="color:rgba(255,255,255,0.7);">Join the inaugural Alumni Schools Golf Challenge — Inaugural Season 2026/27</p>
+  <p class="tagline">Honouring tradition. Celebrating excellence.</p>
+  <div class="tagline-rule"></div>
+  <p class="hero-sub">Join the inaugural Alumni Schools Golf Challenge — Inaugural Season 2026/27</p>
 </div>
 
-<!-- STEPS -->
 <div class="steps-bar">
-  <div class="step active" id="step-1">
-    <div class="step-num">1</div>
-    <div class="step-label">Your Details</div>
-  </div>
+  <div class="step active" id="step-1"><div class="step-num">1</div><div class="step-label">Your Details</div></div>
   <div class="step-sep"></div>
-  <div class="step" id="step-2">
-    <div class="step-num">2</div>
-    <div class="step-label">Eligibility</div>
-  </div>
+  <div class="step" id="step-2"><div class="step-num">2</div><div class="step-label">Eligibility</div></div>
   <div class="step-sep"></div>
-  <div class="step" id="step-3">
-    <div class="step-num">3</div>
-    <div class="step-label">Invite Partner</div>
-  </div>
+  <div class="step" id="step-3"><div class="step-num">3</div><div class="step-label">Partner</div></div>
   <div class="step-sep"></div>
-  <div class="step" id="step-4">
-    <div class="step-num">4</div>
-    <div class="step-label">Payment</div>
-  </div>
+  <div class="step" id="step-4"><div class="step-num">4</div><div class="step-label">Payment</div></div>
 </div>
 
 <div class="main">
 
-  <!-- STEP 1: PLAYER DETAILS -->
-  <div class="section active" id="sec-step1">
-    <div class="form-card">
-      <div class="card-header">
-        <div class="card-icon">🏌️</div>
-        <div>
-          <h2>Player 1 — Captain</h2>
-          <p>Enter your personal details to register</p>
-        </div>
+<!-- ── STEP 1 ── -->
+<div class="section active" id="sec-step1">
+  <div class="form-card">
+    <div class="card-header">
+      <div class="card-icon">🏌️</div>
+      <div><h2>Player 1 — Captain</h2><p>Enter your personal details to register</p></div>
+    </div>
+
+    <div class="error-box" id="err1"></div>
+
+    <div class="form-row">
+      <div class="fg"><label>First Name <span class="req">*</span></label><input type="text" id="p1-first" placeholder="First name" /></div>
+      <div class="fg"><label>Surname <span class="req">*</span></label><input type="text" id="p1-last" placeholder="Surname" /></div>
+    </div>
+
+    <div class="fg"><label>Email Address <span class="req">*</span></label><input type="email" id="p1-email" placeholder="your@email.com" /></div>
+
+    <div class="fg">
+      <label>South African Mobile Number <span class="req">*</span></label>
+      <div class="phone-wrap">
+        <div class="phone-prefix">+27</div>
+        <input type="tel" id="p1-mobile" placeholder="821234567" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
       </div>
+      <div class="hint">Enter 9 digits without leading 0 — e.g. 821234567</div>
+    </div>
 
-      <div id="step1-error" class="alert"></div>
+    <div class="fg">
+      <label>Gender <span class="req">*</span></label>
+      <select id="p1-gender">
+        <option value="">— Select —</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>First Name <span class="req">*</span></label>
-          <input type="text" id="p1-firstname" placeholder="First name" />
-        </div>
-        <div class="form-group">
-          <label>Surname <span class="req">*</span></label>
-          <input type="text" id="p1-surname" placeholder="Surname" />
-        </div>
-      </div>
+    <div class="fg">
+      <label>School <span class="req">*</span></label>
+      <input type="text" id="p1-school" placeholder="Type to search, or enter your school name..." list="school-list" autocomplete="off" />
+      <datalist id="school-list">
+          <option value="Adelaide HS">Adelaide HS</option>
+          <option value="Afrikaans Hoër Meisieskool">Afrikaans Hoër Meisieskool</option>
+          <option value="Afrikaanse Hoër Seunskool (Affies)">Afrikaanse Hoër Seunskool (Affies)</option>
+          <option value="Afrikaanse Hoërskool Kroonstad">Afrikaanse Hoërskool Kroonstad</option>
+          <option value="Albertinia HS">Albertinia HS</option>
+          <option value="Alberton HS">Alberton HS</option>
+          <option value="Alexander Road HS">Alexander Road HS</option>
+          <option value="Aliwal Noord HS">Aliwal Noord HS</option>
+          <option value="Amsterdam HS">Amsterdam HS</option>
+          <option value="Augsburg Landbougimnasium">Augsburg Landbougimnasium</option>
+          <option value="Barkly East HS">Barkly East HS</option>
+          <option value="Bastion HS">Bastion HS</option>
+          <option value="Beaconsfield HS">Beaconsfield HS</option>
+          <option value="Bekker, Magaliesburg HS">Bekker, Magaliesburg HS</option>
+          <option value="Bellville HS">Bellville HS</option>
+          <option value="Bellville Secondary School">Bellville Secondary School</option>
+          <option value="Ben Viljoen HS">Ben Viljoen HS</option>
+          <option value="Ben Vorster HS">Ben Vorster HS</option>
+          <option value="Benoni High School">Benoni High School</option>
+          <option value="Berg Rivier HS">Berg Rivier HS</option>
+          <option value="Bergsig HS">Bergsig HS</option>
+          <option value="Bethelsdorp HS">Bethelsdorp HS</option>
+          <option value="Bloemfontein HTS">Bloemfontein HTS</option>
+          <option value="Bloemhof HS">Bloemhof HS</option>
+          <option value="Bothaville HS">Bothaville HS</option>
+          <option value="Brackenfell HS">Brackenfell HS</option>
+          <option value="Brandwag, HS Benoni">Brandwag, HS Benoni</option>
+          <option value="Brandwag, HS Uitenhage">Brandwag, HS Uitenhage</option>
+          <option value="Brits HS">Brits HS</option>
+          <option value="C&N Sekondêre Meisieskool Oranje">C&N Sekondêre Meisieskool Oranje</option>
+          <option value="CBC Kimberley">CBC Kimberley</option>
+          <option value="CBC Pretoria">CBC Pretoria</option>
+          <option value="CBC, Boksburg">CBC, Boksburg</option>
+          <option value="CBC, Kimberley">CBC, Kimberley</option>
+          <option value="CJ Langenhoven HS">CJ Langenhoven HS</option>
+          <option value="Calvinia HS">Calvinia HS</option>
+          <option value="Cambridge HS">Cambridge HS</option>
+          <option value="Capricorn HS">Capricorn HS</option>
+          <option value="Carleton Jones HS">Carleton Jones HS</option>
+          <option value="Carnarvon HS">Carnarvon HS</option>
+          <option value="Centurion HS">Centurion HS</option>
+          <option value="Chaplin High School">Chaplin High School</option>
+          <option value="Charleston Hill HS">Charleston Hill HS</option>
+          <option value="Charlie Hofmeyr HS">Charlie Hofmeyr HS</option>
+          <option value="Christiana HS">Christiana HS</option>
+          <option value="Churchill High School">Churchill High School</option>
+          <option value="Cillie HS">Cillie HS</option>
+          <option value="Clifton HS">Clifton HS</option>
+          <option value="Cloetesville HS">Cloetesville HS</option>
+          <option value="Cradock HS">Cradock HS</option>
+          <option value="Cullinan HS">Cullinan HS</option>
+          <option value="Curro Durbanville">Curro Durbanville</option>
+          <option value="Curro Hazeldean">Curro Hazeldean</option>
+          <option value="Curro Heuwelkruin">Curro Heuwelkruin</option>
+          <option value="Curro Rising Stars team">Curro Rising Stars team</option>
+          <option value="DF Akademie HS">DF Akademie HS</option>
+          <option value="DF Malherbe HS (PE)">DF Malherbe HS (PE)</option>
+          <option value="DHS">DHS</option>
+          <option value="DR EG Jansen HS">DR EG Jansen HS</option>
+          <option value="Dale College">Dale College</option>
+          <option value="Damelin College">Damelin College</option>
+          <option value="Dan Pienaar HS">Dan Pienaar HS</option>
+          <option value="De Aar HS">De Aar HS</option>
+          <option value="De La Salle College">De La Salle College</option>
+          <option value="De Villiers Graaff, HS">De Villiers Graaff, HS</option>
+          <option value="De Vos Malan HS">De Vos Malan HS</option>
+          <option value="Dealesville HS">Dealesville HS</option>
+          <option value="Delmas HS">Delmas HS</option>
+          <option value="Despatch HS">Despatch HS</option>
+          <option value="Diamantveld HS">Diamantveld HS</option>
+          <option value="Dinamika HS">Dinamika HS</option>
+          <option value="Diocesan College (Bishops)">Diocesan College (Bishops)</option>
+          <option value="Dirkie Uys, HS">Dirkie Uys, HS</option>
+          <option value="Dordrecht HS">Dordrecht HS</option>
+          <option value="Douglas HS">Douglas HS</option>
+          <option value="Dr. Viljoen HS">Dr. Viljoen HS</option>
+          <option value="Driehoek HS">Driehoek HS</option>
+          <option value="Dundee HS">Dundee HS</option>
+          <option value="Durban Girls HS">Durban Girls HS</option>
+          <option value="Durban HS">Durban HS</option>
+          <option value="Durbanville HS">Durbanville HS</option>
+          <option value="EG Jansen HS">EG Jansen HS</option>
+          <option value="East London Technikon">East London Technikon</option>
+          <option value="Eden HS">Eden HS</option>
+          <option value="Eldoraigne HS">Eldoraigne HS</option>
+          <option value="Elliot HS">Elliot HS</option>
+          <option value="Elmar College">Elmar College</option>
+          <option value="Erasmus HS">Erasmus HS</option>
+          <option value="Ermelo HS">Ermelo HS</option>
+          <option value="Estcourt HS">Estcourt HS</option>
+          <option value="Eton College">Eton College</option>
+          <option value="FH Odendaal HS">FH Odendaal HS</option>
+          <option value="Fairmont HS">Fairmont HS</option>
+          <option value="Fakkel HS">Fakkel HS</option>
+          <option value="Ferdinand Postma HS">Ferdinand Postma HS</option>
+          <option value="Fichardtpark HS">Fichardtpark HS</option>
+          <option value="Fish Hoek HS">Fish Hoek HS</option>
+          <option value="Florida HS">Florida HS</option>
+          <option value="Framesby HS">Framesby HS</option>
+          <option value="Franschhoek HS">Franschhoek HS</option>
+          <option value="Fraserburg HS">Fraserburg HS</option>
+          <option value="Frikkie Meyer HS">Frikkie Meyer HS</option>
+          <option value="Garsfontein HS">Garsfontein HS</option>
+          <option value="Gelofte HS">Gelofte HS</option>
+          <option value="Gelvendale HS">Gelvendale HS</option>
+          <option value="Generaal Hertzog HS">Generaal Hertzog HS</option>
+          <option value="General Smuts HS">General Smuts HS</option>
+          <option value="George HS">George HS</option>
+          <option value="George Watsons' College">George Watsons' College</option>
+          <option value="Gerrit Maritz HS">Gerrit Maritz HS</option>
+          <option value="Gifford, Bulawayo HS">Gifford, Bulawayo HS</option>
+          <option value="Gill College">Gill College</option>
+          <option value="Glenwood HS">Glenwood HS</option>
+          <option value="Good Hope HS">Good Hope HS</option>
+          <option value="Goudini, HS">Goudini, HS</option>
+          <option value="Graeme College">Graeme College</option>
+          <option value="Green Point Grammar School">Green Point Grammar School</option>
+          <option value="Greenside HS">Greenside HS</option>
+          <option value="Grens HS">Grens HS</option>
+          <option value="Grenswag HS">Grenswag HS</option>
+          <option value="Grey College Bloemfontein">Grey College Bloemfontein</option>
+          <option value="Grey College PE">Grey College PE</option>
+          <option value="Griekwastad HS">Griekwastad HS</option>
+          <option value="HTS Daniel Pienaar">HTS Daniel Pienaar</option>
+          <option value="HTS Drostdy">HTS Drostdy</option>
+          <option value="Hamilton HS">Hamilton HS</option>
+          <option value="Hangklip HS">Hangklip HS</option>
+          <option value="Hans Strijdom HS">Hans Strijdom HS</option>
+          <option value="Harris School HS">Harris School HS</option>
+          <option value="Harrismith HS">Harrismith HS</option>
+          <option value="Hartswater HS">Hartswater HS</option>
+          <option value="Hawston HS">Hawston HS</option>
+          <option value="Heidelberg Volkskool">Heidelberg Volkskool</option>
+          <option value="Helpmekaar Kollege">Helpmekaar Kollege</option>
+          <option value="Hendrik Verwoerd HS">Hendrik Verwoerd HS</option>
+          <option value="Hentie Cilliers HS">Hentie Cilliers HS</option>
+          <option value="Highlands North HS">Highlands North HS</option>
+          <option value="Hill High School">Hill High School</option>
+          <option value="Hilton College">Hilton College</option>
+          <option value="Hoogenhout HS">Hoogenhout HS</option>
+          <option value="Hopefield HS">Hopefield HS</option>
+          <option value="Hottentots-Holland HS">Hottentots-Holland HS</option>
+          <option value="Hoër Landbouskool Boland">Hoër Landbouskool Boland</option>
+          <option value="Hudson Park High HS">Hudson Park High HS</option>
+          <option value="Hugenote HS Springs">Hugenote HS Springs</option>
+          <option value="Hugenote HS Wellington">Hugenote HS Wellington</option>
+          <option value="Hyde Park HS">Hyde Park HS</option>
+          <option value="JG Meiring HS">JG Meiring HS</option>
+          <option value="JJ Pienaar HS">JJ Pienaar HS</option>
+          <option value="Jan Viljoen HS">Jan Viljoen HS</option>
+          <option value="Jan de Klerk HS">Jan de Klerk HS</option>
+          <option value="Jan van Riebeeck HS">Jan van Riebeeck HS</option>
+          <option value="Jansenville HS">Jansenville HS</option>
+          <option value="Jeppe HS">Jeppe HS</option>
+          <option value="Jeugland HS">Jeugland HS</option>
+          <option value="Jim Fouche HS">Jim Fouche HS</option>
+          <option value="Jim Mvabaza HS">Jim Mvabaza HS</option>
+          <option value="John Orr HS">John Orr HS</option>
+          <option value="John Vorster HTS">John Vorster HTS</option>
+          <option value="John Walton HS">John Walton HS</option>
+          <option value="Kalahari HS">Kalahari HS</option>
+          <option value="Kasselsvlei HS">Kasselsvlei HS</option>
+          <option value="Kathu HS">Kathu HS</option>
+          <option value="Kearsney College">Kearsney College</option>
+          <option value="Kempton Park HS">Kempton Park HS</option>
+          <option value="Kenhardt HS">Kenhardt HS</option>
+          <option value="Kimberley Boys' High">Kimberley Boys' High</option>
+          <option value="Kimberley HTS">Kimberley HTS</option>
+          <option value="King Alfred's College">King Alfred's College</option>
+          <option value="King Edward VII School (KES)">King Edward VII School (KES)</option>
+          <option value="Kingswood College">Kingswood College</option>
+          <option value="Kirkwood HS">Kirkwood HS</option>
+          <option value="Klein Nederburg HS">Klein Nederburg HS</option>
+          <option value="Klerksdorp HS">Klerksdorp HS</option>
+          <option value="Knysna HS">Knysna HS</option>
+          <option value="Kokstad College">Kokstad College</option>
+          <option value="Kroonstad HS">Kroonstad HS</option>
+          <option value="Krugersdorp HS">Krugersdorp HS</option>
+          <option value="Kwamfumdo HS">Kwamfumdo HS</option>
+          <option value="Kylemore HS">Kylemore HS</option>
+          <option value="La Rochelle">La Rochelle</option>
+          <option value="La Rochelle HS">La Rochelle HS</option>
+          <option value="Ladybrand HS">Ladybrand HS</option>
+          <option value="Laingsburg HS">Laingsburg HS</option>
+          <option value="Landbouskool Oakdale">Landbouskool Oakdale</option>
+          <option value="Langenhoven HS">Langenhoven HS</option>
+          <option value="Langlaagte HS">Langlaagte HS</option>
+          <option value="Lenasia HS">Lenasia HS</option>
+          <option value="Lichtenburg HS">Lichtenburg HS</option>
+          <option value="Linden HS">Linden HS</option>
+          <option value="Lindley HS">Lindley HS</option>
+          <option value="Llandovery College">Llandovery College</option>
+          <option value="Louis Botha HTS">Louis Botha HTS</option>
+          <option value="Loyiso HS">Loyiso HS</option>
+          <option value="Luckhoff SS">Luckhoff SS</option>
+          <option value="Maitland HS">Maitland HS</option>
+          <option value="Mandlenkosi HS">Mandlenkosi HS</option>
+          <option value="Mansfield HS">Mansfield HS</option>
+          <option value="Marais Viljoen HS">Marais Viljoen HS</option>
+          <option value="Marandellas HS">Marandellas HS</option>
+          <option value="Maria Louw HS">Maria Louw HS</option>
+          <option value="Marist Brothers Linmeyer">Marist Brothers Linmeyer</option>
+          <option value="Maritzburg College">Maritzburg College</option>
+          <option value="Marlborough College">Marlborough College</option>
+          <option value="Marlow HS">Marlow HS</option>
+          <option value="Marthinus Wessels HS">Marthinus Wessels HS</option>
+          <option value="Martin Oosthuizen">Martin Oosthuizen</option>
+          <option value="Mary Waters HS">Mary Waters HS</option>
+          <option value="Menlopark HS">Menlopark HS</option>
+          <option value="Merensky HS">Merensky HS</option>
+          <option value="Michaelhouse">Michaelhouse</option>
+          <option value="Middelburg (Cape)">Middelburg (Cape)</option>
+          <option value="Middelburg (Tvl)">Middelburg (Tvl)</option>
+          <option value="Middelburg HTS">Middelburg HTS</option>
+          <option value="Milner HS">Milner HS</option>
+          <option value="Milnerton HS">Milnerton HS</option>
+          <option value="Milton HS">Milton HS</option>
+          <option value="Montagu HS">Montagu HS</option>
+          <option value="Montana HS">Montana HS</option>
+          <option value="Monument HS">Monument HS</option>
+          <option value="Monument HS Nonnas">Monument HS Nonnas</option>
+          <option value="Morester Secondary">Morester Secondary</option>
+          <option value="Muir College">Muir College</option>
+          <option value="Muizenberg HS">Muizenberg HS</option>
+          <option value="Nelspruit HS">Nelspruit HS</option>
+          <option value="New College HS">New College HS</option>
+          <option value="New Orleans HS">New Orleans HS</option>
+          <option value="Nico Malan HS">Nico Malan HS</option>
+          <option value="Noorder Paarl HS">Noorder Paarl HS</option>
+          <option value="Noordheuwel HS">Noordheuwel HS</option>
+          <option value="Northcliff HS">Northcliff HS</option>
+          <option value="Northern Cape HS">Northern Cape HS</option>
+          <option value="Northwood HS">Northwood HS</option>
+          <option value="Ntabankulu HS">Ntabankulu HS</option>
+          <option value="Ntabenkonyana HS">Ntabenkonyana HS</option>
+          <option value="Nylstroom HS">Nylstroom HS</option>
+          <option value="Observatory Boys' High">Observatory Boys' High</option>
+          <option value="Olifantshoek HS">Olifantshoek HS</option>
+          <option value="Oos Moot HS">Oos Moot HS</option>
+          <option value="Oosteind HS">Oosteind HS</option>
+          <option value="Oosterlig HS">Oosterlig HS</option>
+          <option value="Oranje Meisieskool">Oranje Meisieskool</option>
+          <option value="Otto du Plessis HS">Otto du Plessis HS</option>
+          <option value="Oudtshoorn HS">Oudtshoorn HS</option>
+          <option value="Outeniqua HS">Outeniqua HS</option>
+          <option value="Overberg HS">Overberg HS</option>
+          <option value="Overkruin HS">Overkruin HS</option>
+          <option value="Paarl Boys High">Paarl Boys High</option>
+          <option value="Paarl Gimnasium">Paarl Gimnasium</option>
+          <option value="Paarl Girls High">Paarl Girls High</option>
+          <option value="Pacaltsdorp HS">Pacaltsdorp HS</option>
+          <option value="Parel Vallei HS">Parel Vallei HS</option>
+          <option value="Parklands College">Parklands College</option>
+          <option value="Parktown Boys' High">Parktown Boys' High</option>
+          <option value="Parow HS">Parow HS</option>
+          <option value="Parys HS">Parys HS</option>
+          <option value="Patriot HS">Patriot HS</option>
+          <option value="Paul Erasmus HS">Paul Erasmus HS</option>
+          <option value="Paul Kruger HS">Paul Kruger HS</option>
+          <option value="Paul Roos Gimnasium">Paul Roos Gimnasium</option>
+          <option value="Paul Sauer HS">Paul Sauer HS</option>
+          <option value="Paulus Joubert HS">Paulus Joubert HS</option>
+          <option value="Pearson HS">Pearson HS</option>
+          <option value="Peddie HS">Peddie HS</option>
+          <option value="Peterhouse HS">Peterhouse HS</option>
+          <option value="Piet Potgieter HS">Piet Potgieter HS</option>
+          <option value="Pietersburg  HS">Pietersburg  HS</option>
+          <option value="Piketberg HS">Piketberg HS</option>
+          <option value="Pinelands HS">Pinelands HS</option>
+          <option value="Pinetown Boys High">Pinetown Boys High</option>
+          <option value="Plumstead HS">Plumstead HS</option>
+          <option value="Plumtree HS">Plumtree HS</option>
+          <option value="Port Natal HS">Port Natal HS</option>
+          <option value="Port Rex HS">Port Rex HS</option>
+          <option value="Port Shepstone HS">Port Shepstone HS</option>
+          <option value="Porterville HS">Porterville HS</option>
+          <option value="Potchefstroom Boys High">Potchefstroom Boys High</option>
+          <option value="Potchefstroom Gimnasium">Potchefstroom Gimnasium</option>
+          <option value="Potchefstroom Tegnies">Potchefstroom Tegnies</option>
+          <option value="Prestige College">Prestige College</option>
+          <option value="Pretoria Boys High">Pretoria Boys High</option>
+          <option value="Prieska HS">Prieska HS</option>
+          <option value="Prince Edward HS">Prince Edward HS</option>
+          <option value="Queen's College">Queen's College</option>
+          <option value="Randburg HS">Randburg HS</option>
+          <option value="Randfontein HS">Randfontein HS</option>
+          <option value="Ravensmead HS">Ravensmead HS</option>
+          <option value="Reivilo HS">Reivilo HS</option>
+          <option value="Repton HS">Repton HS</option>
+          <option value="Rhenish Girls' High">Rhenish Girls' High</option>
+          <option value="Rhodesfield HS">Rhodesfield HS</option>
+          <option value="Riebeeckrand HS">Riebeeckrand HS</option>
+          <option value="Riversdal HS">Riversdal HS</option>
+          <option value="Rob Ferreira HS">Rob Ferreira HS</option>
+          <option value="Robertson HS">Robertson HS</option>
+          <option value="Robinvale HS">Robinvale HS</option>
+          <option value="Rondebosch Boys' High">Rondebosch Boys' High</option>
+          <option value="Roodepoort HS">Roodepoort HS</option>
+          <option value="Rustenburg HS">Rustenburg HS</option>
+          <option value="SACS">SACS</option>
+          <option value="Sand du Plessis HS">Sand du Plessis HS</option>
+          <option value="Sandown HS">Sandown HS</option>
+          <option value="Sarel Cilliers HS">Sarel Cilliers HS</option>
+          <option value="Sasolburg HS">Sasolburg HS</option>
+          <option value="Schoonspruit HS">Schoonspruit HS</option>
+          <option value="Schweizer Reneke">Schweizer Reneke</option>
+          <option value="Scottburgh HS">Scottburgh HS</option>
+          <option value="Scottsville HS">Scottsville HS</option>
+          <option value="Sea Point Boys' High">Sea Point Boys' High</option>
+          <option value="Secunda HS">Secunda HS</option>
+          <option value="Selborne College">Selborne College</option>
+          <option value="Sentraal HS">Sentraal HS</option>
+          <option value="Settlers HS">Settlers HS</option>
+          <option value="Shannon HS">Shannon HS</option>
+          <option value="Skurweberg HS">Skurweberg HS</option>
+          <option value="Spine Road HS">Spine Road HS</option>
+          <option value="Springs Boys High">Springs Boys High</option>
+          <option value="Springs Technical High">Springs Technical High</option>
+          <option value="St Aidan's College">St Aidan's College</option>
+          <option value="St Albans HS">St Albans HS</option>
+          <option value="St Andrews, Bloemfontein">St Andrews, Bloemfontein</option>
+          <option value="St Andrews, Grahamstown">St Andrews, Grahamstown</option>
+          <option value="St Charles, Pietermaritzburg">St Charles, Pietermaritzburg</option>
+          <option value="St David's Marist Inanda">St David's Marist Inanda</option>
+          <option value="St George's College">St George's College</option>
+          <option value="St George's Grammar School">St George's Grammar School</option>
+          <option value="St Henry's College">St Henry's College</option>
+          <option value="St John's College">St John's College</option>
+          <option value="St Michael's College">St Michael's College</option>
+          <option value="St Patrick's Marist College">St Patrick's Marist College</option>
+          <option value="St Saviour's Collegiate School">St Saviour's Collegiate School</option>
+          <option value="St Stithians College">St Stithians College</option>
+          <option value="St Thomas HS (PE)">St Thomas HS (PE)</option>
+          <option value="Standerton HS">Standerton HS</option>
+          <option value="Steenberg HS">Steenberg HS</option>
+          <option value="Stellenberg HS">Stellenberg HS</option>
+          <option value="Stellenbosch HS">Stellenbosch HS</option>
+          <option value="Steyn City School">Steyn City School</option>
+          <option value="Stilfontein HS">Stilfontein HS</option>
+          <option value="Stirling High School">Stirling High School</option>
+          <option value="Stockdale HS">Stockdale HS</option>
+          <option value="Strand HS">Strand HS</option>
+          <option value="Sundra HS">Sundra HS</option>
+          <option value="Swartberg HS">Swartberg HS</option>
+          <option value="Swartland HS">Swartland HS</option>
+          <option value="Swellendam HS">Swellendam HS</option>
+          <option value="Thandolwesizwe HS">Thandolwesizwe HS</option>
+          <option value="The Hill HS">The Hill HS</option>
+          <option value="Thornhill HS">Thornhill HS</option>
+          <option value="Thotagauta HS">Thotagauta HS</option>
+          <option value="Tom Naude HS">Tom Naude HS</option>
+          <option value="Transvalia HS">Transvalia HS</option>
+          <option value="Trio HS">Trio HS</option>
+          <option value="Trompsburg HS">Trompsburg HS</option>
+          <option value="Tshireleco HS">Tshireleco HS</option>
+          <option value="Tsumeb HS">Tsumeb HS</option>
+          <option value="Tuine HS">Tuine HS</option>
+          <option value="TuksSport HS">TuksSport HS</option>
+          <option value="Tulbagh HS">Tulbagh HS</option>
+          <option value="Tweespruit HS">Tweespruit HS</option>
+          <option value="Tygerberg HS">Tygerberg HS</option>
+          <option value="Umtali HS">Umtali HS</option>
+          <option value="Umtata HS">Umtata HS</option>
+          <option value="Union HS">Union HS</option>
+          <option value="Unity SS">Unity SS</option>
+          <option value="Upington HS">Upington HS</option>
+          <option value="Vanderbijlpark HS">Vanderbijlpark HS</option>
+          <option value="Vanrhynsdorp HS">Vanrhynsdorp HS</option>
+          <option value="Ventersdorp HS">Ventersdorp HS</option>
+          <option value="Vereeniging MS">Vereeniging MS</option>
+          <option value="Victoria HS">Victoria HS</option>
+          <option value="Victoria-Wes HS">Victoria-Wes HS</option>
+          <option value="Volkskool, Graaff-Reinet">Volkskool, Graaff-Reinet</option>
+          <option value="Volkskool, Heidelberg">Volkskool, Heidelberg</option>
+          <option value="Volkskool, Potchefstroom">Volkskool, Potchefstroom</option>
+          <option value="Volksrust HS">Volksrust HS</option>
+          <option value="Voortrekker, Bethlehem">Voortrekker, Bethlehem</option>
+          <option value="Voortrekker, Boksburg">Voortrekker, Boksburg</option>
+          <option value="Voortrekker, Pietermaritzburg">Voortrekker, Pietermaritzburg</option>
+          <option value="Voortrekker, Wynberg">Voortrekker, Wynberg</option>
+          <option value="Voortrekkerhoogte HS">Voortrekkerhoogte HS</option>
+          <option value="Vorentoe (Rossmore HS)">Vorentoe (Rossmore HS)</option>
+          <option value="Vredenburg HS">Vredenburg HS</option>
+          <option value="Vredendal HS">Vredendal HS</option>
+          <option value="Vryburg HS">Vryburg HS</option>
+          <option value="Vryheid HS">Vryheid HS</option>
+          <option value="Warmbad HS">Warmbad HS</option>
+          <option value="Warmbaths HS">Warmbaths HS</option>
+          <option value="Waterkloof HS">Waterkloof HS</option>
+          <option value="Weenen HS">Weenen HS</option>
+          <option value="Welkom Gimnasium">Welkom Gimnasium</option>
+          <option value="Wennie Du Plessis HS">Wennie Du Plessis HS</option>
+          <option value="Wessel Maree HS">Wessel Maree HS</option>
+          <option value="Westerford HS">Westerford HS</option>
+          <option value="Westering HS">Westering HS</option>
+          <option value="Weston HS">Weston HS</option>
+          <option value="Westvalia HS">Westvalia HS</option>
+          <option value="Westville Boy's High">Westville Boy's High</option>
+          <option value="Wesvalia HS">Wesvalia HS</option>
+          <option value="Wilgerivier HS">Wilgerivier HS</option>
+          <option value="Wilgers HS">Wilgers HS</option>
+          <option value="Windermere HS">Windermere HS</option>
+          <option value="Windhoek HS">Windhoek HS</option>
+          <option value="Windsor HS">Windsor HS</option>
+          <option value="Winterton HS">Winterton HS</option>
+          <option value="Witbank HS">Witbank HS</option>
+          <option value="Witbank HTS">Witbank HTS</option>
+          <option value="Witteberg HS">Witteberg HS</option>
+          <option value="Wolmaransstad HS">Wolmaransstad HS</option>
+          <option value="Wonderboom HS">Wonderboom HS</option>
+          <option value="Woodridge College">Woodridge College</option>
+          <option value="Worcester Gimnasium">Worcester Gimnasium</option>
+          <option value="Wynberg Boys' High">Wynberg Boys' High</option>
+          <option value="Wynberg Girls' HS">Wynberg Girls' HS</option>
+          <option value="Zastron HS">Zastron HS</option>
+          <option value="Zeerust HS">Zeerust HS</option>
+          <option value="Zwartkop HS">Zwartkop HS</option>
+      </datalist>
+      <div class="hint">Type to search 417 listed schools — or type your full school name if not listed (it will be added).</div>
+    </div>
 
-      <div class="form-group">
-        <label>Email Address <span class="req">*</span></label>
-        <input type="email" id="p1-email" placeholder="your@email.com" />
-      </div>
+    <div class="form-row">
+      <div class="fg"><label>City / Town <span class="req">*</span></label><input type="text" id="p1-city" placeholder="e.g. Cape Town" /></div>
+      <div class="fg"><label>Postal Code <span class="req">*</span></label><input type="text" id="p1-postal" placeholder="e.g. 7550" maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'')" /></div>
+    </div>
+    <div class="info-box">⚠️ <strong>Important:</strong> Your postal code determines your division. Ensure it is 100% accurate.</div>
 
-      <div class="form-group">
-        <label>South African Mobile Number <span class="req">*</span></label>
-        <div style="display:flex;gap:0;">
-          <div style="padding:12px 14px;background:#e8e4dc;border:1.5px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-weight:700;color:var(--navy);font-size:14px;white-space:nowrap;">+27</div>
-          <input type="tel" id="p1-mobile" placeholder="81 234 5678" style="border-radius:0 10px 10px 0;" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="9" />
-        </div>
-        <div class="hint">Enter your number without the leading 0 — e.g. 821234567</div>
-      </div>
+    <button type="button" class="btn btn-gold" onclick="doStep1()">Continue to Eligibility Check →</button>
+    <div class="login-link">Already registered? <a href="portal.html">Log in to your portal</a></div>
+  </div>
+</div>
 
-      <div class="form-group">
-        <label>Gender <span class="req">*</span></label>
-        <select id="p1-gender" style="width:100%;padding:12px 16px;background:#f8f6f0;border:1.5px solid rgba(27,58,107,0.15);border-radius:10px;color:#1a1a2e;font-size:14px;font-family:'DM Sans',sans-serif;">
-          <option value="">— Select gender —</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-      </div>
+<!-- ── STEP 2 ── -->
+<div class="section" id="sec-step2">
+  <div class="form-card">
+    <div class="card-header">
+      <div class="card-icon">✅</div>
+      <div><h2>Eligibility Confirmation</h2><p>Please confirm all of the following to proceed</p></div>
+    </div>
+    <div class="error-box" id="err2"></div>
+    <div class="elig-box">
+      <h3>Please confirm each of the following:</h3>
+      <div class="check-item" onclick="tick(this)"><div class="check-box"></div><div class="check-label">I confirm that I am no longer enrolled as a learner at any school and am a bona fide alumnus of a South African school.</div></div>
+      <div class="check-item" onclick="tick(this)"><div class="check-box"></div><div class="check-label">I confirm that I am at least 18 years of age.</div></div>
+      <div class="check-item" onclick="tick(this)"><div class="check-box"></div><div class="check-label">I confirm that I hold a valid, active Golf RSA HNA (Handicapping Network Africa) handicap and am in good standing at my club.</div></div>
+      <div class="check-item" onclick="tick(this)"><div class="check-box"></div><div class="check-label">I confirm that both members of my team attended the same South African school.</div></div>
+      <div class="check-item" onclick="tick(this)"><div class="check-box"></div><div class="check-label">I agree to the tournament rules, code of conduct, and terms &amp; conditions.</div></div>
+      <div class="check-item" onclick="tick(this)"><div class="check-box"></div><div class="check-label">I understand that payment must be completed to secure my team's entry.</div></div>
+    </div>
 
-      <div class="form-group">
-        <label>School <span class="req">*</span></label>
-        <input type="text" id="p1-school-hidden" list="schools-datalist"
-          placeholder="Start typing your school name..."
-          autocomplete="off"
-          style="width:100%;padding:12px 16px;background:#f8f6f0;border:1.5px solid rgba(27,58,107,0.15);border-radius:10px;color:#1a1a2e;font-size:14px;font-family:'DM Sans',sans-serif;"
-        />
-        <datalist id="schools-datalist">
-                    <option value="Adelaide HS">
-          <option value="Afrikaans Hoër Meisieskool">
-          <option value="Afrikaanse Hoër Seunskool (Affies)">
-          <option value="Afrikaanse Hoërskool Kroonstad">
-          <option value="Albertinia HS">
-          <option value="Alberton HS">
-          <option value="Alexander Road HS">
-          <option value="Aliwal Noord HS">
-          <option value="Amsterdam HS">
-          <option value="Augsburg Landbougimnasium">
-          <option value="Barkly East HS">
-          <option value="Bastion HS">
-          <option value="Beaconsfield HS">
-          <option value="Bekker, Magaliesburg HS">
-          <option value="Bellville HS">
-          <option value="Bellville Secondary School">
-          <option value="Ben Viljoen HS">
-          <option value="Ben Vorster HS">
-          <option value="Benoni High School">
-          <option value="Berg Rivier HS">
-          <option value="Bergsig HS">
-          <option value="Bethelsdorp HS">
-          <option value="Bloemfontein HTS">
-          <option value="Bloemhof HS">
-          <option value="Bothaville HS">
-          <option value="Brackenfell HS">
-          <option value="Brandwag, HS Benoni">
-          <option value="Brandwag, HS Uitenhage">
-          <option value="Brits HS">
-          <option value="C&N Sekondêre Meisieskool Oranje">
-          <option value="CBC Kimberley">
-          <option value="CBC Pretoria">
-          <option value="CBC, Boksburg">
-          <option value="CBC, Kimberley">
-          <option value="CJ Langenhoven HS">
-          <option value="Calvinia HS">
-          <option value="Cambridge HS">
-          <option value="Capricorn HS">
-          <option value="Carleton Jones HS">
-          <option value="Carnarvon HS">
-          <option value="Centurion HS">
-          <option value="Chaplin High School">
-          <option value="Charleston Hill HS">
-          <option value="Charlie Hofmeyr HS">
-          <option value="Christiana HS">
-          <option value="Churchill High School">
-          <option value="Cillie HS">
-          <option value="Clifton HS">
-          <option value="Cloetesville HS">
-          <option value="Cradock HS">
-          <option value="Cullinan HS">
-          <option value="Curro Durbanville">
-          <option value="Curro Hazeldean">
-          <option value="Curro Heuwelkruin">
-          <option value="Curro Rising Stars team">
-          <option value="DF Akademie HS">
-          <option value="DF Malherbe HS (PE)">
-          <option value="DHS">
-          <option value="DR EG Jansen HS">
-          <option value="Dale College">
-          <option value="Damelin College">
-          <option value="Dan Pienaar HS">
-          <option value="De Aar HS">
-          <option value="De La Salle College">
-          <option value="De Villiers Graaff, HS">
-          <option value="De Vos Malan HS">
-          <option value="Dealesville HS">
-          <option value="Delmas HS">
-          <option value="Despatch HS">
-          <option value="Diamantveld HS">
-          <option value="Dinamika HS">
-          <option value="Diocesan College (Bishops)">
-          <option value="Dirkie Uys, HS">
-          <option value="Dordrecht HS">
-          <option value="Douglas HS">
-          <option value="Dr. Viljoen HS">
-          <option value="Driehoek HS">
-          <option value="Dundee HS">
-          <option value="Durban Girls HS">
-          <option value="Durban HS">
-          <option value="Durbanville HS">
-          <option value="EG Jansen HS">
-          <option value="East London Technikon">
-          <option value="Eden HS">
-          <option value="Eldoraigne HS">
-          <option value="Elliot HS">
-          <option value="Elmar College">
-          <option value="Erasmus HS">
-          <option value="Ermelo HS">
-          <option value="Estcourt HS">
-          <option value="Eton College">
-          <option value="FH Odendaal HS">
-          <option value="Fairmont HS">
-          <option value="Fakkel HS">
-          <option value="Ferdinand Postma HS">
-          <option value="Fichardtpark HS">
-          <option value="Fish Hoek HS">
-          <option value="Florida HS">
-          <option value="Framesby HS">
-          <option value="Franschhoek HS">
-          <option value="Fraserburg HS">
-          <option value="Frikkie Meyer HS">
-          <option value="Garsfontein HS">
-          <option value="Gelofte HS">
-          <option value="Gelvendale HS">
-          <option value="Generaal Hertzog HS">
-          <option value="General Smuts HS">
-          <option value="George HS">
-          <option value="George Watsons' College">
-          <option value="Gerrit Maritz HS">
-          <option value="Gifford, Bulawayo HS">
-          <option value="Gill College">
-          <option value="Glenwood HS">
-          <option value="Good Hope HS">
-          <option value="Goudini, HS">
-          <option value="Graeme College">
-          <option value="Green Point Grammar School">
-          <option value="Greenside HS">
-          <option value="Grens HS">
-          <option value="Grenswag HS">
-          <option value="Grey College Bloemfontein">
-          <option value="Grey College PE">
-          <option value="Griekwastad HS">
-          <option value="HTS Daniel Pienaar">
-          <option value="HTS Drostdy">
-          <option value="Hamilton HS">
-          <option value="Hangklip HS">
-          <option value="Hans Strijdom HS">
-          <option value="Harris School HS">
-          <option value="Harrismith HS">
-          <option value="Hartswater HS">
-          <option value="Hawston HS">
-          <option value="Heidelberg Volkskool">
-          <option value="Helpmekaar Kollege">
-          <option value="Hendrik Verwoerd HS">
-          <option value="Hentie Cilliers HS">
-          <option value="Highlands North HS">
-          <option value="Hill High School">
-          <option value="Hilton College">
-          <option value="Hoogenhout HS">
-          <option value="Hopefield HS">
-          <option value="Hottentots-Holland HS">
-          <option value="Hoër Landbouskool Boland">
-          <option value="Hudson Park High HS">
-          <option value="Hugenote HS Springs">
-          <option value="Hugenote HS Wellington">
-          <option value="Hyde Park HS">
-          <option value="JG Meiring HS">
-          <option value="JJ Pienaar HS">
-          <option value="Jan Viljoen HS">
-          <option value="Jan de Klerk HS">
-          <option value="Jan van Riebeeck HS">
-          <option value="Jansenville HS">
-          <option value="Jeppe HS">
-          <option value="Jeugland HS">
-          <option value="Jim Fouche HS">
-          <option value="Jim Mvabaza HS">
-          <option value="John Orr HS">
-          <option value="John Vorster HTS">
-          <option value="John Walton HS">
-          <option value="Kalahari HS">
-          <option value="Kasselsvlei HS">
-          <option value="Kathu HS">
-          <option value="Kearsney College">
-          <option value="Kempton Park HS">
-          <option value="Kenhardt HS">
-          <option value="Kimberley Boys' High">
-          <option value="Kimberley HTS">
-          <option value="King Alfred's College">
-          <option value="King Edward VII School (KES)">
-          <option value="Kingswood College">
-          <option value="Kirkwood HS">
-          <option value="Klein Nederburg HS">
-          <option value="Klerksdorp HS">
-          <option value="Knysna HS">
-          <option value="Kokstad College">
-          <option value="Kroonstad HS">
-          <option value="Krugersdorp HS">
-          <option value="Kwamfumdo HS">
-          <option value="Kylemore HS">
-          <option value="La Rochelle">
-          <option value="La Rochelle HS">
-          <option value="Ladybrand HS">
-          <option value="Laingsburg HS">
-          <option value="Landbouskool Oakdale">
-          <option value="Langenhoven HS">
-          <option value="Langlaagte HS">
-          <option value="Lenasia HS">
-          <option value="Lichtenburg HS">
-          <option value="Linden HS">
-          <option value="Lindley HS">
-          <option value="Llandovery College">
-          <option value="Louis Botha HTS">
-          <option value="Loyiso HS">
-          <option value="Luckhoff SS">
-          <option value="Maitland HS">
-          <option value="Mandlenkosi HS">
-          <option value="Mansfield HS">
-          <option value="Marais Viljoen HS">
-          <option value="Marandellas HS">
-          <option value="Maria Louw HS">
-          <option value="Marist Brothers Linmeyer">
-          <option value="Maritzburg College">
-          <option value="Marlborough College">
-          <option value="Marlow HS">
-          <option value="Marthinus Wessels HS">
-          <option value="Martin Oosthuizen">
-          <option value="Mary Waters HS">
-          <option value="Menlopark HS">
-          <option value="Merensky HS">
-          <option value="Michaelhouse">
-          <option value="Middelburg (Cape)">
-          <option value="Middelburg (Tvl)">
-          <option value="Middelburg HTS">
-          <option value="Milner HS">
-          <option value="Milnerton HS">
-          <option value="Milton HS">
-          <option value="Montagu HS">
-          <option value="Montana HS">
-          <option value="Monument HS">
-          <option value="Monument HS Nonnas">
-          <option value="Morester Secondary">
-          <option value="Muir College">
-          <option value="Muizenberg HS">
-          <option value="Nelspruit HS">
-          <option value="New College HS">
-          <option value="New Orleans HS">
-          <option value="Nico Malan HS">
-          <option value="Noorder Paarl HS">
-          <option value="Noordheuwel HS">
-          <option value="Northcliff HS">
-          <option value="Northern Cape HS">
-          <option value="Northwood HS">
-          <option value="Ntabankulu HS">
-          <option value="Ntabenkonyana HS">
-          <option value="Nylstroom HS">
-          <option value="Observatory Boys' High">
-          <option value="Olifantshoek HS">
-          <option value="Oos Moot HS">
-          <option value="Oosteind HS">
-          <option value="Oosterlig HS">
-          <option value="Oranje Meisieskool">
-          <option value="Otto du Plessis HS">
-          <option value="Oudtshoorn HS">
-          <option value="Outeniqua HS">
-          <option value="Overberg HS">
-          <option value="Overkruin HS">
-          <option value="Paarl Boys High">
-          <option value="Paarl Gimnasium">
-          <option value="Paarl Girls High">
-          <option value="Pacaltsdorp HS">
-          <option value="Parel Vallei HS">
-          <option value="Parklands College">
-          <option value="Parktown Boys' High">
-          <option value="Parow HS">
-          <option value="Parys HS">
-          <option value="Patriot HS">
-          <option value="Paul Erasmus HS">
-          <option value="Paul Kruger HS">
-          <option value="Paul Roos Gimnasium">
-          <option value="Paul Sauer HS">
-          <option value="Paulus Joubert HS">
-          <option value="Pearson HS">
-          <option value="Peddie HS">
-          <option value="Peterhouse HS">
-          <option value="Piet Potgieter HS">
-          <option value="Pietersburg  HS">
-          <option value="Piketberg HS">
-          <option value="Pinelands HS">
-          <option value="Pinetown Boys High">
-          <option value="Plumstead HS">
-          <option value="Plumtree HS">
-          <option value="Port Natal HS">
-          <option value="Port Rex HS">
-          <option value="Port Shepstone HS">
-          <option value="Porterville HS">
-          <option value="Potchefstroom Boys High">
-          <option value="Potchefstroom Gimnasium">
-          <option value="Potchefstroom Tegnies">
-          <option value="Prestige College">
-          <option value="Pretoria Boys High">
-          <option value="Prieska HS">
-          <option value="Prince Edward HS">
-          <option value="Queen's College">
-          <option value="Randburg HS">
-          <option value="Randfontein HS">
-          <option value="Ravensmead HS">
-          <option value="Reivilo HS">
-          <option value="Repton HS">
-          <option value="Rhenish Girls' High">
-          <option value="Rhodesfield HS">
-          <option value="Riebeeckrand HS">
-          <option value="Riversdal HS">
-          <option value="Rob Ferreira HS">
-          <option value="Robertson HS">
-          <option value="Robinvale HS">
-          <option value="Rondebosch Boys' High">
-          <option value="Roodepoort HS">
-          <option value="Rustenburg HS">
-          <option value="SACS">
-          <option value="Sand du Plessis HS">
-          <option value="Sandown HS">
-          <option value="Sarel Cilliers HS">
-          <option value="Sasolburg HS">
-          <option value="Schoonspruit HS">
-          <option value="Schweizer Reneke">
-          <option value="Scottburgh HS">
-          <option value="Scottsville HS">
-          <option value="Sea Point Boys' High">
-          <option value="Secunda HS">
-          <option value="Selborne College">
-          <option value="Sentraal HS">
-          <option value="Settlers HS">
-          <option value="Shannon HS">
-          <option value="Skurweberg HS">
-          <option value="Spine Road HS">
-          <option value="Springs Boys High">
-          <option value="Springs Technical High">
-          <option value="St Aidan's College">
-          <option value="St Albans HS">
-          <option value="St Andrews, Bloemfontein">
-          <option value="St Andrews, Grahamstown">
-          <option value="St Charles, Pietermaritzburg">
-          <option value="St David's Marist Inanda">
-          <option value="St George's College">
-          <option value="St George's Grammar School">
-          <option value="St Henry's College">
-          <option value="St John's College">
-          <option value="St Michael's College">
-          <option value="St Patrick's Marist College">
-          <option value="St Saviour's Collegiate School">
-          <option value="St Stithians College">
-          <option value="St Thomas HS (PE)">
-          <option value="Standerton HS">
-          <option value="Steenberg HS">
-          <option value="Stellenberg HS">
-          <option value="Stellenbosch HS">
-          <option value="Steyn City School">
-          <option value="Stilfontein HS">
-          <option value="Stirling High School">
-          <option value="Stockdale HS">
-          <option value="Strand HS">
-          <option value="Sundra HS">
-          <option value="Swartberg HS">
-          <option value="Swartland HS">
-          <option value="Swellendam HS">
-          <option value="Thandolwesizwe HS">
-          <option value="The Hill HS">
-          <option value="Thornhill HS">
-          <option value="Thotagauta HS">
-          <option value="Tom Naude HS">
-          <option value="Transvalia HS">
-          <option value="Trio HS">
-          <option value="Trompsburg HS">
-          <option value="Tshireleco HS">
-          <option value="Tsumeb HS">
-          <option value="Tuine HS">
-          <option value="TuksSport HS">
-          <option value="Tulbagh HS">
-          <option value="Tweespruit HS">
-          <option value="Tygerberg HS">
-          <option value="Umtali HS">
-          <option value="Umtata HS">
-          <option value="Union HS">
-          <option value="Unity SS">
-          <option value="Upington HS">
-          <option value="Vanderbijlpark HS">
-          <option value="Vanrhynsdorp HS">
-          <option value="Ventersdorp HS">
-          <option value="Vereeniging MS">
-          <option value="Victoria HS">
-          <option value="Victoria-Wes HS">
-          <option value="Volkskool, Graaff-Reinet">
-          <option value="Volkskool, Heidelberg">
-          <option value="Volkskool, Potchefstroom">
-          <option value="Volksrust HS">
-          <option value="Voortrekker, Bethlehem">
-          <option value="Voortrekker, Boksburg">
-          <option value="Voortrekker, Pietermaritzburg">
-          <option value="Voortrekker, Wynberg">
-          <option value="Voortrekkerhoogte HS">
-          <option value="Vorentoe (Rossmore HS)">
-          <option value="Vredenburg HS">
-          <option value="Vredendal HS">
-          <option value="Vryburg HS">
-          <option value="Vryheid HS">
-          <option value="Warmbad HS">
-          <option value="Warmbaths HS">
-          <option value="Waterkloof HS">
-          <option value="Weenen HS">
-          <option value="Welkom Gimnasium">
-          <option value="Wennie Du Plessis HS">
-          <option value="Wessel Maree HS">
-          <option value="Westerford HS">
-          <option value="Westering HS">
-          <option value="Weston HS">
-          <option value="Westvalia HS">
-          <option value="Westville Boy's High">
-          <option value="Wesvalia HS">
-          <option value="Wilgerivier HS">
-          <option value="Wilgers HS">
-          <option value="Windermere HS">
-          <option value="Windhoek HS">
-          <option value="Windsor HS">
-          <option value="Winterton HS">
-          <option value="Witbank HS">
-          <option value="Witbank HTS">
-          <option value="Witteberg HS">
-          <option value="Wolmaransstad HS">
-          <option value="Wonderboom HS">
-          <option value="Woodridge College">
-          <option value="Worcester Gimnasium">
-          <option value="Wynberg Boys' High">
-          <option value="Wynberg Girls' HS">
-          <option value="Zastron HS">
-          <option value="Zeerust HS">
-          <option value="Zwartkop HS">
+    <div style="background:#f8f6f0;border-radius:12px;padding:22px;margin-bottom:18px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--navy);font-weight:700;margin-bottom:14px;">Golf Membership Details</div>
+      <div class="fg">
+        <label>Golf Club <span class="req">*</span></label>
+        <input type="text" id="p1-club" placeholder="Start typing your club name..." list="club-list" autocomplete="off" />
+        <datalist id="club-list">
+          <option value="Atlantic Beach Golf Club">
+          <option value="Bellville Golf Club">
+          <option value="Bloemfontein Golf Club">
+          <option value="Blue Valley Golf and Country Estate">
+          <option value="Bryanston Country Club">
+          <option value="Centurion Country Club">
+          <option value="Clovelly Country Club">
+          <option value="Cotswold Downs">
+          <option value="Dainfern Country Club">
+          <option value="De Zalze Golf Club">
+          <option value="Devonvale Golf and Wine Estate">
+          <option value="Durban Country Club">
+          <option value="Durban Golf Club">
+          <option value="Durbanville Golf Club">
+          <option value="Eagle Canyon Country Club">
+          <option value="Ebotse Golf and Country Estate">
+          <option value="Els Club - Copperleaf">
+          <option value="Erinvale Golf Club">
+          <option value="Eye of Africa Golf Estate">
+          <option value="Fancourt">
+          <option value="Gary Player Country Club">
+          <option value="George Golf Club">
+          <option value="Glendower Golf Club">
+          <option value="Glenvista Country Club">
+          <option value="Goose Valley Golf Club">
+          <option value="Hermanus Golf Club">
+          <option value="Houghton Golf Club">
+          <option value="Humewood Golf Club">
+          <option value="Irene Country Club">
+          <option value="Jackal Creek Golf Estate">
+          <option value="Kimberley Golf Club">
+          <option value="King David Golf Club">
+          <option value="Kingswood Golf Estate">
+          <option value="Kloof Country Club">
+          <option value="Knysna Golf Club">
+          <option value="Kyalami Country Club">
+          <option value="Leopard Creek Country Club">
+          <option value="Lost City Golf Club">
+          <option value="Maccauvlei Golf Club">
+          <option value="Metropolitan Golf Club">
+          <option value="Milnerton Golf Club">
+          <option value="Modderfontein Golf Club">
+          <option value="Mount Edgecombe Country Club">
+          <option value="Mowbray Golf Club">
+          <option value="Oubaai Golf Resort">
+          <option value="Outeniqua at Fancourt">
+          <option value="Paarl Golf Club">
+          <option value="Parkview Golf Club">
+          <option value="Parow Golf Club">
+          <option value="Pearl Valley Golf & Country Estate">
+          <option value="Pezula Championship Golf Course">
+          <option value="Pinnacle Point Golf Club">
+          <option value="Plettenberg Bay Country Club">
+          <option value="Pretoria Country Club">
+          <option value="Pretoria Golf Club">
+          <option value="Randpark Golf Club">
+          <option value="Rondebosch Golf Club">
+          <option value="Royal Cape Golf Club">
+          <option value="Royal Johannesburg and Kensington Golf Club">
+          <option value="SACS Golf Club">
+          <option value="San Lameer Country Club">
+          <option value="Selborne Country Club">
+          <option value="Serengeti Golf and Wildlife Estate">
+          <option value="Silver Lakes Golf and Country Club">
+          <option value="Simola Golf and Country Estate">
+          <option value="Somerset West Golf Club">
+          <option value="St Francis Links">
+          <option value="Steenberg Golf Club">
+          <option value="Stellenbosch Golf Club">
+          <option value="The Club at Steyn City">
+          <option value="The Country Club Johannesburg">
+          <option value="The Links at Fancourt">
+          <option value="Wanderers Golf Club">
+          <option value="Waterkloof Golf Club">
+          <option value="Westlake Golf Club">
+          <option value="Woodhill Country Club">
+          <option value="Worcester Golf Club">
+          <option value="Zimbali Country Club">
+          <option value="Zwartkop Country Club">
+          <option value="Other — not listed">
         </datalist>
-        <div style="font-size:11px;color:#555;margin-top:5px;">Type to search 417 listed schools — or type your school name if not listed, it will be added.</div>
+        <div class="hint">Type to search or enter your club name if not listed.</div>
       </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>City / Town <span class="req">*</span></label>
-          <input type="text" id="p1-city" placeholder="e.g. Cape Town" />
-        </div>
-        <div class="form-group">
-          <label>Postal Code <span class="req">*</span></label>
-          <input type="text" id="p1-postal" placeholder="e.g. 7550" maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
-        </div>
+      <div class="fg">
+        <label>HNA Handicap Number <span class="req">*</span></label>
+        <input type="text" id="p1-hna" placeholder="2700XXXXXX" maxlength="12" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
+        <div class="hint">Your Golf RSA number — must start with 2700</div>
+        <div id="hna-err" style="color:var(--red);font-size:11px;margin-top:3px;display:none;">⚠️ Must start with 2700</div>
       </div>
-      <div class="info-box" style="margin-top:-8px;margin-bottom:20px;">
-        ⚠️ <strong>Important:</strong> Your postal code is used for geo-plotting into your division. Please ensure it is 100% accurate — an incorrect postal code may result in incorrect grouping.
-      </div>
-
-      <button type="button" class="btn-primary" onclick="checkEligibilityEarly()">Continue to Eligibility Check →</button>
-
-      <div id="golf-details-section" style="display:none;margin-top:24px;">
-        <div style="border-top:2px solid var(--border);padding-top:24px;margin-bottom:20px;">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:4px;">✅ Eligibility Confirmed</div>
-          <div style="font-size:13px;color:var(--text2);">Please complete your golf membership details below.</div>
-        </div>
-
-        <div class="form-group autocomplete-wrap">
-          <label>Golf Club <span class="req">*</span></label>
-          <input type="text" id="p1-club" placeholder="Type your club name..." autocomplete="off" oninput="acSearch('p1-club', GOLF_CLUBS, 'p1-club-list', 'p1-club-hidden')" />
-          <input type="hidden" id="p1-club-hidden" />
-          <div class="autocomplete-list" id="p1-club-list"></div>
-        </div>
-
-        <div class="form-group">
-          <label>HNA Handicap Number <span class="req">*</span></label>
-          <input type="text" id="p1-hna" placeholder="2700XXXXXX" oninput="validateHNA(this)" />
-          <div class="hint">Your Golf RSA Handicapping Network Africa number — must start with 2700</div>
-          <div id="hna-error" style="color:var(--red);font-size:11px;margin-top:4px;display:none;">⚠️ HNA number must start with 2700</div>
-        </div>
-
-        <div class="form-group">
-          <label>Handicap Index <span class="req">*</span></label>
-          <input type="number" id="p1-handicap" placeholder="e.g. 12.4" step="0.1" min="0" max="54" />
-          <div class="hint">Men: max 36 | Women: max 54 (Playing cap limited to 24/28 per rules)</div>
-        </div>
-
-        <button type="button" class="btn-primary" onclick="submitStep1()">Continue to Partner & Payment →</button>
-      </div>
-      <div class="login-link">Already registered? <a href="portal.html">Log in to your portal</a></div>
-    </div>
-  </div>
-
-  <!-- STEP 2: ELIGIBILITY -->
-  <div class="section" id="sec-step2">
-    <div class="form-card">
-      <div class="card-header">
-        <div class="card-icon">✅</div>
-        <div>
-          <h2>Eligibility Confirmation</h2>
-          <p>Please confirm all of the following to proceed</p>
-        </div>
-      </div>
-      <div id="step2-error" class="alert"></div>
-      <div class="eligibility-box">
-        <h3>Please confirm each of the following:</h3>
-        <label class="check-item" onclick="toggleCheck(this)">
-          <input type="checkbox" id="elig-1" />
-          <div class="check-box"></div>
-          <div class="check-label">I confirm that I am no longer enrolled as a learner at any school and am a bona fide alumnus of a South African school.</div>
-        </label>
-        <label class="check-item" onclick="toggleCheck(this)">
-          <input type="checkbox" id="elig-2" />
-          <div class="check-box"></div>
-          <div class="check-label">I confirm that I am at least 18 years of age.</div>
-        </label>
-        <label class="check-item" onclick="toggleCheck(this)">
-          <input type="checkbox" id="elig-3" />
-          <div class="check-box"></div>
-          <div class="check-label">I confirm that I hold a valid, active Golf RSA HNA (Handicapping Network Africa) handicap and am in good standing at my club.</div>
-        </label>
-        <label class="check-item" onclick="toggleCheck(this)">
-          <input type="checkbox" id="elig-4" />
-          <div class="check-box"></div>
-          <div class="check-label">I have read, understood and agree to the <a href="rules.html" target="_blank" style="color:var(--gold)">Tournament Rules, Regulations and Conditions</a> of the Alumni Schools Golf Challenge 2026/27.</div>
-        </label>
-        <label class="check-item" onclick="toggleCheck(this)">
-          <input type="checkbox" id="elig-5" />
-          <div class="check-box"></div>
-          <div class="check-label">I consent to my personal information being collected and used for tournament administration purposes in accordance with POPIA (Protection of Personal Information Act). My data will not be shared with third parties.</div>
-        </label>
-        <label class="check-item" onclick="toggleCheck(this)">
-          <input type="checkbox" id="elig-6" />
-          <div class="check-box"></div>
-          <div class="check-label">I grant the organizers permission to photograph or video me for tournament promotion and advertising in any media, without further approval or payment.</div>
-        </label>
-      </div>
-      <button type="button" class="btn-primary" onclick="submitStep2()">Confirm & Continue →</button>
-      <button class="btn-outline" onclick="goToStep(1)">← Back</button>
-    </div>
-  </div>
-
-  <!-- STEP 3: INVITE PARTNER -->
-  <div class="section" id="sec-step3">
-    <div class="form-card">
-      <div class="card-header">
-        <div class="card-icon">🤝</div>
-        <div>
-          <h2>Invite Your Partner</h2>
-          <p>Enter your partner's details — they will receive an invitation to complete their registration</p>
-        </div>
-      </div>
-      <div id="step3-error" class="alert"></div>
-      <div class="info-box">
-        <strong>Same school required.</strong> Both players must be alumni of the same school. Your partner will receive an SMS/email invitation and their registration form will be pre-filled with the school and team details.
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Partner's First Name <span class="req">*</span></label>
-          <input type="text" id="p2-firstname" placeholder="First name" />
-        </div>
-        <div class="form-group">
-          <label>Partner's Surname <span class="req">*</span></label>
-          <input type="text" id="p2-surname" placeholder="Surname" />
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Partner's Mobile Number <span class="req">*</span></label>
-        <input type="tel" id="p2-mobile" placeholder="+27 82 234 5678" />
-        <div class="hint">Your partner will receive an invitation SMS to complete their registration</div>
-      </div>
-      <div class="form-group">
-        <label>Partner's Email Address <span class="req">*</span></label>
-        <input type="email" id="p2-email" placeholder="partner@email.com" />
-      </div>
-      <div class="form-group">
-        <label>School (same as yours)</label>
-        <input type="text" id="p2-school-display" readonly style="opacity:0.7;background:#eee;" />
-        <div class="hint">Your partner will confirm this during their registration</div>
-      </div>
-      <button type="button" class="btn-primary" onclick="submitStep3()">Send Invitation & Continue →</button>
-      <button class="btn-outline" onclick="goToStep(2)">← Back</button>
-      <div class="login-link" style="margin-top:16px;">
-        Looking for a partner? <a href="portal.html">Join the Partner Pool</a>
+      <div class="fg">
+        <label>Handicap Index <span class="req">*</span></label>
+        <input type="number" id="p1-handicap" placeholder="e.g. 12.4" step="0.1" min="0" max="54" />
+        <div class="hint">Men: max 36 | Women: max 54</div>
       </div>
     </div>
+
+    <button type="button" class="btn btn-gold" onclick="doStep2()">Confirm Eligibility &amp; Continue →</button>
+    <button type="button" class="btn btn-outline" onclick="goStep(1)" style="margin-top:8px;">← Back</button>
   </div>
+</div>
 
-  <!-- STEP 4: PAYMENT -->
-  <div class="section" id="sec-step4">
-    <div class="form-card">
-      <div class="card-header">
-        <div class="card-icon">💳</div>
-        <div>
-          <h2>Tournament Entry Fee</h2>
-          <p>Secure your spot in the Alumni Schools Golf Challenge</p>
-        </div>
-      </div>
-      <div id="step4-error" class="alert"></div>
-      <p style="font-size:14px;color:var(--text2);margin-bottom:20px;">Choose how you would like to proceed with payment:</p>
-
-      <!-- PAY NOW / PAY LATER CHOICE -->
-      <div id="payment-choice">
-        <div class="payment-options">
-          <div class="payment-option" onclick="selectPaymentChoice('now')">
-            <div class="opt-icon">💳</div>
-            <h3>Pay Now</h3>
-            <p>Complete your entry immediately by uploading proof of payment</p>
-          </div>
-          <div class="payment-option" onclick="selectPaymentChoice('later')">
-            <div class="opt-icon">⏰</div>
-            <h3>Pay Later</h3>
-            <p>Register now and pay within 7 days to secure your spot</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- PAY NOW FLOW -->
-      <div id="pay-now-flow" style="display:none;">
-        <h3 style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:16px;">Select Payment Amount</h3>
-        <div class="payment-options">
-          <div class="payment-option" onclick="selectPayNowAmount('self')" id="pay-self-opt">
-            <div class="opt-icon">👤</div>
-            <h3>Pay for Myself</h3>
-            <div class="price">R1,500</div>
-            <p>Your entry only</p>
-          </div>
-          <div class="payment-option" onclick="selectPayNowAmount('team')" id="pay-team-opt">
-            <div class="opt-icon">👥</div>
-            <h3>Pay for Team</h3>
-            <div class="price">R2,800</div>
-            <div class="save">💰 Save R200!</div>
-            <p>Both players covered</p>
-          </div>
-        </div>
-
-        <div id="banking-section" style="display:none;">
-          <div class="banking-details">
-            <h3>💳 Banking Details — EFT Payment</h3>
-            <div class="banking-row"><span class="label">Account Name</span><span class="value">LEGACY EVENT VENTURES (PTY) LTD</span></div>
-            <div class="banking-row"><span class="label">Bank</span><span class="value">FNB — Cape Gate</span></div>
-            <div class="banking-row">
-              <span class="label">Account Number</span>
-              <span class="value">63192217123</span>
-              <button class="copy-btn" onclick="copyText('63192217123')">Copy</button>
-            </div>
-            <div class="banking-row"><span class="label">Branch Code</span><span class="value">251945</span></div>
-            <div class="banking-row"><span class="label">Swift Code</span><span class="value">FIRNZAJJ</span></div>
-            <div class="banking-row"><span class="label">Reference</span><span class="value" id="payment-reference">—</span></div>
-            <div class="banking-row"><span class="label">Amount</span><span class="value" id="payment-amount-display" style="color:var(--gold);font-size:18px;">—</span></div>
-          </div>
-          <div class="form-group">
-            <label>Upload Proof of Payment <span class="req">*</span></label>
-            <div class="upload-area" onclick="document.getElementById('pop-file').click()">
-              <div class="upload-icon">📎</div>
-              <p>Click to upload your proof of payment (PDF, JPG or PNG)</p>
-              <p id="pop-filename" style="color:var(--navy);font-weight:600;margin-top:6px;"></p>
-            </div>
-            <input type="file" id="pop-file" accept=".pdf,.jpg,.jpeg,.png" onchange="handlePOPUpload(this)" />
-          </div>
-          <button class="btn-primary" id="btn-submit-payment" onclick="submitPayment()" style="display:none;">
-            ✅ Submit Registration & Proof of Payment
-          </button>
-          <button class="btn-outline" onclick="document.getElementById('pay-now-flow').style.display='none';document.getElementById('payment-choice').style.display='block';">← Back</button>
-        </div>
-      </div>
-
-      <!-- PAY LATER -->
-      <div id="pay-later-confirm" style="display:none;">
-        <div class="info-box">
-          <strong>Pay Later selected.</strong> Your registration will be saved and your spot held for 7 days. You will receive an email with payment details and a QR code for easy payment. Please complete payment within 7 days to confirm your entry.
-        </div>
-        <button type="button" class="btn-primary" onclick="submitPayLater()">✅ Complete Registration — Pay Later</button>
-        <button class="btn-outline" onclick="document.getElementById('pay-later-confirm').style.display='none';document.getElementById('payment-choice').style.display='block';">← Back</button>
+<!-- ── STEP 3 ── -->
+<div class="section" id="sec-step3">
+  <div class="form-card">
+    <div class="card-header">
+      <div class="card-icon">🤝</div>
+      <div><h2>Invite Your Partner — Player 2</h2><p>Both players must be alumni of the same school</p></div>
+    </div>
+    <div class="error-box" id="err3"></div>
+    <div class="fg"><label>School</label><input type="text" id="p2-school-display" readonly style="opacity:0.7;cursor:default;" /></div>
+    <div class="form-row">
+      <div class="fg"><label>First Name <span class="req">*</span></label><input type="text" id="p2-first" placeholder="First name" /></div>
+      <div class="fg"><label>Surname <span class="req">*</span></label><input type="text" id="p2-last" placeholder="Surname" /></div>
+    </div>
+    <div class="fg"><label>Email Address <span class="req">*</span></label><input type="email" id="p2-email" placeholder="partner@email.com" /></div>
+    <div class="fg">
+      <label>Mobile Number <span class="req">*</span></label>
+      <div class="phone-wrap">
+        <div class="phone-prefix">+27</div>
+        <input type="tel" id="p2-mobile" placeholder="821234567" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
       </div>
     </div>
+    <button type="button" class="btn btn-gold" onclick="doStep3()">Continue to Payment →</button>
+    <button type="button" class="btn btn-outline" onclick="goStep(2)" style="margin-top:8px;">← Back</button>
   </div>
+</div>
 
-  <!-- SUCCESS -->
-  <div class="section" id="sec-success">
-    <div class="form-card">
-      <div class="success-screen">
-        <div class="success-icon">🏆</div>
-        <h2 id="success-title">You're Registered!</h2>
-        <p id="success-message">Thank you — we have received your registration.</p>
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
-          <a href="portal.html" class="btn-primary" style="display:inline-block;text-decoration:none;width:auto;padding:14px 32px;">Go to My Portal</a>
-          <a href="index.html" class="btn-outline" style="display:inline-block;text-decoration:none;width:auto;padding:14px 32px;">Back to Home</a>
+<!-- ── STEP 4 ── -->
+<div class="section" id="sec-step4">
+  <div class="form-card">
+    <div class="card-header">
+      <div class="card-icon">💳</div>
+      <div><h2>Payment</h2><p>Secure your team's entry</p></div>
+    </div>
+    <div class="error-box" id="err4"></div>
+    <div id="payment-choice">
+      <div class="pay-opts">
+        <div class="pay-opt" onclick="payChoice('now')">
+          <div class="opt-icon">💳</div>
+          <h3>Pay Now</h3>
+          <div class="price">R1,500</div>
+          <p>Pay for yourself now</p>
+        </div>
+        <div class="pay-opt" onclick="payChoice('team')">
+          <div class="opt-icon">🏌️</div>
+          <h3>Pay for Team</h3>
+          <div class="price">R3,000</div>
+          <p>Pay for both players upfront</p>
         </div>
       </div>
+      <button type="button" class="btn btn-outline" onclick="payChoice('later')">Pay Later — Reserve my spot</button>
+    </div>
+    <div id="pay-now-flow" style="display:none;">
+      <div class="bank-block">
+        <h3>Banking Details — EFT</h3>
+        <div class="bank-row"><span class="lbl">Bank</span><span class="val">FNB</span></div>
+        <div class="bank-row"><span class="lbl">Account Name</span><span class="val">Legacy Event Ventures</span></div>
+        <div class="bank-row"><span class="lbl">Account No.</span><span class="val">62951078553 <button class="copy-btn" onclick="copyText('62951078553')">Copy</button></span></div>
+        <div class="bank-row"><span class="lbl">Branch Code</span><span class="val">250655</span></div>
+        <div class="bank-row"><span class="lbl">Reference</span><span class="val" id="pay-ref">—</span> <button class="copy-btn" onclick="copyRef()">Copy</button></div>
+        <div class="bank-row"><span class="lbl">Amount</span><span class="val" style="color:var(--gold);font-size:18px;" id="pay-amount">—</span></div>
+      </div>
+      <div class="fg" style="margin-top:4px;">
+        <label>Upload Proof of Payment</label>
+        <div class="upload-area" onclick="document.getElementById('pop-file').click()">
+          <div style="font-size:28px;">📎</div>
+          <p id="pop-name">Click to select file (PDF, JPG or PNG)</p>
+          <input type="file" id="pop-file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="handlePOP(this)" />
+        </div>
+      </div>
+      <button type="button" class="btn btn-gold" id="btn-submit" onclick="submitPay()" style="display:none;">✅ Submit Registration &amp; Proof of Payment</button>
+    </div>
+    <div id="pay-later-flow" style="display:none;">
+      <div class="info-box">Your spot will be held for <strong>7 days</strong>. Payment instructions will be emailed to you. Entry is only confirmed once payment is received.</div>
+      <button type="button" class="btn btn-gold" onclick="submitLater()">✅ Complete Registration — Pay Later</button>
     </div>
   </div>
+</div>
+
+<!-- ── SUCCESS ── -->
+<div class="section" id="sec-success">
+  <div class="form-card">
+    <div class="success-screen">
+      <div class="success-icon">🏆</div>
+      <h2 id="success-title">Registration Received!</h2>
+      <p id="success-msg">Thank you for registering.</p>
+      <a href="portal.html" class="btn btn-gold" style="display:inline-block;width:auto;padding:14px 32px;text-decoration:none;">View My Portal →</a>
+    </div>
+  </div>
+</div>
 
 </div><!-- /main -->
 
 <footer>
-  <p>© 2026 Alumni Schools Golf Challenge — Legacy Event Ventures (Pty) Ltd | <a href="/cdn-cgi/l/email-protection#2243464f4b4c62434e574f4c4b454d4e440c4c4756"><span class="__cf_email__" data-cfemail="650401080c0b25040910080b0c020a09034b0b0011">[email&#160;protected]</span></a></p>
-  <p style="margin-top:6px;">Honouring tradition. Celebrating excellence.</p>
+  <p>© 2026 Alumni Schools Golf Challenge — Legacy Event Ventures (Pty) Ltd | <a href="mailto:admin@alumnigolf.net">admin@alumnigolf.net</a></p>
+  <p style="margin-top:5px;">Honouring tradition. Celebrating excellence.</p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// ── SUPABASE ──────────────────────────────────────────────────────────────────
-const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+<script>
+const SUPABASE_URL =  + SB_URL + ;
+const SUPABASE_KEY =  + SB_KEY + ;
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ── DATA ──────────────────────────────────────────────────────────────────────
-const SA_SCHOOLS = ["Adelaide HS", "Afrikaans Hoër Meisieskool", "Afrikaanse Hoër Seunskool (Affies)", "Afrikaanse Hoërskool Kroonstad", "Albertinia HS", "Alberton HS", "Alexander Road HS", "Aliwal Noord HS", "Amsterdam HS", "Augsburg Landbougimnasium", "Barkly East HS", "Bastion HS", "Beaconsfield HS", "Bekker, Magaliesburg HS", "Bellville HS", "Bellville Secondary School", "Ben Viljoen HS", "Ben Vorster HS", "Benoni High School", "Berg Rivier HS", "Bergsig HS", "Bethelsdorp HS", "Bloemfontein HTS", "Bloemhof HS", "Bothaville HS", "Brackenfell HS", "Brandwag, HS Benoni", "Brandwag, HS Uitenhage", "Brits HS", "C&N Sekondêre Meisieskool Oranje", "CBC Kimberley", "CBC Pretoria", "CBC, Boksburg", "CBC, Kimberley", "CJ Langenhoven HS", "Calvinia HS", "Cambridge HS", "Capricorn HS", "Carleton Jones HS", "Carnarvon HS", "Centurion HS", "Chaplin High School", "Charleston Hill HS", "Charlie Hofmeyr HS", "Christiana HS", "Churchill High School", "Cillie HS", "Clifton HS", "Cloetesville HS", "Cradock HS", "Cullinan HS", "Curro Durbanville", "Curro Hazeldean", "Curro Heuwelkruin", "Curro Rising Stars team", "DF Akademie HS", "DF Malherbe HS (PE)", "DHS", "DR EG Jansen HS", "Dale College", "Damelin College", "Dan Pienaar HS", "De Aar HS", "De La Salle College", "De Villiers Graaff, HS", "De Vos Malan HS", "Dealesville HS", "Delmas HS", "Despatch HS", "Diamantveld HS", "Dinamika HS", "Diocesan College (Bishops)", "Dirkie Uys, HS", "Dordrecht HS", "Douglas HS", "Dr. Viljoen HS", "Driehoek HS", "Dundee HS", "Durban Girls HS", "Durban HS", "Durbanville HS", "EG Jansen HS", "East London Technikon", "Eden HS", "Eldoraigne HS", "Elliot HS", "Elmar College", "Erasmus HS", "Ermelo HS", "Estcourt HS", "Eton College", "FH Odendaal HS", "Fairmont HS", "Fakkel HS", "Ferdinand Postma HS", "Fichardtpark HS", "Fish Hoek HS", "Florida HS", "Framesby HS", "Franschhoek HS", "Fraserburg HS", "Frikkie Meyer HS", "Garsfontein HS", "Gelofte HS", "Gelvendale HS", "Generaal Hertzog HS", "General Smuts HS", "George HS", "George Watsons' College", "Gerrit Maritz HS", "Gifford, Bulawayo HS", "Gill College", "Glenwood HS", "Good Hope HS", "Goudini, HS", "Graeme College", "Green Point Grammar School", "Greenside HS", "Grens HS", "Grenswag HS", "Grey College Bloemfontein", "Grey College PE", "Griekwastad HS", "HTS Daniel Pienaar", "HTS Drostdy", "Hamilton HS", "Hangklip HS", "Hans Strijdom HS", "Harris School HS", "Harrismith HS", "Hartswater HS", "Hawston HS", "Heidelberg Volkskool", "Helpmekaar Kollege", "Hendrik Verwoerd HS", "Hentie Cilliers HS", "Highlands North HS", "Hill High School", "Hilton College", "Hoogenhout HS", "Hopefield HS", "Hottentots-Holland HS", "Hoër Landbouskool Boland", "Hudson Park High HS", "Hugenote HS Springs", "Hugenote HS Wellington", "Hyde Park HS", "JG Meiring HS", "JJ Pienaar HS", "Jan Viljoen HS", "Jan de Klerk HS", "Jan van Riebeeck HS", "Jansenville HS", "Jeppe HS", "Jeugland HS", "Jim Fouche HS", "Jim Mvabaza HS", "John Orr HS", "John Vorster HTS", "John Walton HS", "Kalahari HS", "Kasselsvlei HS", "Kathu HS", "Kearsney College", "Kempton Park HS", "Kenhardt HS", "Kimberley Boys' High", "Kimberley HTS", "King Alfred's College", "King Edward VII School (KES)", "Kingswood College", "Kirkwood HS", "Klein Nederburg HS", "Klerksdorp HS", "Knysna HS", "Kokstad College", "Kroonstad HS", "Krugersdorp HS", "Kwamfumdo HS", "Kylemore HS", "La Rochelle", "La Rochelle HS", "Ladybrand HS", "Laingsburg HS", "Landbouskool Oakdale", "Langenhoven HS", "Langlaagte HS", "Lenasia HS", "Lichtenburg HS", "Linden HS", "Lindley HS", "Llandovery College", "Louis Botha HTS", "Loyiso HS", "Luckhoff SS", "Maitland HS", "Mandlenkosi HS", "Mansfield HS", "Marais Viljoen HS", "Marandellas HS", "Maria Louw HS", "Marist Brothers Linmeyer", "Maritzburg College", "Marlborough College", "Marlow HS", "Marthinus Wessels HS", "Martin Oosthuizen", "Mary Waters HS", "Menlopark HS", "Merensky HS", "Michaelhouse", "Middelburg (Cape)", "Middelburg (Tvl)", "Middelburg HTS", "Milner HS", "Milnerton HS", "Milton HS", "Montagu HS", "Montana HS", "Monument HS", "Monument HS Nonnas", "Morester Secondary", "Muir College", "Muizenberg HS", "Nelspruit HS", "New College HS", "New Orleans HS", "Nico Malan HS", "Noorder Paarl HS", "Noordheuwel HS", "Northcliff HS", "Northern Cape HS", "Northwood HS", "Ntabankulu HS", "Ntabenkonyana HS", "Nylstroom HS", "Observatory Boys' High", "Olifantshoek HS", "Oos Moot HS", "Oosteind HS", "Oosterlig HS", "Oranje Meisieskool", "Otto du Plessis HS", "Oudtshoorn HS", "Outeniqua HS", "Overberg HS", "Overkruin HS", "Paarl Boys High", "Paarl Gimnasium", "Paarl Girls High", "Pacaltsdorp HS", "Parel Vallei HS", "Parklands College", "Parktown Boys' High", "Parow HS", "Parys HS", "Patriot HS", "Paul Erasmus HS", "Paul Kruger HS", "Paul Roos Gimnasium", "Paul Sauer HS", "Paulus Joubert HS", "Pearson HS", "Peddie HS", "Peterhouse HS", "Piet Potgieter HS", "Pietersburg  HS", "Piketberg HS", "Pinelands HS", "Pinetown Boys High", "Plumstead HS", "Plumtree HS", "Port Natal HS", "Port Rex HS", "Port Shepstone HS", "Porterville HS", "Potchefstroom Boys High", "Potchefstroom Gimnasium", "Potchefstroom Tegnies", "Prestige College", "Pretoria Boys High", "Prieska HS", "Prince Edward HS", "Queen's College", "Randburg HS", "Randfontein HS", "Ravensmead HS", "Reivilo HS", "Repton HS", "Rhenish Girls' High", "Rhodesfield HS", "Riebeeckrand HS", "Riversdal HS", "Rob Ferreira HS", "Robertson HS", "Robinvale HS", "Rondebosch Boys' High", "Roodepoort HS", "Rustenburg HS", "SACS", "Sand du Plessis HS", "Sandown HS", "Sarel Cilliers HS", "Sasolburg HS", "Schoonspruit HS", "Schweizer Reneke", "Scottburgh HS", "Scottsville HS", "Sea Point Boys' High", "Secunda HS", "Selborne College", "Sentraal HS", "Settlers HS", "Shannon HS", "Skurweberg HS", "Spine Road HS", "Springs Boys High", "Springs Technical High", "St Aidan's College", "St Albans HS", "St Andrews, Bloemfontein", "St Andrews, Grahamstown", "St Charles, Pietermaritzburg", "St David's Marist Inanda", "St George's College", "St George's Grammar School", "St Henry's College", "St John's College", "St Michael's College", "St Patrick's Marist College", "St Saviour's Collegiate School", "St Stithians College", "St Thomas HS (PE)", "Standerton HS", "Steenberg HS", "Stellenberg HS", "Stellenbosch HS", "Steyn City School", "Stilfontein HS", "Stirling High School", "Stockdale HS", "Strand HS", "Sundra HS", "Swartberg HS", "Swartland HS", "Swellendam HS", "Thandolwesizwe HS", "The Hill HS", "Thornhill HS", "Thotagauta HS", "Tom Naude HS", "Transvalia HS", "Trio HS", "Trompsburg HS", "Tshireleco HS", "Tsumeb HS", "Tuine HS", "TuksSport HS", "Tulbagh HS", "Tweespruit HS", "Tygerberg HS", "Umtali HS", "Umtata HS", "Union HS", "Unity SS", "Upington HS", "Vanderbijlpark HS", "Vanrhynsdorp HS", "Ventersdorp HS", "Vereeniging MS", "Victoria HS", "Victoria-Wes HS", "Volkskool, Graaff-Reinet", "Volkskool, Heidelberg", "Volkskool, Potchefstroom", "Volksrust HS", "Voortrekker, Bethlehem", "Voortrekker, Boksburg", "Voortrekker, Pietermaritzburg", "Voortrekker, Wynberg", "Voortrekkerhoogte HS", "Vorentoe (Rossmore HS)", "Vredenburg HS", "Vredendal HS", "Vryburg HS", "Vryheid HS", "Warmbad HS", "Warmbaths HS", "Waterkloof HS", "Weenen HS", "Welkom Gimnasium", "Wennie Du Plessis HS", "Wessel Maree HS", "Westerford HS", "Westering HS", "Weston HS", "Westvalia HS", "Westville Boy's High", "Wesvalia HS", "Wilgerivier HS", "Wilgers HS", "Windermere HS", "Windhoek HS", "Windsor HS", "Winterton HS", "Witbank HS", "Witbank HTS", "Witteberg HS", "Wolmaransstad HS", "Wonderboom HS", "Woodridge College", "Worcester Gimnasium", "Wynberg Boys' High", "Wynberg Girls' HS", "Zastron HS", "Zeerust HS", "Zwartkop HS"];
-const GOLF_CLUBS = ["Aberdeen Golf Club", "Adelaide Golf Club", "Afrikander Golf Club", "Akasia Country Club", "Albertinia Golf Club", "Alexander Golf Club", "Alexandria Golf Club", "Aliwal North Golf Club", "Allanridge Golf Club", "Amandelbult Golf Club", "Amanzimtoti Country Club", "Amatikulu Country Club", "Amersfoort Golf Club", "Amphitheatre Golf Club", "Arabella Country Estate", "Arendskraal Golf Club", "Arnot Golf Club", "Atlantic Beach Golf Club", "Avion Park Golf Club", "Badplaas Golf Club,", "Bank Golf Club", "Barberton Golf Club", "Barkly East Golf Club", "Beaufort West Golf Club", "Bedford Golf Club", "Beeshoek Golf Club", "Belfast Golf Club", "Bellville Golf Club", "Benoni Country Club", "Berg Rivier Golf Club", "Bethal Golf Club", "Bethlehem Golf Club", "Bethulie Golf Club", "Black Mountain Golf Club", "Black Rock Golf Club", "Blair Atholl", "Bloemfontein Golf Club", "Bloemhof Golf Club", "Blue Valley Golf and Country Estate", "Bluff National Park Golf Club", "Blyvooruitzicht Golf Club", "Boggomsbaai Golf Club", "Bonnievale Golf Club", "Bosch Hoek Golf Club", "Bothaville Golf Club", "Brandfort Golf Club", "Bredasdorp Golf Club", "Bronkhorstspruit Golf Club", "Bryanston Country Club", "Bultfontein Golf Club", "Burgersdorp Golf Club", "Bushman Sands Golf Club", "Butterworth Country Club", "Caledon Golf Club", "Calvinia Golf Club", "Camelot Country Club", "Carnarvon Golf Club", "Carolina Golf Club", "Cathcart Golf Club", "Cathedral Peak Golf Club", "Cato Ridge Country Club", "Centurion Country Club", "Ceres Golf Club", "Champagne Sports Resort", "Christiana Golf Club", "Chrome Golf Club", "Citrusdal Golf Club", "Clanwilliam Golf Club", "Clarens Golf and Trout Estate", "Clocolan Golf Club", "Clovelly Country Club", "Cmr Golf Club", "Colesberg Golf Club", "Cotswold Downs", "Cradock Golf Club", "Creighton Golf Estate", "Crocodile Golf Course", "Crown Mines Golf Club", "Cullinan Golf Club", "Dainfern Country Club", "Darling Golf Club", "Darnall Country Club", "Daveyton Golf Club", "De Zalze Golf Club", "Delareyville Golf Club", "Delmas Golf Club", "Devonvale Golf and Wine Estate", "Dewetsdorp Golf Club", "Dolphin Creek Golf Estate", "Dordrecht Golf Club", "Douglas Golf Club", "Drakensig Golf Club", "Dunblane Golf and Trout Estate", "Dundee Country Club", "Durban Country Club", "Durban Deep Golf Club", "Durban Golf Club", "Durbanville Golf Club", "Eagle Canyon Country Club", "Eagles Creek Golf and Nature Estate", "East London Golf Club", "Ebotse Golf and Country Estate", "Edenburg Golf Club", "Elements Private Golf Reserve", "Elliot Golf Club", "Els Club - Copperleaf", "Emfuleni Golf Estate", "Empangeni Country Club", "Engineers Golf Club", "Erinvale Golf Club", "Ermelo Country Club", "Erpm Golf Club", "Eshowe Hills Eco Estate", "Estcourt Golf Club", "Euphoria Golf and Lifestyle Estate", "Eureka Golf Club", "Excelsior Golf Club", "Eye of Africa Golf Estate", "Fairview Golf Estate", "Fish River  Country Club", "Fort Beaufort Golf Club", "Frankfort Golf Club", "Fynbos Golf and Country Estate", "Gansbaai Golf Club", "Gary Player Country Club", "George Golf Club", "Germiston Golf Club", "Glencoe Correctional Services Golf Club", "Glendower Golf Club", "Glengarry Country Club", "Glenvista Country Club", "Goldfields West Golf Club", "Gonubie Golf Club", "Goose Valley Golf Club", "Gowrie Farm Golf Club", "Graaff Reinet Golf Club", "Graceland Country Club", "Grahamstown Golf Club", "Greenside Colliery Golf Club", "Greytown Country Club", "Groblersdal Golf Club", "Hankey Golf Club", "Hanover Golf Club", "Hans Merensky Hotel and Golf Estate", "Harding Golf Club", "Harrismith Country Club", "Hartswater Golf Club", "Heidelberg Country Club", "Heidelberg Golf Club", "Heilbron Country Club", "Helderberg Village Golf Club", "Hermanus Golf Club", "Heron Banks Golf and River Estate", "Hex Valley Golf Club", "Hillside Golf Club", "Holly Country Club", "Hoopstad Golf Club", "Hopetown Golf Club", "Hotazel Golf Club", "Houghton Golf Club", "Howick Golf Club", "Humewood Golf Club", "Hunters Rest Golf Course", "Indwe Golf Club", "Irene Country Club", "Ixopo Golf Club", "Jackal Creek Golf Estate", "Jacobsdal Golf Club", "Jagersfontein Golf Club", "Jan Kempdorp Golf Club", "Jeffreys Bay Golf Club", "Kakamas Golf Club", "Kameeldoring Country Club", "Katberg Eco Golf Course", "Kei Mouth Country Club", "Kempton Park Golf Club", "Kenhardt Golf Club", "Kensington Golf Club", "Kestell Golf Club", "Kilbarchan Golf Club", "Killarney Country Club", "Kimberley Golf Club", "King David Golf Club", "King Williams Town Golf Club", "Kingswood Golf Estate", "Kinross Golf Club", "Kirkwood Golf Club", "Kleinmond Golf Club", "Klerksdorp Golf Club", "Kliprivier Country Club", "Kloof Country Club", "Knysna Golf Club", "Koffiefontein Golf Club", "Kokstad Golf Club", "Komatipoort Golf Club", "Komga Sports Club", "Koro Creek Country Club", "Koster Golf Club", "Kragga Kamma Golf Club", "Kriel Golf Club", "Kroonstad Correctional Services Golf Club", "Kroonstad Country Club", "Kruger Park Lodge Golf Club", "Krugersdorp Golf Club", "Kuilsrivier Golf Club", "Kuruman Country Club", "Kwambonambi Golf Club", "Kyalami Country Club", "Ladismith Golf Club", "Lady Grey Golf Club", "Ladybrand Sports Club", "Ladysmith Country Club", "Laingsburg Golf Club", "Lambertsbaai Golf Club", "Landboukollege Golf Club", "Langebaan Country Estate", "Langkloof Golf Club", "Le Grand George Golf Course", "Leeudoringstad Golf Club", "Leeuwkop Golf Club", "Legend Golf and Safari Resort", "Leopard Creek Country Club", "Leopard Park Golf Club", "Lichtenburg Golf Club", "Lime Acres Golf Club", "Lindley Golf Club", "Linksfield Golf Club", "Lions Rock Golf Lodge", "Lizard Point Golf Estate", "Loeriesfontein Golf Club", "Lost City Golf Club", "Louis Trichardt Golf Club", "Lutzville Golf Club", "Lydenburg Golf Club", "Maccauvlei Golf Club", "Maclear Country Club and Golf Estate", "Magalies Park Country Club", "Magersfontein Memorial Golf Club and Country Estate", "Maidstone Golf Club", "Malelane Golf Club", "Malmesbury Golf Club (Mount Royal Golf and Country Estate)", "Mandini Sports Club", "Marble Hall Golf Club", "Margate Country Club", "Maritzburg Golf Club", "Marquard Golf Club", "Matatiele Golf Club", "Melmoth Golf Club", "Messina Golf Club", "Metropolitan Golf Club", "Meyerton Golf Club", "Middelburg Country Club", "Middelburg Golf Club", "Millvale Golf Estate", "Milnerton Golf Club", "Modderfontein Golf Club", "Mogol Golf Club", "Molteno Country Club", "Monks Cowl Country Club", "Montagu Golf Club", "Montagu at Fancourt", "Monzi Golf Club", "Mooi River Country Club", "Mooinooi Golf Club", "Moorreesburg Golf Club", "Morgenzon Golf Club", "Morningside Farm Golf Club", "Mossel Bay Golf Club", "Mount Edgecombe Country Club", "Mowbray Golf Club", "Mthatha Country Club", "Mtunzini Country Club", "Mzingazi Golf Estate", "Naboomspruit Golf Club", "Nelspruit Golf Club", "Newcastle Golf Club", "Nigel Golf Club", "Noodsberg Country Club", "Noupoort Golf Club", "Observatory Golf Club", "Ohenimuri Country Club", "Oppenheimer Park Golf Club", "Orangedene Country Club", "Orkney Golf Club", "Ottosdal Golf Club", "Oubaai Golf Resort and Spa", "Oudtshoorn Golf Club", "Outeniqua at Fancourt", "Paarl Golf Club", "Papwa Sewgolum Golf Course", "Parkview Golf Club", "Parow Golf Club", "Parys Golf Club", "Paulpietersburg Country Club", "Pearl Valley Golf & Country Estate", "Pebble Rock Golf Club", "Pecanwood Golf and Country Club", "Petrus Steyn Golf Club", "Pezula Championship Golf Course", "Piet Retief Country Club", "Piketberg Golf Club", "Pilgrims Rest Golf Club", "Pinnacle Point Golf Club", "Plettenberg Bay Country Club", "Pollak Park Golf Club", "Polokwane Golf Club", "Pongola Golf Club", "Port Edward Country Club", "Port Elizabeth Golf Club", "Port Shepstone Country Club", "Porterville Golf Club", "Potchefstroom Country Club", "Pretoria Country Club", "Pretoria Golf Club", "Prieska Golf Club", "Prince Albert Golf Club", "Prince"s Grant Golf Estate", "Pullenshope Golf Club", "Queenstown Golf Club", "Randfontein Golf and Country Club", "Randpark Golf Club", "Reading Country Club", "Reitz Golf Club", "Reivilo Golf Club", "Richmond Country Club", "Richmond Golf Club", "Riversdale Golf Club", "Riviera on Vaal Country Club", "Riviersonderend Golf Club", "Robertson Golf Club", "Rondebosch Golf Club", "Roodepoort Country Club", "Rooiberg Golf Club", "Royal Cape Golf Club", "Royal Johannesburg and Kensington Golf Club", "Royal Northland Golf Club", "Royal Oak Country Club", "Royal Port Alfred Golf Club", "Rustenburg Golf Club", "Sabi River Bungalows Golf Club", "Sabie Country Club", "Saint Cathryn"s Golf Estate", "Saint Francis Bay Golf Club", "Sakabula Golf Club", "Saldanha Military Golf Club", "San Lameer Country Club", "Sand River Golf Club", "Sandonia Golf Club", "Sandy Lane Golf Club", "Sani Pass Golf Club", "Sannieshof Golf Club", "Saps Mechanical School Golf Club", "Schoeman Park Golf Club", "Schweizer Reneke Golf Club", "Scottburgh Golf Club", "Seasons Eco Golf Estate", "Sedibeng Country Club", "Selborne Country Club", "Senekal Golf Club", "Serengeti Golf and Wildlife Estate", "Services Golf Club", "Shark River Golf Club", "Shelley Point Golf Club", "Silver Lakes Golf and Country Club", "Simbithi Country Club", "Simola Golf and Country Estate", "Simon"s Town Country Club", "Sishen Golf Club", "Skukuza Golf Club", "Smithfield Golf Club", "Somerset East Golf Club", "Somerset West Golf Club", "Southbroom Golf Club", "Southdowns Country Club", "Soutpansberg Golf Club", "Soweto Country Club", "Springbok Golf Club", "Springs Golf Club", "St Francis Links", "Stafford Hill Golf and Polo Estate", "Standerton Country Club", "State Mines Country Club", "Steenberg Golf Club", "Stella Golf Club", "Stellenbosch Golf Club", "Steynsberg Golf Club", "Stilbaai Golf Club", "Strand Golf Club", "Stutterheim Country Club", "Summerfield Golf Club", "Sutherland Golf Club", "Swartklip Golf Club", "Swellendam Golf Club", "Tempe Golf Club", "Thabazimbi Golf Club", "The Club at Steyn City", "The Country Club Johannesburg", "The Lake Club - Benoni", "The Links at Fancourt", "The River Club", "Theewaterskloof Golf Club", "Theunissen Golf Club", "Tsitsikamma Coastal Golf Estate", "Tweefontein Golf Club", "Tweespruit Golf Club", "Tzaneen Country Club", "Uitenhage Golf Club", "Ulco Golf Club", "Umdoni Park Golf Club", "Umfolozi Golf Club", "Umhlali Country Club", "Umkomaas Golf Club", "Underberg Country Club", "Uniondale Golf Club", "University of Limpopo Golf Club", "Upington Golf Club", "Utrecht Country Club", "Vaal de Grace Golf Estate", "Ventersdorp Golf Club", "Venterspost Golf Club", "Victoria Country Club", "Victoria West Golf Club", "Viljoenskroon Golf Club", "Volksrust Golf Club", "Vrede Golf Club", "Vredenburg Golf Club", "Vredendal Golf Club", "Vryburg Golf Club", "Vryheid Golf Club", "Walker Park Golf Club", "Walmer", "Wanderers Golf Club", "Waterford Golf and River Estate", "Waterkloof Golf Club", "Waterpan Golf Club", "Wedgewood Park Country Club", "Wellington Golf Club", "Wesselsbron Golf Club", "West Bank Golf Club", "Westlake Golf Club", "Westminster Golf Club", "White River Country Club", "Whites Golf Club", "Wild Coast Sun Country Club", "Williston Golf Club", "Willowmore Golf Club", "Windsor Park Golf Course", "Wingate Park Country Club", "Witbank Golf Club", "Wolmaransstad Golf Club", "Woodhill Country Club", "Worcester Golf Club", "Zastron Golf Club", "Zebediela Country Club", "Zebula Golf Estate and Spa", "Zeerust Country Club", "Zimbali Country Club", "Zwartenbosch Golf and Lifestyle Estate", "Zwartkop Country Club", "de Aar Country Club", "de Hoek Golf Club"];
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let regData = {};
-let currentStep = 1;
-let selectedGender = {};
-let payNowAmount = null;
-let popFile = null;
+var reg = {};
+var popFile = null;
 
-// ── STEP NAVIGATION ───────────────────────────────────────────────────────────
-function goToStep(n) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+// ── STEPS ────────────────────────────────────────────────────────────────────
+function goStep(n) {
+  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById('sec-step' + n).classList.add('active');
-  document.getElementById('step-' + n).classList.add('active');
-  for (let i = 1; i < n; i++) document.getElementById('step-' + i).classList.add('done');
-  currentStep = n;
+  for (var i = 1; i <= 4; i++) {
+    var el = document.getElementById('step-' + i);
+    el.classList.remove('active','done');
+    if (i === n) el.classList.add('active');
+    if (i < n) el.classList.add('done');
+  }
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-// ── GENDER ────────────────────────────────────────────────────────────────────
-function selectGender(player, gender) {
-  selectedGender[player] = gender;
-  document.getElementById(player + '-gender').value = gender;
-  var maleEl = document.getElementById(player + '-male');
-  var femaleEl = document.getElementById(player + '-female');
-  var unsel = 'flex:1;padding:12px;border:2px solid #ccc;border-radius:10px;background:#f8f6f0;color:#555;font-size:14px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;user-select:none;';
-  var sel = 'flex:1;padding:12px;border:2px solid #1B3A6B;border-radius:10px;background:#1B3A6B;color:white;font-size:14px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;user-select:none;';
-  maleEl.style.cssText = (gender === 'Male') ? sel : unsel;
-  femaleEl.style.cssText = (gender === 'Female') ? sel : unsel;
-  var ge = document.getElementById('gender-error');
-  if (ge) ge.style.display = 'none';
-}
-
-
-}
-
-// ── AUTOCOMPLETE ──────────────────────────────────────────────────────────────
-var acSelected = {};
-
-function acSearch(inputId, list, listId, hiddenId) {
-  var inputEl = document.getElementById(inputId);
-  var dropdown = document.getElementById(listId);
-  var q = inputEl.value.trim().toLowerCase();
-  if (q.length < 1) { dropdown.style.display = 'none'; return; }
-  var matches = [];
-  for (var i = 0; i < list.length; i++) {
-    if (list[i].toLowerCase().indexOf(q) !== -1) { matches.push(list[i]); }
-    if (matches.length >= 10) break;
-  }
-  if (matches.length === 0) {
-    dropdown.style.display = 'none';
-    document.getElementById(hiddenId).value = inputEl.value.trim();
-    return;
-  }
-  var rows = '';
-  for (var j = 0; j < matches.length; j++) {
-    rows += '<div class="autocomplete-item" data-val="' + matches[j].replace(/"/g,'&quot;') + '" data-input="' + inputId + '" data-list="' + listId + '" data-hidden="' + hiddenId + '" onmousedown="pickAC(this)">' + matches[j] + '</div>';
-  }
-  dropdown.innerHTML = rows;
-  dropdown.style.display = 'block';
-}
-
-function pickAC(el) {
-  var val = el.getAttribute('data-val');
-  var inputId = el.getAttribute('data-input');
-  var listId = el.getAttribute('data-list');
-  var hiddenId = el.getAttribute('data-hidden');
-  document.getElementById(inputId).value = val;
-  document.getElementById(hiddenId).value = val;
-  document.getElementById(listId).style.display = 'none';
-}
-
-document.addEventListener('click', function(e) {
-  document.querySelectorAll('.autocomplete-list').forEach(function(l) {
-    if (!l.parentElement.contains(e.target)) l.style.display = 'none';
-  });
-});
-
-// ── ELIGIBILITY CHECKBOXES ────────────────────────────────────────────────────
-function toggleCheck(el) {
-  el.classList.toggle('checked');
-  el.querySelector('input[type=checkbox]').checked = el.classList.contains('checked');
-}
-
-// ── VALIDATION ────────────────────────────────────────────────────────────────
-function showError(sectionId, msg) {
-  const el = document.getElementById(sectionId);
+// ── ERRORS ───────────────────────────────────────────────────────────────────
+function showErr(id, msg) {
+  var el = document.getElementById(id);
   el.textContent = msg;
-  el.className = 'alert alert-error';
+  el.classList.add('show');
   el.scrollIntoView({behavior:'smooth', block:'center'});
 }
-
-// ── HNA VALIDATOR ────────────────────────────────────────────────────────────
-function validateHNA(input) {
-  const val = input.value.replace(/[^0-9]/g, '');
-  input.value = val;
-  const errEl = document.getElementById('hna-error');
-  if (val.length > 0 && !val.startsWith('2700')) {
-    errEl.style.display = 'block';
-    input.style.borderColor = 'var(--red)';
-  } else {
-    errEl.style.display = 'none';
-    input.style.borderColor = '';
-  }
+function clearErr(id) {
+  var el = document.getElementById(id);
+  el.classList.remove('show');
 }
 
-// ── EARLY ELIGIBILITY CHECK ───────────────────────────────────────────────────
-function checkEligibilityEarly() {
-  var fn = document.getElementById('p1-firstname').value.trim();
-  var sn = document.getElementById('p1-surname').value.trim();
+// ── ELIGIBILITY TICKS ────────────────────────────────────────────────────────
+function tick(el) {
+  el.classList.toggle('ticked');
+}
+
+// ── STEP 1 ───────────────────────────────────────────────────────────────────
+function doStep1() {
+  clearErr('err1');
+  var first = document.getElementById('p1-first').value.trim();
+  var last  = document.getElementById('p1-last').value.trim();
   var email = document.getElementById('p1-email').value.trim().toLowerCase();
-  var mobile = document.getElementById('p1-mobile').value.trim();
-  var gender = document.getElementById('p1-gender').value;
-  var school = document.getElementById('p1-school-hidden').value.trim();
-  var city = document.getElementById('p1-city').value.trim();
-  var postal = document.getElementById('p1-postal').value.trim();
+  var mob   = document.getElementById('p1-mobile').value.trim();
+  var gen   = document.getElementById('p1-gender').value;
+  var sch   = document.getElementById('p1-school').value.trim();
+  var city  = document.getElementById('p1-city').value.trim();
+  var post  = document.getElementById('p1-postal').value.trim();
 
-  if (!fn || !sn) return showError('step1-error', 'Please enter your first name and surname.');
-  if (!email || email.indexOf('@') === -1) return showError('step1-error', 'Please enter a valid email address.');
-  if (!mobile) return showError('step1-error', 'Please enter your mobile number.');
-  if (!gender) return showError('step1-error', 'Please select your gender.');
-  if (!school) return showError('step1-error', 'Please select your school from the dropdown.');
-  if (!city) return showError('step1-error', 'Please enter your city or town.');
-  if (!postal || postal.length < 4) return showError('step1-error', 'Please enter a valid 4-digit postal code.');
+  if (!first || !last)           return showErr('err1','Please enter your first name and surname.');
+  if (!email || !email.includes('@')) return showErr('err1','Please enter a valid email address.');
+  if (!mob || mob.length < 9)    return showErr('err1','Please enter your 9-digit mobile number (without leading 0).');
+  if (!gen)                      return showErr('err1','Please select your gender.');
+  if (!sch)                      return showErr('err1','Please enter your school name.');
+  if (!city)                     return showErr('err1','Please enter your city or town.');
+  if (!post || post.length < 4)  return showErr('err1','Please enter your 4-digit postal code.');
 
-  document.getElementById('step1-error').className = 'alert';
+  reg.p1 = { first:first, last:last, full:first+' '+last, email:email, mobile:'+27'+mob, gender:gen, school:sch, city:city, postal:post };
 
-  // Fire-and-forget background save — never blocks the user
-  try {
-    sb.from('players').upsert({
-      full_name: fn + ' ' + sn, email: email, mobile: '+27' + mobile,
-      gender: gender, school_name: school, city: city, postal_code: postal,
-      eligibility_status: 'pending', payment_status: 'unpaid', registration_source: 'web_partial',
-    }, { onConflict: 'email' });
-  } catch(e) {}
+  // Background save — never blocks
+  sb.from('players').upsert({
+    full_name:reg.p1.full, email:reg.p1.email, mobile:reg.p1.mobile,
+    gender:gen, school_name:sch, city:city, postal_code:post,
+    eligibility_status:'pending', payment_status:'unpaid', registration_source:'web_partial'
+  },{onConflict:'email'}).then(function(){}).catch(function(){});
 
-  var section = document.getElementById('golf-details-section');
-  section.style.display = 'block';
-  setTimeout(function() { section.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
+  document.getElementById('p2-school-display').value = sch;
+  goStep(2);
 }
 
-// ── STEP 1 SUBMIT ─────────────────────────────────────────────────────────────
-async function submitStep1() {
-  const fn = document.getElementById('p1-firstname').value.trim();
-  const sn = document.getElementById('p1-surname').value.trim();
-  const email = document.getElementById('p1-email').value.trim().toLowerCase();
-  const mobile = document.getElementById('p1-mobile').value.trim();
-  const gender = document.getElementById('p1-gender').value;
-  const school = document.getElementById('p1-school-hidden').value.trim();
-  const club = document.getElementById('p1-club-hidden').value || document.getElementById('p1-club').value.trim();
-  const hna = document.getElementById('p1-hna').value.trim();
-  const handicap = document.getElementById('p1-handicap').value;
-  const city = document.getElementById('p1-city').value.trim();
-  const postal = document.getElementById('p1-postal').value.trim();
+// ── STEP 2 ───────────────────────────────────────────────────────────────────
+function doStep2() {
+  clearErr('err2');
+  var ticks = document.querySelectorAll('#sec-step2 .check-item.ticked').length;
+  if (ticks < 6) return showErr('err2','Please confirm all ' + (6 - ticks) + ' remaining eligibility items.');
 
-  if (!club) return showError('step1-error', 'Please enter your golf club name.');
-  if (!hna || !hna.startsWith('2700')) return showError('step1-error', 'Please enter a valid HNA number — it must start with 2700.');
-  if (!handicap) return showError('step1-error', 'Please enter your handicap index.');
+  var club = document.getElementById('p1-club').value.trim();
+  var hna  = document.getElementById('p1-hna').value.trim();
+  var hcap = document.getElementById('p1-handicap').value;
 
-  document.getElementById('step1-error').className = 'alert';
+  if (!club)                        return showErr('err2','Please enter your golf club.');
+  if (!hna || !hna.startsWith('2700')) return showErr('err2','Please enter your HNA number — it must start with 2700.');
+  if (!hcap)                        return showErr('err2','Please enter your handicap index.');
 
-  regData.player1 = { full_name: fn + ' ' + sn, first_name: fn, surname: sn, email, mobile: '+27' + mobile, gender, school, club, hna_number: hna, handicap_index: parseFloat(handicap), city, postal_code: postal };
-  goToStep(2);
+  reg.p1.club = club; reg.p1.hna = hna; reg.p1.handicap = parseFloat(hcap);
+  goStep(3);
 }
 
-// ── STEP 2 SUBMIT ─────────────────────────────────────────────────────────────
-function submitStep2() {
-  for (let i = 1; i <= 6; i++) {
-    if (!document.getElementById('elig-' + i).checked) {
-      return showError('step2-error', 'Please confirm all eligibility requirements to proceed.');
-    }
-  }
-  document.getElementById('step2-error').className = 'alert';
-  document.getElementById('p2-school-display').value = regData.player1.school;
-  goToStep(3);
+// ── STEP 3 ───────────────────────────────────────────────────────────────────
+function doStep3() {
+  clearErr('err3');
+  var first = document.getElementById('p2-first').value.trim();
+  var last  = document.getElementById('p2-last').value.trim();
+  var email = document.getElementById('p2-email').value.trim().toLowerCase();
+  var mob   = document.getElementById('p2-mobile').value.trim();
+
+  if (!first || !last)           return showErr('err3','Please enter your partner's name.');
+  if (!email || !email.includes('@')) return showErr('err3','Please enter your partner's email address.');
+  if (!mob || mob.length < 9)    return showErr('err3','Please enter your partner's 9-digit mobile number.');
+
+  reg.p2 = { first:first, last:last, full:first+' '+last, email:email, mobile:'+27'+mob };
+  goStep(4);
 }
 
-// ── STEP 3 SUBMIT ─────────────────────────────────────────────────────────────
-async function submitStep3() {
-  const fn = document.getElementById('p2-firstname').value.trim();
-  const sn = document.getElementById('p2-surname').value.trim();
-  const mobile = document.getElementById('p2-mobile').value.trim();
-  const email = document.getElementById('p2-email').value.trim().toLowerCase();
-
-  if (!fn || !sn) return showError('step3-error', 'Please enter your partner\'s name.');
-  if (!mobile) return showError('step3-error', 'Please enter your partner\'s mobile number.');
-  if (!email || !email.includes('@')) return showError('step3-error', 'Please enter your partner\'s email address.');
-
-  document.getElementById('step3-error').className = 'alert';
-  regData.player2 = { full_name: fn + ' ' + sn, first_name: fn, surname: sn, mobile, email };
-  goToStep(4);
-}
-
-// ── PAYMENT CHOICE ────────────────────────────────────────────────────────────
-function selectPaymentChoice(choice) {
+// ── PAYMENT ──────────────────────────────────────────────────────────────────
+function payChoice(type) {
   document.getElementById('payment-choice').style.display = 'none';
-  if (choice === 'now') {
-    document.getElementById('pay-now-flow').style.display = 'block';
+  var ref = 'ASC-' + reg.p1.postal + '-' + Date.now().toString().slice(-5);
+  reg.payRef = ref;
+  if (type === 'later') {
+    reg.payType = 'later';
+    document.getElementById('pay-later-flow').style.display = 'block';
   } else {
-    document.getElementById('pay-later-confirm').style.display = 'block';
+    reg.payType = type;
+    var amt = type === 'team' ? 'R3,000.00' : 'R1,500.00';
+    document.getElementById('pay-ref').textContent = ref;
+    document.getElementById('pay-amount').textContent = amt;
+    document.getElementById('pay-now-flow').style.display = 'block';
   }
 }
 
-function selectPayNowAmount(type) {
-  payNowAmount = type;
-  document.getElementById('pay-self-opt').classList.toggle('selected', type === 'self');
-  document.getElementById('pay-team-opt').classList.toggle('selected', type === 'team');
-  const amount = type === 'team' ? 'R2,800.00' : 'R1,500.00';
-  const ref = 'ASC-' + regData.player1.postal_code + '-' + Date.now().toString().slice(-6);
-  regData.paymentRef = ref;
-  document.getElementById('payment-reference').textContent = ref;
-  document.getElementById('payment-amount-display').textContent = amount;
-  document.getElementById('banking-section').style.display = 'block';
-}
-
-function handlePOPUpload(input) {
+function handlePOP(input) {
   popFile = input.files[0];
   if (popFile) {
-    document.getElementById('pop-filename').textContent = '✅ ' + popFile.name;
-    document.getElementById('btn-submit-payment').style.display = 'block';
+    document.getElementById('pop-name').textContent = '✅ ' + popFile.name;
+    document.getElementById('btn-submit').style.display = 'block';
   }
 }
 
-function copyText(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = event.target;
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy', 2000);
-  });
+function copyText(t) { navigator.clipboard.writeText(t).catch(function(){}); }
+function copyRef() { navigator.clipboard.writeText(reg.payRef||'').catch(function(){}); }
+
+// ── SAVE & SUBMIT ─────────────────────────────────────────────────────────────
+async function saveReg(payStatus, popUrl) {
+  var teamNum = reg.p1.school.replace(/[^a-zA-Z]/g,'').substring(0,3).toUpperCase() + Date.now().toString().slice(-5);
+  reg.teamNum = teamNum;
+
+  await sb.from('players').upsert({
+    full_name:reg.p1.full, email:reg.p1.email, mobile:reg.p1.mobile,
+    gender:reg.p1.gender, school_name:reg.p1.school, golf_club:reg.p1.club,
+    hna_number:reg.p1.hna, handicap_index:reg.p1.handicap,
+    city:reg.p1.city, postal_code:reg.p1.postal, team_number:teamNum,
+    payment_status:payStatus, payment_proof_url:popUrl,
+    payment_reference:reg.payRef||null, eligibility_status:'pending',
+    partner_status:'invited_partner', registration_source:'web'
+  },{onConflict:'email'});
+
+  await sb.from('players').upsert({
+    full_name:reg.p2.full, email:reg.p2.email, mobile:reg.p2.mobile,
+    school_name:reg.p1.school, team_number:teamNum,
+    payment_status:reg.payType==='team'?payStatus:'unpaid',
+    eligibility_status:'pending', partner_status:'invited',
+    invited_by:reg.p1.email, registration_source:'web_invite'
+  },{onConflict:'email'});
 }
 
-// ── SUBMIT PAYMENT (Pay Now) ───────────────────────────────────────────────────
-async function submitPayment() {
-  if (!popFile) return showError('step4-error', 'Please upload your proof of payment.');
-  const btn = document.getElementById('btn-submit-payment');
+async function submitPay() {
+  if (!popFile) return showErr('err4','Please upload your proof of payment.');
+  var btn = document.getElementById('btn-submit');
   btn.innerHTML = '<span class="spinner"></span>Submitting...';
   btn.disabled = true;
-
   try {
-    // Upload POP to Supabase storage
-    const ext = popFile.name.split('.').pop();
-    const fileName = `pop/${regData.player1.email}-${Date.now()}.${ext}`;
-    const { data: uploadData } = await sb.storage.from('proofs').upload(fileName, popFile, { upsert: true });
-    const popUrl = uploadData ? `${SUPABASE_URL}/storage/v1/object/public/proofs/${fileName}` : null;
-
-    await saveRegistration('pending_verification', popUrl);
-
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById('sec-success').classList.add('active');
-    document.getElementById('success-title').textContent = '🏆 You\'re Officially Entered!';
-    document.getElementById('success-message').textContent = 'Thank you — we have received your registration and tournament entry. You are officially entered in the Alumni Schools Golf Challenge. We will verify your proof of payment and be in touch shortly.';
-    window.scrollTo({top:0, behavior:'smooth'});
+    var ext = popFile.name.split('.').pop();
+    var fileName = 'pop/' + reg.p1.email + '-' + Date.now() + '.' + ext;
+    var up = await sb.storage.from('proofs').upload(fileName, popFile, {upsert:true});
+    var popUrl = up.data ? SUPABASE_URL+'/storage/v1/object/public/proofs/'+fileName : null;
+    await saveReg('pending_verification', popUrl);
+    showSuccess('🏆 You're Officially Entered!','Your registration and proof of payment have been received. We will verify and confirm your entry shortly.');
   } catch(e) {
-    showError('step4-error', 'Something went wrong. Please try again or email admin@alumnigolf.net');
+    showErr('err4','Something went wrong. Please try again or email admin@alumnigolf.net');
     btn.innerHTML = '✅ Submit Registration & Proof of Payment';
     btn.disabled = false;
   }
 }
 
-// ── SUBMIT PAY LATER ──────────────────────────────────────────────────────────
-async function submitPayLater() {
-  const btn = event.target;
-  btn.innerHTML = '<span class="spinner"></span>Submitting...';
-  btn.disabled = true;
+async function submitLater() {
   try {
-    await saveRegistration('unpaid', null);
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById('sec-success').classList.add('active');
-    document.getElementById('success-title').textContent = '✅ Registration Received!';
-    document.getElementById('success-message').textContent = 'Thank you — we have received your registration and tournament entry. You are accepted in the Alumni Schools Golf Challenge. Your place is on hold until payment has been received, after which you will be officially entered. Check your email for payment details.';
-    window.scrollTo({top:0, behavior:'smooth'});
+    await saveReg('unpaid', null);
+    showSuccess('✅ Registration Received!','Your registration has been received. Your place is held for 7 days — payment instructions have been emailed to you.');
   } catch(e) {
-    showError('step4-error', 'Something went wrong. Please try again or email admin@alumnigolf.net');
-    btn.innerHTML = '✅ Complete Registration — Pay Later';
-    btn.disabled = false;
+    showErr('err4','Something went wrong. Please try again or email admin@alumnigolf.net');
   }
 }
 
-// ── SAVE TO SUPABASE ──────────────────────────────────────────────────────────
-async function saveRegistration(paymentStatus, popUrl) {
-  const p1 = regData.player1;
-  const p2 = regData.player2;
+function showSuccess(title, msg) {
+  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('sec-success').classList.add('active');
+  document.getElementById('success-title').textContent = title;
+  document.getElementById('success-msg').textContent = msg;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
-  // Generate team number based on school + timestamp
-  const teamNum = p1.school.replace(/[^a-zA-Z]/g,'').substring(0,3).toUpperCase() + Date.now().toString().slice(-5);
-
-  // Add school to master list if new
-  await sb.from('schools_master').upsert({ name: p1.school }, { onConflict: 'name', ignoreDuplicates: true });
-
-  // Insert Player 1
-  const { error: e1 } = await sb.from('players').upsert({
-    full_name: p1.full_name,
-    email: p1.email,
-    mobile: '+27' + p1.mobile,
-    gender: p1.gender,
-    school: p1.school,
-    golf_club: p1.club,
-    hna_number: p1.hna_number,
-    handicap_index: p1.handicap_index,
-    city: p1.city,
-    postal_code: p1.postal_code,
-    team_number: teamNum,
-    payment_status: paymentStatus,
-    payment_proof_url: popUrl,
-    payment_reference: regData.paymentRef || null,
-    payment_amount: payNowAmount === 'team' ? 3000 : payNowAmount === 'self' ? 1500 : null,
-    eligibility_status: 'pending',
-    partner_status: 'invited_partner',
-    registration_source: 'web',
-  }, { onConflict: 'email' });
-  if (e1) throw e1;
-
-  // Insert Player 2 as pending invite
-  const { error: e2 } = await sb.from('players').upsert({
-    full_name: p2.full_name,
-    email: p2.email,
-    mobile: p2.mobile,
-    school: p1.school,
-    team_number: teamNum,
-    payment_status: payNowAmount === 'team' ? paymentStatus : 'unpaid',
-    eligibility_status: 'pending',
-    partner_status: 'invited',
-    invited_by: p1.email,
-    registration_source: 'web_invite',
-  }, { onConflict: 'email' });
-  if (e2) throw e2;
-
-  // Send confirmation email via Supabase Edge Function
-  try {
-    await fetch(`${SUPABASE_URL}/functions/v1/send-registration-email`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
-      body: JSON.
+// Auto-login check
+sb.auth.getSession().then(function(r){
+  if (r.data && r.data.session) {
+    var email = r.data.session.user.email;
+    sb.from('players').select('full_name,school_name,payment_status').eq('email',email).maybeSingle().then(function(res){
+      if (res.data && res.data.payment_status === 'paid') {
+        window.location.href = 'portal.html';
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
