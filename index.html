@@ -27,6 +27,9 @@ nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;j
 .hero h1 span{color:var(--gold);}
 .hero-tagline{color:rgba(255,255,255,0.7);font-size:18px;font-style:italic;font-family:'Cormorant Garamond',serif;margin-bottom:32px;}
 .gold-line{width:60px;height:3px;background:var(--gold);margin:20px auto;border-radius:2px;}
+.hero-tagline-wrap{margin-bottom:32px;}
+.hero-tagline{font-family:'Cormorant Garamond',serif;color:white;font-size:clamp(22px,3.5vw,32px);font-style:italic;font-weight:600;letter-spacing:1px;margin-bottom:10px;}
+.tagline-rule{width:200px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto;}
 .hero-desc{color:rgba(255,255,255,0.65);font-size:15px;max-width:540px;margin:0 auto 40px;line-height:1.7;}
 .hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
 .btn-gold{background:var(--gold);color:var(--navy-dark);padding:16px 40px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;transition:all 0.2s;}
@@ -102,17 +105,17 @@ footer a{color:var(--gold);text-decoration:none;}
     <div class="hero-badge">Inaugural Season 2026/27</div>
     <h1>Alumni Schools<br><span>Golf Challenge</span></h1>
     <div class="gold-line"></div>
-    <p class="hero-tagline">Honouring tradition. Celebrating excellence.</p>
+    <div class="hero-tagline-wrap"><p class="hero-tagline">Honouring tradition. Celebrating excellence.</p><div class="tagline-rule"></div></div>
     <p class="hero-desc">South Africa's premier school alumni golf tournament. Betterball Matchplay. Nationwide divisions. One unforgettable journey to the SA Final.</p>
     <div class="hero-btns">
       <a href="register.html" class="btn-gold">⛳ Register Your Team</a>
       <a href="how-it-works.html" class="btn-ghost">How It Works</a>
     </div>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="num">5</div><div class="lbl">Rounds</div></div>
+      <div class="hero-stat"><div class="num">6</div><div class="lbl">Rounds</div></div>
       <div class="hero-stat"><div class="num">8</div><div class="lbl">Teams Per Division</div></div>
       <div class="hero-stat"><div class="num">31 Jul</div><div class="lbl">Entry Closes</div></div>
-      <div class="hero-stat"><div class="num">R3,000</div><div class="lbl">Per Team</div></div>
+      <div class="hero-stat"><div class="num">2026/27</div><div class="lbl">Inaugural Season</div></div>
     </div>
   </div>
 </section>
@@ -140,12 +143,13 @@ footer a{color:var(--gold);text-decoration:none;}
     <h2 class="section-title" style="color:white">Double-Elimination Bracket</h2>
     <p class="section-sub" style="color:rgba(255,255,255,0.6)">Every division runs a double-elimination bracket — you get a second chance before you're out.</p>
     <div class="rounds-grid">
-      <div class="round-card"><div class="r-num">1</div><h3>Round 1</h3><p>4 matches among 8 teams</p><div class="dates">14 Aug – 20 Sep 2026</div></div>
-      <div class="round-card"><div class="r-num">2</div><h3>Round 2</h3><p>Winners vs Winners, 2nd Chance vs 2nd Chance</p><div class="dates">28 Sep – 18 Oct 2026</div></div>
-      <div class="round-card"><div class="r-num">3</div><h3>Round 3</h3><p>Cross-bracket matches</p><div class="dates">26 Oct – 22 Nov 2026</div></div>
-      <div class="round-card"><div class="r-num">4</div><h3>Semi-Finals</h3><p>Top 4 compete for 2 spots</p><div class="dates">30 Nov 2026 – 15 Jan 2027</div></div>
-      <div class="round-card"><div class="r-num">5</div><h3>Division Final</h3><p>One match — one champion</p><div class="dates">1 Feb – 28 Feb 2027</div></div>
-      <div class="round-card"><div class="r-num">★</div><h3>SA Final</h3><p>National title event</p><div class="dates">Mid-May 2027</div></div>
+      <div class="round-card"><div class="r-num">1</div><h3>Round 1</h3><p>4 matches among 8 teams. Winners advance, losers enter 2nd Chance.</p><div class="dates">14 Aug – 20 Sep 2026</div></div>
+      <div class="round-card"><div class="r-num">2</div><h3>Round 2</h3><p>Winners vs Winners. 2nd Chance vs 2nd Chance. Two chances remain.</p><div class="dates">28 Sep – 18 Oct 2026</div></div>
+      <div class="round-card"><div class="r-num">3</div><h3>Round 3</h3><p>Cross-bracket matches. 2 undefeated teams get a bye to Semi-Finals.</p><div class="dates">26 Oct – 22 Nov 2026</div></div>
+      <div class="round-card"><div class="r-num">4</div><h3>Semi-Finals</h3><p>Top 4 teams compete — only 2 advance to the Division Final.</p><div class="dates">30 Nov 2026 – 15 Jan 2027</div></div>
+      <div class="round-card"><div class="r-num">5</div><h3>Division Final</h3><p>One match — one Division Champion crowned.</p><div class="dates">1 Feb – 28 Feb 2027</div></div>
+      <div class="round-card" style="border-color:var(--gold);background:rgba(201,168,76,0.12)"><div class="r-num" style="background:var(--gold-light)">6</div><h3>SA Final Qualifier</h3><p>Division Champions meet — winners qualify for the SA Final.</p><div class="dates">8 Mar – 11 Apr 2027</div></div>
+      <div class="round-card" style="border-color:white;background:rgba(255,255,255,0.12)"><div class="r-num" style="background:white;color:var(--navy-dark)">★</div><h3>SA Final</h3><p>The ultimate showdown — national champions crowned at a spectacular event.</p><div class="dates">Mid-May 2027</div></div>
     </div>
   </div>
 </section>
@@ -163,7 +167,8 @@ footer a{color:var(--gold);text-decoration:none;}
         <tr><td><span class="r-badge">R3</span></td><td>Round 3</td><td>26 October 2026</td><td>22 November 2026</td></tr>
         <tr><td><span class="r-badge">R4</span></td><td>Semi-Finals</td><td>30 November 2026</td><td>15 January 2027</td></tr>
         <tr><td><span class="r-badge">R5</span></td><td>Division Final</td><td>1 February 2027</td><td>28 February 2027</td></tr>
-        <tr><td><span class="r-badge">★</span></td><td>SA Final</td><td>16 May 2027</td><td>20 May 2027</td></tr>
+        <tr><td><span class="r-badge">R6</span></td><td>SA Final Qualifier</td><td>8 March 2027</td><td>11 April 2027</td></tr>
+        <tr><td><span class="r-badge">★</span></td><td>SA Final</td><td>Mid-May 2027</td><td>TBA</td></tr>
       </tbody>
     </table>
   </div>
@@ -172,7 +177,7 @@ footer a{color:var(--gold);text-decoration:none;}
 <section class="cta-section">
   <h2>Ready to Represent Your School?</h2>
   <p>Registration opens 2 April 2026. Entries are limited — don't miss your spot.</p>
-  <a href="register.html" class="btn-navy">⛳ Register Now — R3,000 Per Team</a>
+  <a href="register.html" class="btn-navy">⛳ Register Your Team Now</a>
 </section>
 
 <footer>
