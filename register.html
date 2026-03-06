@@ -173,14 +173,7 @@ footer a { color:var(--gold); text-decoration:none; }
       <div class="hint">Enter 9 digits without leading 0 — e.g. 821234567</div>
     </div>
 
-    <div class="fg">
-      <label>Gender <span class="req">*</span></label>
-      <select id="p1-gender">
-        <option value="">— Select —</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-      </select>
-    </div>
+
 
     <div class="fg">
       <label>School <span class="req">*</span></label>
@@ -639,6 +632,14 @@ footer a { color:var(--gold); text-decoration:none; }
     <div style="background:#f8f6f0;border-radius:12px;padding:22px;margin-bottom:18px;">
       <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--navy);font-weight:700;margin-bottom:14px;">Golf Membership Details</div>
       <div class="fg">
+        <label>Gender <span class="req">*</span></label>
+        <select id="p1-gender">
+          <option value="">— Select —</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <div class="fg">
         <label>Golf Club <span class="req">*</span></label>
         <input type="text" id="p1-club" placeholder="Start typing your club name..." list="club-list" autocomplete="off" />
         <datalist id="club-list">
@@ -882,12 +883,13 @@ function tick(el) {
 
 // ── STEP 1 ───────────────────────────────────────────────────────────────────
 function doStep1() {
+  alert("Button clicked! Checking fields...");
   clearErr('err1');
   var first = document.getElementById('p1-first').value.trim();
   var last  = document.getElementById('p1-last').value.trim();
   var email = document.getElementById('p1-email').value.trim().toLowerCase();
   var mob   = document.getElementById('p1-mobile').value.trim();
-  var gen   = document.getElementById('p1-gender').value;
+  var gen   = '';
   var sch   = document.getElementById('p1-school').value.trim();
   var city  = document.getElementById('p1-city').value.trim();
   var post  = document.getElementById('p1-postal').value.trim();
@@ -897,7 +899,6 @@ function doStep1() {
   if (!email) return showErr('err1', 'Missing: Email address');
   if (email.indexOf('@') === -1) return showErr('err1', 'Invalid: Email address must contain @');
   if (!mob)   return showErr('err1', 'Missing: Mobile number');
-  if (!gen)   return showErr('err1', 'Missing: Please select your gender');
   if (!sch)   return showErr('err1', 'Missing: School name');
   if (!city)  return showErr('err1', 'Missing: City or town');
   if (!post)  return showErr('err1', 'Missing: Postal code');
@@ -928,11 +929,13 @@ function doStep2() {
   var hna  = document.getElementById('p1-hna').value.trim();
   var hcap = document.getElementById('p1-handicap').value;
 
+  var gen = document.getElementById('p1-gender').value;
+  if (!gen)  return showErr('err2','Please select your gender.');
   if (!club)                        return showErr('err2','Please enter your golf club.');
   if (!hna || !hna.startsWith('2700')) return showErr('err2','Please enter your HNA number — it must start with 2700.');
   if (!hcap)                        return showErr('err2','Please enter your handicap index.');
 
-  reg.p1.club = club; reg.p1.hna = hna; reg.p1.handicap = parseFloat(hcap);
+  reg.p1.club = club; reg.p1.hna = hna; reg.p1.handicap = parseFloat(hcap); reg.p1.gender = gen;
   goStep(3);
 }
 
