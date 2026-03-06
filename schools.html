@@ -31,11 +31,11 @@ nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;j
 .alpha-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:28px;}
 .alpha-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--white);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
 .alpha-btn:hover,.alpha-btn.active{background:var(--gold);color:var(--navy-dark);border-color:var(--gold);}
-.schools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
-.school-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;transition:all 0.2s;}
-.school-card:hover{border-color:var(--gold);transform:translateY(-2px);}
-.school-card h3{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:4px;}
-.school-card p{font-size:12px;color:var(--text2);}
+.schools-grid{display:flex;flex-direction:column;gap:0;}
+.school-card{background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;transition:background 0.15s;}
+.school-card:hover{background:rgba(201,168,76,0.06);}
+.school-card h3{font-size:14px;font-weight:500;color:var(--navy);}
+.school-card p{font-size:11px;color:var(--text2);}
 .no-results{text-align:center;padding:60px 20px;color:var(--text2);}
 footer{background:var(--navy-dark);color:rgba(255,255,255,0.5);text-align:center;padding:24px;font-size:12px;border-top:2px solid var(--gold);}
 footer a{color:var(--gold);text-decoration:none;}
@@ -68,7 +68,7 @@ footer a{color:var(--gold);text-decoration:none;}
     <input type="text" class="search-input" id="school-search" placeholder="Search schools..." oninput="filterSchools()" />
   </div>
   <div class="alpha-nav" id="alpha-nav"></div>
-  <div class="schools-grid" id="schools-grid"></div>
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;"><div class="schools-grid" id="schools-grid"></div></div>
 </div>
 <footer><p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#ea8b8e878384aa8b869f8784838d85868cc4848f9e"><span class="__cf_email__" data-cfemail="3253565f5b5c72535e475f5c5b555d5e541c5c5746">[email&#160;protected]</span></a></p></footer>
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
