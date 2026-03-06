@@ -66,6 +66,54 @@ footer a{color:var(--gold);text-decoration:none;}
 
 <div class="main">
   <!-- LOGIN -->
+
+  <!-- FORGOT PASSWORD -->
+  <div id="forgot-section" style="display:none;max-width:420px;margin:0 auto;">
+    <div class="card" style="margin-top:20px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:6px;">&#128274; Reset Your Password</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">Enter your registered email address and we will send you a password reset link.</p>
+      <div id="forgot-msg" style="display:none;padding:12px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:12px;"></div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="forgot-email" placeholder="your@email.com" />
+      </div>
+      <button type="button" class="btn-primary" onclick="sendReset()">Send Reset Link</button>
+      <button type="button" class="btn-outline" onclick="hideForgot()" style="margin-top:8px;">&#8592; Back to Login</button>
+      <div style="margin-top:16px;padding:12px;background:rgba(27,58,107,0.05);border-radius:8px;font-size:12px;color:var(--text2);text-align:center;line-height:1.6;">
+        <strong>Don't have access to your email anymore?</strong><br>
+        Email us at <a href="/cdn-cgi/l/email-protection#08696c6561664869647d6566616f67646e26666d7c377b7d6a626d6b7c3558677a7c69642d3a38496b6b6d7b7b2d3a38406d6478" style="color:var(--gold);font-weight:700;"><span class="__cf_email__" data-cfemail="48292c2521260829243d2526212f27242e66262d3c">[email&#160;protected]</span></a>
+        or <a href="https://wa.me/27000000000?text=Hi%2C%20I%20need%20help%20with%20my%20Alumni%20Golf%20portal%20login." target="_blank" style="color:#25D366;font-weight:700;">WhatsApp us</a>
+        and we will verify your identity and update your account manually.
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL HELP SECTION -->
+  <div id="email-help-section" style="display:none;max-width:420px;margin:0 auto;">
+    <div class="card" style="margin-top:20px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:4px;">&#128274; Account Recovery</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">
+        Please fill in your details below. We will verify your identity and manually restore your access within 24 hours.
+      </p>
+      <div id="help-msg" style="display:none;padding:12px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:12px;"></div>
+      <div class="form-group"><label>Full Name</label><input type="text" id="help-name" placeholder="First name and surname" /></div>
+      <div class="form-group"><label>Surname</label><input type="text" id="help-surname" placeholder="Surname" /></div>
+      <div class="form-group"><label>Mobile Number</label>
+        <div style="display:flex;">
+          <div style="padding:12px 13px;background:#e8e4dc;border:1.5px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-weight:700;color:var(--navy);font-size:14px;">+27</div>
+          <input type="tel" id="help-mobile" placeholder="821234567" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'')" style="border-radius:0 10px 10px 0;" />
+        </div>
+      </div>
+      <div class="form-group"><label>School Name</label><input type="text" id="help-school" placeholder="Your school" /></div>
+      <div class="form-group"><label>New Email Address <span style="color:var(--gold)">*</span></label>
+        <input type="email" id="help-newemail" placeholder="The email you want to use going forward" />
+        <div style="font-size:11px;color:var(--text2);margin-top:4px;">We will update your account to this new email once verified.</div>
+      </div>
+      <button type="button" class="btn-primary" onclick="submitEmailHelp()">Send Recovery Request</button>
+      <button type="button" class="btn-outline" onclick="hideEmailHelp()" style="margin-top:8px;">&#8592; Back to Login</button>
+    </div>
+  </div>
+
   <div class="section active" id="sec-login">
     <div class="card login-box">
       <div style="text-align:center;margin-bottom:24px;">
@@ -76,7 +124,17 @@ footer a{color:var(--gold);text-decoration:none;}
       <div id="login-error" class="alert alert-error" style="display:none;"></div>
       <div class="form-group"><label>Email Address</label><input type="email" id="login-email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()" /></div>
       <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" /></div>
-      <button class="btn-primary" onclick="doLogin()">Sign In to Portal</button>
+      <button type="button" class="btn-primary" onclick="doLogin()">Sign In to Portal</button>
+      <div style="text-align:center;margin-top:14px;">
+        <a href="#" onclick="showForgot();return false;" style="font-size:13px;color:var(--navy);font-weight:600;text-decoration:underline;">Forgot your password?</a>
+      </div>
+      <div style="margin-top:10px;padding:14px;background:rgba(27,58,107,0.05);border-radius:8px;font-size:12px;color:var(--text2);text-align:center;line-height:1.6;">
+        &#128274; <strong>Lost access to your email?</strong><br>
+        Contact admin to update your account:<br>
+        <a href="/cdn-cgi/l/email-protection#f796939a9e99b7969b829a999e90989b91d9999283c88482959d929483caa7988583969bd2c5c7b69494928484d2c5c7bf929b87d19598938ecaba8ed2c5c799969a92d2c4b6d2c7b6ba8ed2c5c784949f98989bd2c4b6d2c7b6ba8ed2c5c79a98959e9b92d2c4b6d2c7b6a79b92968492d2c5c79f929b87d2c5c79a92d2c5c7969494928484d2c5c79a8ed2c5c796949498829983d9" style="color:var(--gold);font-weight:700;"><span class="__cf_email__" data-cfemail="fa9b9e979394ba9b968f9794939d95969cd4949f8e">[email&#160;protected]</span></a>
+        &nbsp;|&nbsp;
+        <a href="https://wa.me/27000000000?text=Hi%2C%20I%20need%20help%20accessing%20my%20Alumni%20Golf%20portal." target="_blank" style="color:#25D366;font-weight:700;">WhatsApp Us</a>
+      </div>
       <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--text2);">
         Not registered? <a href="register.html" style="color:var(--navy);font-weight:600;">Register here</a>
       </div>
@@ -129,7 +187,7 @@ footer a{color:var(--gold);text-decoration:none;}
 </div>
 
 <footer>
-  <p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#650401080c0b25040910080b0c020a09034b0b0011"><span class="__cf_email__" data-cfemail="9dfcf9f0f4f3ddfcf1e8f0f3f4faf2f1fbb3f3f8e9">[email&#160;protected]</span></a></p>
+  <p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#89e8ede4e0e7c9e8e5fce4e7e0eee6e5efa7e7ecfd"><span class="__cf_email__" data-cfemail="88e9ece5e1e6c8e9e4fde5e6e1efe7e4eea6e6edfc">[email&#160;protected]</span></a></p>
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -139,6 +197,100 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentPlayer = null;
 
+function showEmailHelp() {
+  document.getElementById('sec-login').style.display = 'none';
+  document.getElementById('forgot-section').style.display = 'none';
+  document.getElementById('email-help-section').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+function hideEmailHelp() {
+  document.getElementById('email-help-section').style.display = 'none';
+  document.getElementById('sec-login').style.display = 'block';
+}
+async function submitEmailHelp() {
+  var name = document.getElementById('help-name').value.trim();
+  var surname = document.getElementById('help-surname').value.trim();
+  var mobile = document.getElementById('help-mobile').value.trim();
+  var school = document.getElementById('help-school').value.trim();
+  var newemail = document.getElementById('help-newemail').value.trim().toLowerCase();
+  var msg = document.getElementById('help-msg');
+
+  if (!name) return showHelpMsg('Please enter your first name.', false);
+  if (!surname) return showHelpMsg('Please enter your surname.', false);
+  if (!mobile || mobile.length < 9) return showHelpMsg('Please enter your 9-digit mobile number.', false);
+  if (!school) return showHelpMsg('Please enter your school name.', false);
+  if (!newemail || newemail.indexOf('@') < 0) return showHelpMsg('Please enter a valid new email address.', false);
+
+  var btn = event.target;
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    await sb.from('account_recovery_requests').insert({
+      full_name: name + ' ' + surname,
+      mobile: '+27' + mobile,
+      school_name: school,
+      new_email: newemail,
+      status: 'pending',
+      created_at: new Date().toISOString()
+    });
+    showHelpMsg('Recovery request sent! We will verify your details and contact you on +27' + mobile + ' within 24 hours.', true);
+    btn.textContent = 'Send Recovery Request';
+    btn.disabled = false;
+  } catch(e) {
+    var mailto = 'mailto:admin@alumnigolf.net?subject=Account%20Recovery&body=Name%3A%20' + encodeURIComponent(name + ' ' + surname) + '%0AMobile%3A%2027' + mobile + '%0ASchool%3A%20' + encodeURIComponent(school) + '%0ANew%20Email%3A%20' + encodeURIComponent(newemail);
+    showHelpMsg('Automatic request failed. Please email us directly: <a href="' + mailto + '" style="color:var(--gold);font-weight:700;">admin@alumnigolf.net</a>', false);
+    btn.textContent = 'Send Recovery Request';
+    btn.disabled = false;
+  }
+}
+function showHelpMsg(text, success) {
+  var el = document.getElementById('help-msg');
+  el.innerHTML = text;
+  el.style.background = success ? 'rgba(39,174,96,0.1)' : 'rgba(192,57,43,0.1)';
+  el.style.color = success ? '#27ae60' : '#c0392b';
+  el.style.border = success ? '1px solid rgba(39,174,96,0.3)' : '1px solid rgba(192,57,43,0.3)';
+  el.style.display = 'block';
+}
+
+function showForgot() {
+  document.getElementById('sec-login').style.display = 'none';
+  document.getElementById('forgot-section').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+function hideForgot() {
+  document.getElementById('forgot-section').style.display = 'none';
+  document.getElementById('sec-login').style.display = 'block';
+}
+async function sendReset() {
+  var email = document.getElementById('forgot-email').value.trim().toLowerCase();
+  var msg = document.getElementById('forgot-msg');
+  if (!email || email.indexOf('@') < 0) {
+    msg.textContent = 'Please enter a valid email address.';
+    msg.style.background = 'rgba(192,57,43,0.1)';
+    msg.style.color = '#c0392b';
+    msg.style.display = 'block';
+    return;
+  }
+  var btn = event.target;
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  var redirectUrl = window.location.origin + '/portal.html';
+  var res = await sb.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
+  btn.textContent = 'Send Reset Link';
+  btn.disabled = false;
+  if (res.error) {
+    msg.textContent = 'Something went wrong. Please try again or contact admin@alumnigolf.net';
+    msg.style.background = 'rgba(192,57,43,0.1)';
+    msg.style.color = '#c0392b';
+  } else {
+    msg.textContent = 'Reset link sent! Check your email inbox (and spam folder). The link expires in 1 hour.';
+    msg.style.background = 'rgba(39,174,96,0.1)';
+    msg.style.color = '#27ae60';
+  }
+  msg.style.display = 'block';
+}
+
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const pass = document.getElementById('login-password').value;
@@ -146,7 +298,7 @@ async function doLogin() {
   err.style.display = 'none';
   if (!email || !pass) { err.textContent = 'Please enter your email and password.'; err.style.display='block'; return; }
   const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-  if (error) { err.textContent = 'Invalid email or password. If you registered via the web form, please check your email for your login details.'; err.style.display='block'; return; }
+  if (error) { err.textContent = 'Incorrect email or password. Use the Forgot Password link below if you need to reset it.'; err.style.display='block'; return; }
   await loadDashboard(email);
 }
 
@@ -217,10 +369,4 @@ async function submitPortalPayment() {
   const ext = file.name.split('.').pop();
   const fileName = `pop/${currentPlayer.email}-${Date.now()}.${ext}`;
   await sb.storage.from('proofs').upload(fileName, file, { upsert: true });
-  await sb.from('players').update({ payment_status: 'pending_verification', payment_proof_url: `${SUPABASE_URL}/storage/v1/object/public/proofs/${fileName}` }).eq('email', currentPlayer.email);
-  document.getElementById('payment-card').innerHTML = '<div style="text-align:center;padding:20px;"><div style="font-size:48px;margin-bottom:12px;">✅</div><h3 style="color:var(--navy);font-family:Cormorant Garamond,serif;font-size:24px;">Proof of Payment Submitted!</h3><p style="color:var(--text2);font-size:14px;margin-top:8px;">We will verify your payment and confirm your entry shortly.</p></div>';
-}
-
-async function doLogout() {
-  await sb.auth.signOut();
-  document.getElementBy
+ 

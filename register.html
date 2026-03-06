@@ -156,6 +156,15 @@ footer a{color:var(--gold);text-decoration:none;}
     </div>
     <div class="fg"><label>Email <span class="r">*</span></label><input type="email" id="f3" placeholder="your@email.com"></div>
     <div class="fg">
+      <label>Create Password <span class="r">*</span></label>
+      <input type="password" id="f_pw" placeholder="e.g. Golf2026!" oninput="checkPW(this)">
+      <div id="pw-hint" style="font-size:11px;color:var(--text2);margin-top:4px;">
+        Must contain: <strong>8+ characters</strong> &bull; <strong>one uppercase letter</strong> &bull; <strong>one number</strong> &bull; <strong>one special character</strong> (e.g. Golf@2026!)<br>
+        You will use this password to log into your portal.
+      </div>
+      <div id="pw-strength" style="margin-top:6px;font-size:11px;display:none;"></div>
+    </div>
+    <div class="fg">
       <label>Mobile Number <span class="r">*</span></label>
       <div class="pfix"><div class="pfix-lbl">+27</div><input type="tel" id="f4" placeholder="821234567" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></div>
       <div class="hint">9 digits, no leading zero</div>
@@ -723,7 +732,7 @@ footer a{color:var(--gold);text-decoration:none;}
       <div class="fg"><label>Partner First Name <span class="r">*</span></label><input type="text" id="f13" placeholder="First name"></div>
       <div class="fg"><label>Partner Surname <span class="r">*</span></label><input type="text" id="f14" placeholder="Surname"></div>
     </div>
-    <div class="fg"><label>Partner Email <span class="r">*</span></label><input type="email" id="f15" placeholder="partner@email.com"></div>
+    <div class="fg"><label>Partner Email <span style="color:#aaa;font-size:10px;">(optional)</span></label><input type="email" id="f15" placeholder="partner@email.com (optional)"></div>
     <div class="fg">
       <label>Partner Mobile <span class="r">*</span></label>
       <div class="pfix"><div class="pfix-lbl">+27</div><input type="tel" id="f16" placeholder="821234567" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></div>
@@ -800,16 +809,37 @@ footer a{color:var(--gold);text-decoration:none;}
 </div>
 
 <footer>
-  <p>&#169; 2026 Alumni Schools Golf Challenge &#8212; Legacy Event Ventures (Pty) Ltd | <a href="mailto:admin@alumnigolf.net">admin@alumnigolf.net</a></p>
+  <p>&#169; 2026 Alumni Schools Golf Challenge &#8212; Legacy Event Ventures (Pty) Ltd | <a href="/cdn-cgi/l/email-protection#3f5e5b5256517f5e534a5251565850535911515a4b"><span class="__cf_email__" data-cfemail="7a1b1e1713143a1b160f1714131d15161c54141f0e">[email&#160;protected]</span></a></p>
   <p style="margin-top:5px;">Honouring tradition. Celebrating excellence.</p>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 var SB_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 var sb = supabase.createClient(SB_URL, SB_KEY);
 var R = {};
 var popFile = null;
+
+function checkPW(input) {
+  var pw = input.value;
+  var el = document.getElementById('pw-strength');
+  if (!pw) { el.style.display='none'; return; }
+  el.style.display = 'block';
+  var checks = [
+    { ok: pw.length >= 8,          msg: '8+ characters' },
+    { ok: /[A-Z]/.test(pw),        msg: 'one uppercase letter (A-Z)' },
+    { ok: /[0-9]/.test(pw),        msg: 'one number (0-9)' },
+    { ok: /[^A-Za-z0-9]/.test(pw), msg: 'one special character (!@#$%^&*)' }
+  ];
+  var failed = checks.filter(function(c){ return !c.ok; });
+  if (failed.length === 0) {
+    el.style.color = '#27ae60';
+    el.textContent = '✓ Strong password — looks good!';
+  } else {
+    el.style.color = '#c0392b';
+    el.textContent = '✗ Still needs: ' + failed.map(function(c){ return c.msg; }).join(', ');
+  }
+}
 
 function goTo(n) {
   for (var i = 1; i <= 5; i++) {
@@ -842,13 +872,18 @@ function step1() {
   if (!v('f2')) return showErr('e1', 'Missing: Surname');
   if (!v('f3')) return showErr('e1', 'Missing: Email address');
   if (v('f3').indexOf('@') < 0) return showErr('e1', 'Invalid email — must contain @');
+  var pw = v('f_pw');
+  if (!pw || pw.length < 8) return showErr('e1', 'Password must be at least 8 characters.');
+  if (!/[A-Z]/.test(pw)) return showErr('e1', 'Password must contain at least one uppercase letter.');
+  if (!/[0-9]/.test(pw)) return showErr('e1', 'Password must contain at least one number.');
+  if (!/[^A-Za-z0-9]/.test(pw)) return showErr('e1', 'Password must contain at least one special character e.g. ! @ # $ %');
   if (!v('f4')) return showErr('e1', 'Missing: Mobile number');
   if (!v('f5')) return showErr('e1', 'Missing: School name');
   if (!v('f6')) return showErr('e1', 'Missing: City or town');
   if (!v('f7')) return showErr('e1', 'Missing: Postal code');
   if (v('f7').length < 4) return showErr('e1', 'Postal code must be 4 digits');
 
-  R.first = v('f1'); R.last = v('f2'); R.email = v('f3').toLowerCase();
+  R.first = v('f1'); R.last = v('f2'); R.email = v('f3').toLowerCase(); R.pw = pw;
   R.mobile = '+27' + v('f4'); R.school = v('f5');
   R.city = v('f6'); R.postal = v('f7');
   R.full = R.first + ' ' + R.last;
@@ -856,6 +891,7 @@ function step1() {
   document.getElementById('f12').value = R.school;
 
   try {
+    sb.auth.signUp({ email: R.email, password: R.pw }).catch(function(){});
     sb.from('players').upsert({
       full_name: R.full, email: R.email, mobile: R.mobile,
       school_name: R.school, city: R.city, postal_code: R.postal,
@@ -885,8 +921,7 @@ function step3() {
   hideErr('e3');
   if (!v('f13')) return showErr('e3', 'Missing: Partner first name.');
   if (!v('f14')) return showErr('e3', 'Missing: Partner surname.');
-  if (!v('f15')) return showErr('e3', 'Missing: Partner email.');
-  if (v('f15').indexOf('@') < 0) return showErr('e3', 'Invalid partner email.');
+  if (v('f15') && v('f15').indexOf('@') < 0) return showErr('e3', 'Invalid partner email — must contain @.');
   if (!v('f16')) return showErr('e3', 'Missing: Partner mobile number.');
 
   R.p2first = v('f13'); R.p2last = v('f14'); R.p2email = v('f15').toLowerCase();
@@ -926,6 +961,10 @@ function teamNum() {
 }
 
 async function saveReg(payStatus, popUrl) {
+  // Create Supabase auth account so player can log in
+  try {
+    await sb.auth.signUp({ email: R.email, password: R.pw });
+  } catch(e) {}
   var tn = teamNum();
   R.teamNum = tn;
   await sb.from('players').upsert({
@@ -989,13 +1028,4 @@ function showSuccess(title, msg) {
 sb.auth.getSession().then(function(r) {
   if (r.data && r.data.session) {
     var em = r.data.session.user.email;
-    sb.from('players').select('payment_status').eq('email', em).maybeSingle().then(function(res) {
-      if (res.data && res.data.payment_status === 'paid') {
-        window.location.href = 'portal.html';
-      }
-    });
-  }
-});
-</script>
-</body>
-</html>
+    sb.fro
