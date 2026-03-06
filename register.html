@@ -836,11 +836,11 @@ footer a { color:var(--gold); text-decoration:none; }
 </div><!-- /main -->
 
 <footer>
-  <p>© 2026 Alumni Schools Golf Challenge — Legacy Event Ventures (Pty) Ltd | <a href="mailto:admin@alumnigolf.net">admin@alumnigolf.net</a></p>
+  <p>© 2026 Alumni Schools Golf Challenge — Legacy Event Ventures (Pty) Ltd | <a href="/cdn-cgi/l/email-protection#6c0d080105022c0d00190102050b03000a42020918"><span class="__cf_email__" data-cfemail="9ffefbf2f6f1dffef3eaf2f1f6f8f0f3f9b1f1faeb">[email&#160;protected]</span></a></p>
   <p style="margin-top:5px;">Honouring tradition. Celebrating excellence.</p>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const SUPABASE_URL =  + SB_URL + ;
 const SUPABASE_KEY =  + SB_KEY + ;
 const { createClient } = supabase;
@@ -865,13 +865,14 @@ function goStep(n) {
 // ── ERRORS ───────────────────────────────────────────────────────────────────
 function showErr(id, msg) {
   var el = document.getElementById(id);
-  el.textContent = msg;
-  el.classList.add('show');
+  el.textContent = '⚠️  ' + msg;
+  el.style.cssText = 'display:block;background:rgba(192,57,43,0.12);border:2px solid #c0392b;color:#c0392b;padding:13px 16px;border-radius:8px;font-size:14px;font-weight:600;margin-bottom:16px;';
   el.scrollIntoView({behavior:'smooth', block:'center'});
 }
 function clearErr(id) {
   var el = document.getElementById(id);
-  el.classList.remove('show');
+  el.style.display = 'none';
+  el.textContent = '';
 }
 
 // ── ELIGIBILITY TICKS ────────────────────────────────────────────────────────
@@ -891,22 +892,27 @@ function doStep1() {
   var city  = document.getElementById('p1-city').value.trim();
   var post  = document.getElementById('p1-postal').value.trim();
 
-  if (!first || !last)           return showErr('err1','Please enter your first name and surname.');
-  if (!email || !email.includes('@')) return showErr('err1','Please enter a valid email address.');
-  if (!mob || mob.length < 9)    return showErr('err1','Please enter your 9-digit mobile number (without leading 0).');
-  if (!gen)                      return showErr('err1','Please select your gender.');
-  if (!sch)                      return showErr('err1','Please enter your school name.');
-  if (!city)                     return showErr('err1','Please enter your city or town.');
-  if (!post || post.length < 4)  return showErr('err1','Please enter your 4-digit postal code.');
+  if (!first) return showErr('err1', 'Missing: First name');
+  if (!last)  return showErr('err1', 'Missing: Surname');
+  if (!email) return showErr('err1', 'Missing: Email address');
+  if (email.indexOf('@') === -1) return showErr('err1', 'Invalid: Email address must contain @');
+  if (!mob)   return showErr('err1', 'Missing: Mobile number');
+  if (!gen)   return showErr('err1', 'Missing: Please select your gender');
+  if (!sch)   return showErr('err1', 'Missing: School name');
+  if (!city)  return showErr('err1', 'Missing: City or town');
+  if (!post)  return showErr('err1', 'Missing: Postal code');
+  if (post.length < 4) return showErr('err1', 'Invalid: Postal code must be 4 digits');
 
   reg.p1 = { first:first, last:last, full:first+' '+last, email:email, mobile:'+27'+mob, gender:gen, school:sch, city:city, postal:post };
 
   // Background save — never blocks
-  sb.from('players').upsert({
-    full_name:reg.p1.full, email:reg.p1.email, mobile:reg.p1.mobile,
-    gender:gen, school_name:sch, city:city, postal_code:post,
-    eligibility_status:'pending', payment_status:'unpaid', registration_source:'web_partial'
-  },{onConflict:'email'}).then(function(){}).catch(function(){});
+  try {
+    sb.from('players').upsert({
+      full_name:reg.p1.full, email:reg.p1.email, mobile:reg.p1.mobile,
+      gender:gen, school_name:sch, city:city, postal_code:post,
+      eligibility_status:'pending', payment_status:'unpaid', registration_source:'web_partial'
+    },{onConflict:'email'}).then(function(){}).catch(function(){});
+  } catch(e) {}
 
   document.getElementById('p2-school-display').value = sch;
   goStep(2);
@@ -1038,13 +1044,4 @@ function showSuccess(title, msg) {
 sb.auth.getSession().then(function(r){
   if (r.data && r.data.session) {
     var email = r.data.session.user.email;
-    sb.from('players').select('full_name,school_name,payment_status').eq('email',email).maybeSingle().then(function(res){
-      if (res.data && res.data.payment_status === 'paid') {
-        window.location.href = 'portal.html';
-      }
-    });
-  }
-});
-</script>
-</body>
-</html>
+    sb.from('players').select('f
