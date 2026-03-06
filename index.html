@@ -6,110 +6,51 @@
 <title>Alumni Schools Golf Challenge</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#1B3A6B;--navy-dark:#0f2347;--gold:#C9A84C;--gold-light:#e8c96a;--white:#fff;--off-white:#f8f6f0;--text:#1a1a2e;--text2:#555;--border:rgba(27,58,107,0.12);--red:#c0392b;}
+:root{--navy:#1B3A6B;--navy-dark:#0f2347;--gold:#C9A84C;--gold-light:#e8c96a;--white:#fff;--off-white:#f8f6f0;--text:#1a1a2e;--text2:#555;--border:rgba(27,58,107,0.12);}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);min-height:100vh;}
-
-/* PASSWORD SCREEN */
-#password-screen {
-  min-height:100vh;
-  background:linear-gradient(160deg,var(--navy-dark) 0%,var(--navy) 60%,#2a4f8f 100%);
-  display:flex;align-items:center;justify-content:center;padding:20px;
-}
-.pw-box {
-  background:rgba(255,255,255,0.07);
-  border:1px solid rgba(255,255,255,0.15);
-  border-radius:20px;padding:48px 40px;
-  width:100%;max-width:420px;
-  backdrop-filter:blur(10px);
-  box-shadow:0 20px 60px rgba(0,0,0,0.4);
-  text-align:center;
-}
-.pw-logo {width:160px;height:auto;margin-bottom:24px;}
-.pw-box h2 {
-  font-family:'Cormorant Garamond',serif;
-  color:white;font-size:28px;font-weight:700;margin-bottom:6px;
-}
-.pw-box p {color:rgba(255,255,255,0.55);font-size:13px;margin-bottom:28px;}
-.gold-line{width:50px;height:2px;background:var(--gold);margin:14px auto 24px;border-radius:2px;}
-.pw-input {
-  width:100%;padding:13px 18px;
-  background:rgba(255,255,255,0.1);
-  border:1.5px solid rgba(255,255,255,0.2);
-  border-radius:10px;color:white;font-size:15px;
-  font-family:'DM Sans',sans-serif;
-  text-align:center;letter-spacing:3px;
-  transition:border-color 0.2s;margin-bottom:14px;
-}
-.pw-input::placeholder{color:rgba(255,255,255,0.35);letter-spacing:1px;}
-.pw-input:focus{outline:none;border-color:var(--gold);}
-.pw-btn {
-  width:100%;padding:13px;background:var(--gold);
-  color:var(--navy-dark);border:none;border-radius:10px;
-  font-size:14px;font-weight:700;letter-spacing:1px;
-  text-transform:uppercase;cursor:pointer;
-  font-family:'DM Sans',sans-serif;transition:all 0.2s;
-}
-.pw-btn:hover{background:var(--gold-light);}
-.pw-error{color:#ff6b6b;font-size:13px;margin-top:10px;display:none;}
-.pw-note{color:rgba(255,255,255,0.3);font-size:11px;margin-top:20px;}
-
-/* MAIN SITE - hidden until password entered */
-#main-site{display:none;}
-
-/* NAV */
+.preview-bar{background:var(--gold);color:var(--navy-dark);text-align:center;padding:10px;font-size:13px;font-weight:700;letter-spacing:1px;}
 nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:70px;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold);}
 .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
 .nav-logo img{height:44px;width:auto;}
+.nav-logo span{font-family:'Cormorant Garamond',serif;color:white;font-size:20px;font-weight:600;}
 .nav-links{display:flex;gap:28px;}
 .nav-links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s;}
-.nav-links a:hover,.nav-links a.active{color:var(--gold);}
-.nav-cta{background:var(--gold);color:var(--navy-dark);padding:9px 22px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;transition:opacity 0.2s;}
-.nav-cta:hover{opacity:0.9;}
-@media(max-width:768px){.nav-links{display:none;}}
-
-/* HERO */
-.hero{min-height:92vh;background:linear-gradient(160deg,var(--navy-dark) 0%,var(--navy) 50%,#2a4f8f 100%);display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 20px;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23C9A84C' fill-opacity='0.03'%3E%3Cpath d='M40 0L80 40L40 80L0 40z'/%3E%3C/g%3E%3C/svg%3E");}
-.hero-content{position:relative;z-index:1;max-width:780px;}
-.hero-logo{width:220px;height:auto;margin:0 auto 32px;display:block;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.4));}
+.nav-links a:hover{color:var(--gold);}
+.nav-cta{background:var(--gold);color:var(--navy-dark);padding:9px 22px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;}
+@media(max-width:768px){.nav-links{display:none;}.nav-cta{display:none;}}
+.hero{min-height:90vh;background:linear-gradient(160deg,var(--navy-dark) 0%,var(--navy) 50%,#2a4f8f 100%);display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 20px;}
+.hero-content{max-width:780px;width:100%;}
+.hero-logo{width:220px;height:auto;display:block;margin:0 auto 32px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.4));}
 .hero-badge{display:inline-block;border:1px solid var(--gold);color:var(--gold);padding:6px 20px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
 .hero h1{font-family:'Cormorant Garamond',serif;color:white;font-size:clamp(42px,7vw,80px);font-weight:700;line-height:1.1;margin-bottom:16px;}
 .hero h1 span{color:var(--gold);}
 .hero-tagline{color:rgba(255,255,255,0.7);font-size:18px;font-style:italic;font-family:'Cormorant Garamond',serif;margin-bottom:32px;}
-.gold-line2{width:60px;height:3px;background:var(--gold);margin:20px auto;border-radius:2px;}
+.gold-line{width:60px;height:3px;background:var(--gold);margin:20px auto;border-radius:2px;}
 .hero-desc{color:rgba(255,255,255,0.65);font-size:15px;max-width:540px;margin:0 auto 40px;line-height:1.7;}
 .hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
-.btn-gold{background:var(--gold);color:var(--navy-dark);padding:16px 40px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;letter-spacing:1px;transition:all 0.2s;}
-.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,0.4);}
+.btn-gold{background:var(--gold);color:var(--navy-dark);padding:16px 40px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;transition:all 0.2s;}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px);}
 .btn-ghost{border:2px solid rgba(255,255,255,0.4);color:white;padding:14px 40px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;transition:all 0.2s;}
 .btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
 .hero-stats{display:flex;gap:40px;justify-content:center;margin-top:52px;flex-wrap:wrap;}
 .hero-stat .num{font-family:'Cormorant Garamond',serif;font-size:42px;color:var(--gold);font-weight:700;}
 .hero-stat .lbl{font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:1px;text-transform:uppercase;}
-
-/* SECTIONS */
 .section{padding:80px 20px;}
 .section-inner{max-width:1100px;margin:0 auto;}
 .section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
 .section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,48px);color:var(--navy);margin-bottom:16px;}
 .section-sub{font-size:16px;color:var(--text2);line-height:1.7;max-width:600px;}
-
-/* ABOUT */
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-top:48px;}
 @media(max-width:768px){.about-grid{grid-template-columns:1fr;}}
-.about-img{background:var(--navy);border-radius:20px;height:380px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.about-img img{width:70%;height:auto;filter:drop-shadow(0 8px 32px rgba(0,0,0,0.4));}
+.about-img{background:var(--navy);border-radius:20px;height:380px;display:flex;align-items:center;justify-content:center;}
+.about-img img{width:70%;height:auto;}
 .about-points{display:flex;flex-direction:column;gap:20px;margin-top:24px;}
 .about-point{display:flex;gap:14px;align-items:flex-start;}
 .about-point .icon{width:40px;height:40px;background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .about-point h4{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px;}
 .about-point p{font-size:13px;color:var(--text2);line-height:1.5;}
-
-/* FORMAT */
 .format-section{background:var(--navy-dark);}
-.format-section .section-title{color:white;}
-.format-section .section-sub{color:rgba(255,255,255,0.6);}
 .rounds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:40px;}
 .round-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:24px;text-align:center;transition:all 0.2s;}
 .round-card:hover{background:rgba(201,168,76,0.1);border-color:var(--gold);}
@@ -117,23 +58,17 @@ nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;j
 .round-card h3{color:white;font-size:14px;font-weight:700;margin-bottom:6px;}
 .round-card p{color:rgba(255,255,255,0.5);font-size:12px;line-height:1.5;}
 .round-card .dates{color:var(--gold);font-size:11px;font-weight:600;margin-top:10px;}
-
-/* DATES */
 .dates-section{background:white;}
 .dates-table{width:100%;border-collapse:collapse;margin-top:32px;}
 .dates-table th{padding:14px 20px;text-align:left;font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--border);}
 .dates-table td{padding:16px 20px;border-bottom:1px solid var(--border);font-size:14px;}
 .dates-table tr:hover td{background:rgba(201,168,76,0.05);}
 .r-badge{background:var(--navy);color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;}
-
-/* CTA */
 .cta-section{background:linear-gradient(135deg,var(--gold),var(--gold-light));padding:80px 20px;text-align:center;}
 .cta-section h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,52px);color:var(--navy-dark);margin-bottom:16px;}
 .cta-section p{color:rgba(27,58,107,0.7);font-size:16px;margin-bottom:32px;}
 .btn-navy{background:var(--navy-dark);color:white;padding:16px 48px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;display:inline-block;transition:all 0.2s;}
 .btn-navy:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(15,35,71,0.4);}
-
-/* FOOTER */
 footer{background:var(--navy-dark);color:rgba(255,255,255,0.5);text-align:center;padding:32px 20px;border-top:2px solid var(--gold);}
 .footer-logo-img{height:60px;width:auto;margin-bottom:12px;opacity:0.9;}
 footer a{color:var(--gold);text-decoration:none;}
@@ -144,18 +79,15 @@ footer a{color:var(--gold);text-decoration:none;}
 </head>
 <body>
 
-<!-- MAIN SITE -->
-<div style="background:#C9A84C;color:#0f2347;text-align:center;padding:10px;font-size:13px;font-weight:700;letter-spacing:1px;">
-🚧 PREVIEW MODE — Site under development — Not yet public 🚧
-</div>
-<div id="main-site">
+<div class="preview-bar">🚧 PREVIEW MODE — Site under development — Not yet public 🚧</div>
 
 <nav>
   <a href="index.html" class="nav-logo">
     <img src="logo.png" alt="Alumni Schools Golf Challenge" onerror="this.style.display='none'" />
+    <span>Alumni Schools Golf Challenge</span>
   </a>
   <div class="nav-links">
-    <a href="index.html" class="active">Home</a>
+    <a href="index.html">Home</a>
     <a href="how-it-works.html">How It Works</a>
     <a href="schools.html">Schools</a>
     <a href="register.html">Register</a>
@@ -169,7 +101,7 @@ footer a{color:var(--gold);text-decoration:none;}
     <img src="logo.png" alt="Alumni Schools Golf Challenge" class="hero-logo" onerror="this.style.display='none'" />
     <div class="hero-badge">Inaugural Season 2026/27</div>
     <h1>Alumni Schools<br><span>Golf Challenge</span></h1>
-    <div class="gold-line2"></div>
+    <div class="gold-line"></div>
     <p class="hero-tagline">Honouring tradition. Celebrating excellence.</p>
     <p class="hero-desc">South Africa's premier school alumni golf tournament. Betterball Matchplay. Nationwide divisions. One unforgettable journey to the SA Final.</p>
     <div class="hero-btns">
@@ -189,16 +121,14 @@ footer a{color:var(--gold);text-decoration:none;}
   <div class="section-inner">
     <div class="section-label">About the Tournament</div>
     <h2 class="section-title">Where School Pride Meets the Fairway</h2>
-    <p class="section-sub">The Alumni Schools Golf Challenge is a fun, purely competitive golf tournament exclusively for former pupils of South African schools — bringing together alumni across the country to celebrate shared traditions and friendly rivalry.</p>
+    <p class="section-sub">The Alumni Schools Golf Challenge brings together former pupils of South African schools to celebrate shared traditions and friendly rivalry on the golf course.</p>
     <div class="about-grid">
-      <div class="about-img"><img src="logo.png" alt="Alumni Schools Golf Challenge" onerror="this.style.display='none'" /></div>
-      <div>
-        <div class="about-points">
-          <div class="about-point"><div class="icon">🏌️</div><div><h4>Betterball Matchplay Format</h4><p>Two-player teams compete hole by hole in the classic betterball matchplay format — exciting, social and competitive.</p></div></div>
-          <div class="about-point"><div class="icon">📍</div><div><h4>Geo-Plotted Divisions</h4><p>Teams are grouped into divisions of 8 by location (postal code) — so you play against alumni near you before advancing nationally.</p></div></div>
-          <div class="about-point"><div class="icon">🏆</div><div><h4>Path to the SA Final</h4><p>Win your division, advance through the playoffs, and represent your school at the SA Final — a multi-day event in the Southern Cape.</p></div></div>
-          <div class="about-point"><div class="icon">📱</div><div><h4>App & Web Managed</h4><p>Manage scheduling, results and communication through our dedicated app launching 2 April 2026.</p></div></div>
-        </div>
+      <div class="about-img"><img src="logo.png" alt="Logo" onerror="this.style.display='none'" /></div>
+      <div class="about-points">
+        <div class="about-point"><div class="icon">🏌️</div><div><h4>Betterball Matchplay Format</h4><p>Two-player teams compete hole by hole in the classic betterball matchplay format.</p></div></div>
+        <div class="about-point"><div class="icon">📍</div><div><h4>Geo-Plotted Divisions</h4><p>Teams grouped into divisions of 8 by location so you play against alumni near you first.</p></div></div>
+        <div class="about-point"><div class="icon">🏆</div><div><h4>Path to the SA Final</h4><p>Win your division and represent your school at the SA Final in the Southern Cape.</p></div></div>
+        <div class="about-point"><div class="icon">📱</div><div><h4>App & Web Managed</h4><p>Manage everything through our dedicated app launching 2 April 2026.</p></div></div>
       </div>
     </div>
   </div>
@@ -207,8 +137,8 @@ footer a{color:var(--gold);text-decoration:none;}
 <section class="section format-section">
   <div class="section-inner">
     <div class="section-label" style="color:var(--gold)">Tournament Format</div>
-    <h2 class="section-title">Double-Elimination Bracket</h2>
-    <p class="section-sub">Every division runs a double-elimination bracket — you get a second chance before you're out.</p>
+    <h2 class="section-title" style="color:white">Double-Elimination Bracket</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.6)">Every division runs a double-elimination bracket — you get a second chance before you're out.</p>
     <div class="rounds-grid">
       <div class="round-card"><div class="r-num">1</div><h3>Round 1</h3><p>4 matches among 8 teams</p><div class="dates">14 Aug – 20 Sep 2026</div></div>
       <div class="round-card"><div class="r-num">2</div><h3>Round 2</h3><p>Winners vs Winners, 2nd Chance vs 2nd Chance</p><div class="dates">28 Sep – 18 Oct 2026</div></div>
@@ -257,31 +187,8 @@ footer a{color:var(--gold);text-decoration:none;}
     <a href="portal.html">My Portal</a>
   </div>
   <p style="font-size:12px;">© 2026 Alumni Schools Golf Challenge — Legacy Event Ventures (Pty) Ltd</p>
-  <p style="margin-top:4px;font-size:12px;"><a href="/cdn-cgi/l/email-protection#6706030a0e0927060b120a090e00080b0149090213"><span class="__cf_email__" data-cfemail="ceafaaa3a7a08eafa2bba3a0a7a9a1a2a8e0a0abba">[email&#160;protected]</span></a></p>
+  <p style="margin-top:4px;font-size:12px;"><a href="mailto:admin@alumnigolf.net">admin@alumnigolf.net</a></p>
 </footer>
 
-</div><!-- /main-site -->
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// Password is stored as a simple hash - change 'ASCGolf2026' to whatever you want
-const CORRECT_PASSWORD = 'golf2026';
-
-function checkPassword() {
-  const input = document.getElementById('pw-input').value;
-  const error = document.getElementById('pw-error');
-  if (input.toLowerCase() === CORRECT_PASSWORD) {
-    // Store in session so they don't have to re-enter on refresh
-    sessionStorage.setItem('asc-auth', 'true');
-    document.getElementById('password-screen').style.display = 'none';
-    document.getElementById('main-site').style.display = 'block';
-  } else {
-    error.style.display = 'block';
-    document.getElementById('pw-input').value = '';
-    document.getElementById('pw-input').style.borderColor = '#ff6b6b';
-    setTimeout(() => {
-      document.getElementById('pw-input').style.borderColor = 'rgba(255,255,255,0.2)';
-    }, 2000);
-  }
-}
-
-// Check if alre
+</body>
+</html>
