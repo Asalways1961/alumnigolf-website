@@ -837,11 +837,11 @@ footer a { color:var(--gold); text-decoration:none; }
 </div><!-- /main -->
 
 <footer>
-  <p>© 2026 Alumni Schools Golf Challenge — Legacy Event Ventures (Pty) Ltd | <a href="/cdn-cgi/l/email-protection#6c0d080105022c0d00190102050b03000a42020918"><span class="__cf_email__" data-cfemail="9ffefbf2f6f1dffef3eaf2f1f6f8f0f3f9b1f1faeb">[email&#160;protected]</span></a></p>
+  <p>© 2026 Alumni Schools Golf Challenge — Legacy Event Ventures (Pty) Ltd | <a href="mailto:admin@alumnigolf.net">admin@alumnigolf.net</a></p>
   <p style="margin-top:5px;">Honouring tradition. Celebrating excellence.</p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const { createClient } = supabase;
@@ -1046,4 +1046,13 @@ function showSuccess(title, msg) {
 sb.auth.getSession().then(function(r){
   if (r.data && r.data.session) {
     var email = r.data.session.user.email;
-    sb.from('players').select('f
+    sb.from('players').select('full_name,payment_status').eq('email',email).maybeSingle().then(function(res){
+      if (res && res.data && res.data.payment_status === 'paid') {
+        window.location.href = 'portal.html';
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
