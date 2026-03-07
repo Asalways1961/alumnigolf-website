@@ -137,7 +137,9 @@ footer a{color:var(--gold);text-decoration:none;}
   <div class="stp-sep"></div>
   <div class="stp" id="stp3"><div class="stp-num">3</div><div class="stp-label">Partner</div></div>
   <div class="stp-sep"></div>
-  <div class="stp" id="stp4"><div class="stp-num">4</div><div class="stp-label">Payment</div></div>
+  <div class="stp" id="stp4"><div class="stp-num">4</div><div class="stp-label">Details</div></div>
+  <div class="stp-sep"></div>
+  <div class="stp" id="stp5"><div class="stp-num">5</div><div class="stp-label">Payment</div></div>
 </div>
 
 <div class="main">
@@ -719,8 +721,50 @@ footer a{color:var(--gold);text-decoration:none;}
   </div>
 </div>
 
-<!-- STEP 3 -->
+<!-- STEP 3 — PARTNER OPTIONS -->
 <div class="sec" id="s3">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#129309;</div>
+      <div><h2>Partner Options</h2><p>Every team needs two players from the same school</p></div>
+    </div>
+    <div class="err" id="e3"></div>
+    <div style="display:grid;gap:14px;margin:20px 0;">
+
+      <div onclick="partnerChoice('has_partner')" id="popt1"
+        style="border:2px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:34px;flex-shrink:0;">&#129309;</div>
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--navy);font-weight:700;">I have a partner</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:3px;">I will enter my partner's details right now</div>
+        </div>
+      </div>
+
+      <div onclick="partnerChoice('invite_later')" id="popt2"
+        style="border:2px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:34px;flex-shrink:0;">&#9993;&#65039;</div>
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--navy);font-weight:700;">Invite partner later</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:3px;">I have a partner but will send their details later</div>
+        </div>
+      </div>
+
+      <div onclick="partnerChoice('needs_matching')" id="popt3"
+        style="border:2px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:34px;flex-shrink:0;">&#128270;</div>
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--navy);font-weight:700;">Find me a partner</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:3px;">I don't have a partner — please match me with someone</div>
+        </div>
+      </div>
+
+    </div>
+    <button type="button" class="btn btn-outline" onclick="goTo(2)" style="margin-top:4px;">&#8592; Back</button>
+  </div>
+</div>
+
+<!-- STEP 4 — PARTNER DETAILS -->
+<div class="sec" id="s4">
   <div class="card">
     <div class="card-header">
       <div class="card-icon">&#129309;</div>
@@ -738,18 +782,18 @@ footer a{color:var(--gold);text-decoration:none;}
       <div class="pfix"><div class="pfix-lbl">+27</div><input type="tel" id="f16" placeholder="821234567" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></div>
     </div>
     <button type="button" class="btn btn-gold" onclick="step3()">Continue to Payment &#8594;</button>
-    <button type="button" class="btn btn-outline" onclick="goTo(2)" style="margin-top:8px;">&#8592; Back</button>
+    <button type="button" class="btn btn-outline" onclick="goTo(3)" style="margin-top:8px;">&#8592; Back</button>
   </div>
 </div>
 
-<!-- STEP 4 -->
-<div class="sec" id="s4">
+<!-- STEP 5 — PAYMENT -->
+<div class="sec" id="s5">
   <div class="card">
     <div class="card-header">
       <div class="card-icon">&#128179;</div>
       <div><h2>Payment</h2><p>Secure your team entry</p></div>
     </div>
-    <div class="err" id="e4"></div>
+    <div class="err" id="e5_pay"></div>
     <div id="pay-choice">
       <div class="pay-grid">
         <div class="pay-opt" onclick="payNow('single')">
@@ -761,8 +805,8 @@ footer a{color:var(--gold);text-decoration:none;}
         <div class="pay-opt" onclick="payNow('team')">
           <div class="oi">&#127955;</div>
           <h3>Pay for Team</h3>
-          <div class="price">R3,000</div>
-          <p>Pay for both players upfront</p>
+          <div class="price">R2,800</div>
+          <p>Pay for both — <strong style="color:#27ae60;">Save R200!</strong></p>
         </div>
       </div>
       <button type="button" class="btn btn-outline" onclick="payLater()">Pay Later — Reserve my spot (7 days)</button>
@@ -795,7 +839,7 @@ footer a{color:var(--gold);text-decoration:none;}
 </div>
 
 <!-- SUCCESS -->
-<div class="sec" id="s5">
+<div class="sec" id="s6">
   <div class="card">
     <div class="success-wrap">
       <div class="ico">&#127942;</div>
@@ -846,16 +890,20 @@ function checkPW(input) {
 }
 
 function goTo(n) {
-  for (var i = 1; i <= 5; i++) {
-    document.getElementById('s' + i).classList.remove('active');
-    if (i <= 4) {
-      var s = document.getElementById('stp' + i);
-      s.classList.remove('active', 'done');
-      if (i === n) s.classList.add('active');
-      if (i < n) s.classList.add('done');
+  for (var i = 1; i <= 6; i++) {
+    var sec = document.getElementById('s' + i);
+    if (sec) sec.classList.remove('active');
+    if (i <= 5) {
+      var stp = document.getElementById('stp' + i);
+      if (stp) {
+        stp.classList.remove('active', 'done');
+        if (i === n) stp.classList.add('active');
+        if (i < n) stp.classList.add('done');
+      }
     }
   }
-  document.getElementById('s' + n).classList.add('active');
+  var cur = document.getElementById('s' + n);
+  if (cur) cur.classList.add('active');
   window.scrollTo(0, 0);
 }
 
@@ -910,6 +958,27 @@ function step2() {
   goTo(3);
 }
 
+function partnerChoice(type) {
+  R.partnerChoice = type;
+  // Highlight selected card, clear others
+  var opts = ['popt1','popt2','popt3'];
+  var vals = ['has_partner','invite_later','needs_matching'];
+  for (var i = 0; i < opts.length; i++) {
+    var el = document.getElementById(opts[i]);
+    if (el) {
+      el.style.borderColor = vals[i] === type ? 'var(--navy)' : 'var(--border)';
+      el.style.background  = vals[i] === type ? 'rgba(27,58,107,0.06)' : '';
+    }
+  }
+  if (type === 'has_partner') {
+    setTimeout(function(){ goTo(4); }, 180);
+  } else {
+    // invite_later or needs_matching — skip partner details, go to payment
+    R.p2first = ''; R.p2last = ''; R.p2email = ''; R.p2mobile = ''; R.p2full = '';
+    setTimeout(function(){ goTo(5); }, 180);
+  }
+}
+
 function step3() {
   hideErr('e3');
   if (!v('f13')) return showErr('e3', 'Missing: Partner first name.');
@@ -917,15 +986,15 @@ function step3() {
   if (v('f15') && v('f15').indexOf('@') < 0) return showErr('e3', 'Invalid partner email — must contain @.');
   if (!v('f16')) return showErr('e3', 'Missing: Partner mobile number.');
 
-  R.p2first = v('f13'); R.p2last = v('f14'); R.p2email = v('f15').toLowerCase();
+  R.p2first = v('f13'); R.p2last = v('f14'); R.p2email = v('f15') ? v('f15').toLowerCase() : '';
   R.p2mobile = '+27' + v('f16'); R.p2full = R.p2first + ' ' + R.p2last;
-  goTo(4);
+  goTo(5);
 }
 
 function payNow(type) {
   R.payType = type;
   R.payRef = 'ASC-' + R.postal + '-' + Date.now().toString().slice(-5);
-  R.payAmt = type === 'team' ? 'R3,000.00' : 'R1,500.00';
+  R.payAmt = type === 'team' ? 'R2,800.00' : 'R1,500.00';
   document.getElementById('pay-choice').style.display = 'none';
   document.getElementById('payref').textContent = R.payRef;
   document.getElementById('payamt').textContent = R.payAmt;
@@ -967,20 +1036,25 @@ async function saveReg(payStatus, popUrl) {
     city: R.city, postal_code: R.postal, team_number: tn,
     payment_status: payStatus, payment_proof_url: popUrl,
     payment_reference: R.payRef || null,
+    partner_status: R.partnerChoice || 'has_partner',
     eligibility_status: 'pending', registration_source: 'web'
   }, { onConflict: 'email' });
 
-  await sb.from('players').upsert({
-    full_name: R.p2full, email: R.p2email, mobile: R.p2mobile,
-    school_name: R.school, team_number: tn,
-    payment_status: R.payType === 'team' ? payStatus : 'unpaid',
-    eligibility_status: 'pending',
-    invited_by: R.email, registration_source: 'web_invite'
-  }, { onConflict: 'email' });
+  // Only create partner record if they entered partner details
+  if (R.p2email && R.p2email.indexOf('@') > 0) {
+    await sb.from('players').upsert({
+      full_name: R.p2full, email: R.p2email, mobile: R.p2mobile,
+      school_name: R.school, team_number: tn,
+      payment_status: R.payType === 'team' ? payStatus : 'unpaid',
+      partner_status: 'has_partner',
+      eligibility_status: 'pending',
+      invited_by: R.email, registration_source: 'web_invite'
+    }, { onConflict: 'email' });
+  }
 }
 
 async function submitPay() {
-  if (!popFile) return showErr('e4', 'Please upload your proof of payment.');
+  if (!popFile) return showErr('e5_pay', 'Please upload your proof of payment.');
   var btn = document.getElementById('btnsubmit');
   btn.innerHTML = '<span class="spin"></span>Submitting...';
   btn.disabled = true;
@@ -992,7 +1066,7 @@ async function submitPay() {
     await saveReg('pending_verification', url);
     showSuccess('You are Officially Entered!', 'Your registration and proof of payment have been received. We will verify and confirm your entry within 24 hours.');
   } catch(e) {
-    showErr('e4', 'Something went wrong. Please try again or email admin@alumnigolf.net');
+    showErr('e5_pay', 'Something went wrong. Please try again or email admin@alumnigolf.net');
     btn.innerHTML = 'Submit Registration and Proof of Payment';
     btn.disabled = false;
   }
@@ -1006,7 +1080,7 @@ async function submitLater() {
     await saveReg('unpaid', null);
     showSuccess('Registration Received!', 'Your registration has been received. Your place is held for 7 days. Payment instructions have been emailed to you.');
   } catch(e) {
-    showErr('e4', 'Something went wrong. Please try again or email admin@alumnigolf.net');
+    showErr('e5_pay', 'Something went wrong. Please try again or email admin@alumnigolf.net');
     btn.innerHTML = 'Complete Registration — Pay Later';
     btn.disabled = false;
   }
@@ -1015,7 +1089,7 @@ async function submitLater() {
 function showSuccess(title, msg) {
   document.getElementById('suc-title').textContent = title;
   document.getElementById('suc-msg').textContent = msg;
-  goTo(5);
+  goTo(6);
 }
 
 sb.auth.getSession().then(function(r) {
