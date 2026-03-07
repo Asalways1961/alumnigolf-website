@@ -639,7 +639,11 @@ footer a{color:var(--gold);text-decoration:none;}
     <div id="ineligible-block" style="display:none;background:rgba(192,57,43,0.07);border:2px solid rgba(192,57,43,0.3);border-radius:12px;padding:28px 24px;text-align:center;margin-bottom:16px;">
       <div style="font-size:44px;margin-bottom:12px;">&#128530;</div>
       <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:#c0392b;margin-bottom:12px;">Sorry, you are not eligible to enter the competition.</div>
-      <div style="font-size:13px;color:#666;line-height:1.8;margin-bottom:18px;">You have been registered as a <strong>Supporter</strong> of the Alumni Schools Golf Challenge.<br>Thank you for your interest — we hope to see you at the event!<br><br>If you have any questions please contact our admin:<br><a href="mailto:admin&#64;alumnigolf.net" style="color:var(--navy);font-weight:700;">admin&#64;alumnigolf.net</a></div>
+      <div style="font-size:13px;color:#666;line-height:1.8;margin-bottom:20px;">You have been registered as a <strong>Supporter</strong> of the Alumni Schools Golf Challenge.<br>Thank you for your interest — we hope to see you at the event!<br><br>If you have any questions please contact our admin:<br><a href="mailto:admin&#64;alumnigolf.net" style="color:var(--navy);font-weight:700;">admin&#64;alumnigolf.net</a></div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="index.html" style="padding:12px 24px;background:var(--navy);color:#fff;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;">&#8592; Return to Website</a>
+        <a href="portal.html" style="padding:12px 24px;background:transparent;border:2px solid var(--navy);color:var(--navy);border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;">Go to My Portal</a>
+      </div>
     </div>
 
     <div id="elig-questions">
@@ -687,6 +691,7 @@ footer a{color:var(--gold);text-decoration:none;}
         </div>
       </div>
     </div>
+    <div id="eligible-only">
     <div class="golf-block">
       <h3>Golf Membership Details</h3>
       <div class="fg">
@@ -783,6 +788,7 @@ footer a{color:var(--gold);text-decoration:none;}
     </div>
     <button type="button" class="btn btn-gold" onclick="step2()">Confirm Eligibility &#8594;</button>
     <button type="button" class="btn btn-outline" onclick="goTo(1)" style="margin-top:8px;">&#8592; Back</button>
+    </div><!-- /eligible-only -->
   </div>
 </div>
 
@@ -922,7 +928,7 @@ footer a{color:var(--gold);text-decoration:none;}
   <p style="margin-top:5px;">Honouring tradition. Celebrating excellence.</p>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 var SB_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 var sb = supabase.createClient(SB_URL, SB_KEY);
@@ -1033,6 +1039,7 @@ async function saveAsSupporter() {
     }, { onConflict: 'email' });
   } catch(e) {}
   document.getElementById('elig-questions').style.display = 'none';
+  document.getElementById('eligible-only').style.display = 'none';
   document.getElementById('ineligible-block').style.display = 'block';
   hideErr('e2');
 }
@@ -1191,12 +1198,3 @@ sb.auth.getSession().then(function(r) {
   if (r.data && r.data.session) {
     var em = r.data.session.user.email;
     sb.from('players').select('payment_status').eq('email', em).maybeSingle().then(function(res) {
-      if (res.data && res.data.payment_status === 'paid') {
-        window.location.href = 'portal.html';
-      }
-    });
-  }
-});
-</script>
-</body>
-</html>
