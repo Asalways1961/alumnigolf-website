@@ -300,16 +300,8 @@ async function doLogin() {
   try {
     var result = await sb.auth.signInWithPassword({ email: email, password: pass });
     if (result.error) {
-      var emsg = result.error.message ? result.error.message.toLowerCase() : '';
-      if (emsg.includes('invalid login') || emsg.includes('invalid credentials') || emsg.includes('invalid api key')) {
-        err.textContent = '\u26a0 Incorrect email or password. Please check and try again.';
-      } else if (emsg.includes('email not confirmed')) {
-        err.textContent = '\u26a0 Please verify your email address. Check your inbox for a confirmation email from Supabase, then try again.';
-      } else if (emsg.includes('user not found') || emsg.includes('no user')) {
-        err.textContent = '\u26a0 No account found for this email. Please register first.';
-      } else {
-        err.textContent = '\u26a0 ' + (result.error.message || 'Sign in failed. Please try again.');
-      }
+      // Show exact Supabase error for debugging
+      err.textContent = '\u26a0 Supabase says: ' + result.error.message + ' (status: ' + result.error.status + ')';
       err.style.display = 'block';
       btn.textContent = 'Sign In to Portal'; btn.disabled = false;
       return;
