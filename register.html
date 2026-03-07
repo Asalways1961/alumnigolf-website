@@ -162,7 +162,7 @@ footer a{color:var(--gold);text-decoration:none;}
         Must contain: <strong>8+ characters</strong> &bull; <strong>one uppercase letter</strong> &bull; <strong>one number</strong> &bull; <strong>one special character</strong> (e.g. Golf@2026!)<br>
         You will use this password to log into your portal.
       </div>
-      <div id="pw-strength" style="margin-top:6px;font-size:11px;display:none;"></div>
+      <div id="pw-strength" style="margin-top:8px;font-size:12px;padding:8px;background:rgba(27,58,107,0.04);border-radius:6px;display:none;"></div>
     </div>
     <div class="fg">
       <label>Mobile Number <span class="r">*</span></label>
@@ -823,22 +823,26 @@ var popFile = null;
 function checkPW(input) {
   var pw = input.value;
   var el = document.getElementById('pw-strength');
-  if (!pw) { el.style.display='none'; return; }
-  el.style.display = 'block';
-  var checks = [
-    { ok: pw.length >= 8,          msg: '8+ characters' },
-    { ok: /[A-Z]/.test(pw),        msg: 'one uppercase letter (A-Z)' },
-    { ok: /[0-9]/.test(pw),        msg: 'one number (0-9)' },
-    { ok: /[^A-Za-z0-9]/.test(pw), msg: 'one special character (!@#$%^&*)' }
+  if (!pw) { el.style.display = 'none'; return; }
+  var hasLen  = pw.length >= 8;
+  var hasCap  = /[A-Z]/.test(pw);
+  var hasNum  = /[0-9]/.test(pw);
+  var hasSpc  = /[^A-Za-z0-9]/.test(pw);
+  var rows = [
+    { ok: hasLen,  label: '8+ characters' },
+    { ok: hasCap,  label: 'Uppercase letter' },
+    { ok: hasNum,  label: 'Number' },
+    { ok: hasSpc,  label: 'Special character e.g. ! @ # $' }
   ];
-  var failed = checks.filter(function(c){ return !c.ok; });
-  if (failed.length === 0) {
-    el.style.color = '#27ae60';
-    el.textContent = '✓ Strong password — looks good!';
-  } else {
-    el.style.color = '#c0392b';
-    el.textContent = '✗ Still needs: ' + failed.map(function(c){ return c.msg; }).join(', ');
+  var html = '';
+  for (var i = 0; i < rows.length; i++) {
+    var tick = rows[i].ok
+      ? '<span style="color:#27ae60;font-weight:700;">&#10003;</span>'
+      : '<span style="color:#c0392b;font-weight:700;">&#10007;</span>';
+    html += '<div style="margin:2px 0;">' + tick + ' ' + rows[i].label + '</div>';
   }
+  el.innerHTML = html;
+  el.style.display = 'block';
 }
 
 function goTo(n) {
@@ -889,17 +893,6 @@ function step1() {
   R.full = R.first + ' ' + R.last;
 
   document.getElementById('f12').value = R.school;
-
-  try {
-    sb.auth.signUp({ email: R.email, password: R.pw }).catch(function(){});
-    sb.from('players').upsert({
-      full_name: R.full, email: R.email, mobile: R.mobile,
-      school_name: R.school, city: R.city, postal_code: R.postal,
-      eligibility_status: 'pending', payment_status: 'unpaid',
-      registration_source: 'web_partial'
-    }, { onConflict: 'email' });
-  } catch(e) {}
-
   goTo(2);
 }
 
