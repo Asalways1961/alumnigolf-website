@@ -610,7 +610,7 @@ footer a{color:var(--gold);text-decoration:none;}
         Your information will be used to: manage your registration and entry, communicate tournament details,
         verify your eligibility, and process payments. Your data will not be sold or shared with third parties
         without your consent. You may request access to or deletion of your data at any time by contacting
-        <strong>admin&#64;alumnigolf.net</strong>.
+        <strong>admin&#64;alumnigolf&#46;net</strong>.
       </div>
       <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
         <input type="checkbox" id="popia-consent" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--navy);">
@@ -639,7 +639,7 @@ footer a{color:var(--gold);text-decoration:none;}
     <div id="ineligible-block" style="display:none;background:rgba(192,57,43,0.07);border:2px solid rgba(192,57,43,0.3);border-radius:12px;padding:28px 24px;text-align:center;margin-bottom:16px;">
       <div style="font-size:44px;margin-bottom:12px;">&#128530;</div>
       <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:#c0392b;margin-bottom:12px;">Sorry, you are not eligible to enter the competition.</div>
-      <div style="font-size:13px;color:#666;line-height:1.8;margin-bottom:20px;">You have been registered as a <strong>Supporter</strong> of the Alumni Schools Golf Challenge.<br>Thank you for your interest — we hope to see you at the event!<br><br>If you have any questions please contact our admin:<br><a href="mailto:admin&#64;alumnigolf.net" style="color:var(--navy);font-weight:700;">admin&#64;alumnigolf.net</a></div>
+      <div style="font-size:13px;color:#666;line-height:1.8;margin-bottom:20px;">You have been registered as a <strong>Supporter</strong> of the Alumni Schools Golf Challenge.<br>Thank you for your interest — we hope to see you at the event!<br><br>If you have any questions please contact our admin:<br><strong style="color:var(--navy);">admin&#64;alumnigolf&#46;net</strong></div>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
         <a href="index.html" style="padding:12px 24px;background:var(--navy);color:#fff;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;">&#8592; Return to Website</a>
         <a href="portal.html" style="padding:12px 24px;background:transparent;border:2px solid var(--navy);color:var(--navy);border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;">Go to My Portal</a>
@@ -928,38 +928,27 @@ footer a{color:var(--gold);text-decoration:none;}
   <p style="margin-top:5px;">Honouring tradition. Celebrating excellence.</p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 var SB_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 var sb = supabase.createClient(SB_URL, SB_KEY);
 var R = {};
 var popFile = null;
 
-function checkPW(input) {
-  var pw = input.value;
-  var el = document.getElementById('pw-strength');
-  if (!pw) { el.style.display = 'none'; return; }
-  var hasLen  = pw.length >= 8;
-  var hasCap  = /[A-Z]/.test(pw);
-  var hasNum  = /[0-9]/.test(pw);
-  var hasSpc  = /[^A-Za-z0-9]/.test(pw);
-  var rows = [
-    { ok: hasLen,  label: '8+ characters' },
-    { ok: hasCap,  label: 'Uppercase letter' },
-    { ok: hasNum,  label: 'Number' },
-    { ok: hasSpc,  label: 'Special character e.g. ! @ # $' }
-  ];
-  var html = '';
-  for (var i = 0; i < rows.length; i++) {
-    var tick = rows[i].ok
-      ? '<span style="color:#27ae60;font-weight:700;">&#10003;</span>'
-      : '<span style="color:#c0392b;font-weight:700;">&#10007;</span>';
-    html += '<div style="margin:2px 0;">' + tick + ' ' + rows[i].label + '</div>';
-  }
-  el.innerHTML = html;
-  el.style.display = 'block';
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function v(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function showErr(id, msg) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '&#9888; ' + msg;
+  el.style.cssText = 'display:block;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:12px;background:rgba(192,57,43,0.1);border:1.5px solid rgba(192,57,43,0.3);color:#c0392b;';
+}
+function hideErr(id) {
+  var el = document.getElementById(id);
+  if (el) { el.style.display = 'none'; el.innerHTML = ''; }
 }
 
+// ── STEP NAVIGATION ───────────────────────────────────────────────────────────
 function goTo(n) {
   for (var i = 1; i <= 6; i++) {
     var sec = document.getElementById('s' + i);
@@ -969,7 +958,7 @@ function goTo(n) {
       if (stp) {
         stp.classList.remove('active', 'done');
         if (i === n) stp.classList.add('active');
-        if (i < n) stp.classList.add('done');
+        if (i < n)  stp.classList.add('done');
       }
     }
   }
@@ -978,45 +967,64 @@ function goTo(n) {
   window.scrollTo(0, 0);
 }
 
-function showErr(id, msg) {
-  var el = document.getElementById(id);
-  el.innerHTML = '&#9888; ' + msg;
+// ── PASSWORD CHECKER ──────────────────────────────────────────────────────────
+function checkPW(input) {
+  var pw = input.value;
+  var el = document.getElementById('pw-strength');
+  if (!el) return;
+  if (!pw) { el.style.display = 'none'; return; }
+  var checks = [
+    { ok: pw.length >= 8,          label: '8+ characters' },
+    { ok: /[A-Z]/.test(pw),        label: 'Uppercase letter' },
+    { ok: /[0-9]/.test(pw),        label: 'Number' },
+    { ok: /[^A-Za-z0-9]/.test(pw), label: 'Special character e.g. ! @ # $' }
+  ];
+  var html = '';
+  for (var i = 0; i < checks.length; i++) {
+    var icon = checks[i].ok
+      ? '<span style="color:#27ae60;font-weight:900;">&#10003;</span>'
+      : '<span style="color:#c0392b;font-weight:900;">&#10007;</span>';
+    html += '<div style="margin:3px 0;">' + icon + ' ' + checks[i].label + '</div>';
+  }
+  el.innerHTML = html;
   el.style.display = 'block';
 }
-function hideErr(id) {
-  document.getElementById(id).style.display = 'none';
-}
 
-function v(id) { return document.getElementById(id).value.trim(); }
-
+// ── STEP 1 ────────────────────────────────────────────────────────────────────
 function step1() {
   hideErr('e1');
-  if (!document.getElementById('popia-consent').checked) return showErr('e1', 'You must read and accept the POPIA consent above to continue.');
+  if (!document.getElementById('popia-consent').checked)
+    return showErr('e1', 'You must read and accept the POPIA consent above to continue.');
   if (!v('f1')) return showErr('e1', 'Missing: First name');
   if (!v('f2')) return showErr('e1', 'Missing: Surname');
   if (!v('f3')) return showErr('e1', 'Missing: Email address');
   if (v('f3').indexOf('@') < 0) return showErr('e1', 'Invalid email — must contain @');
   var pw = v('f_pw');
-  if (!pw || pw.length < 8) return showErr('e1', 'Password must be at least 8 characters.');
-  if (!/[A-Z]/.test(pw)) return showErr('e1', 'Password must contain at least one uppercase letter.');
-  if (!/[0-9]/.test(pw)) return showErr('e1', 'Password must contain at least one number.');
-  if (!/[^A-Za-z0-9]/.test(pw)) return showErr('e1', 'Password must contain at least one special character e.g. ! @ # $ %');
-  if (!v('f4')) return showErr('e1', 'Missing: Mobile number');
-  if (!v('f5')) return showErr('e1', 'Missing: School name');
-  if (!v('f6')) return showErr('e1', 'Missing: City or town');
-  if (!v('f7')) return showErr('e1', 'Missing: Postal code');
+  if (!pw || pw.length < 8)        return showErr('e1', 'Password must be at least 8 characters.');
+  if (!/[A-Z]/.test(pw))           return showErr('e1', 'Password needs at least one uppercase letter.');
+  if (!/[0-9]/.test(pw))           return showErr('e1', 'Password needs at least one number.');
+  if (!/[^A-Za-z0-9]/.test(pw))    return showErr('e1', 'Password needs at least one special character e.g. ! @ # $');
+  if (!v('f4'))  return showErr('e1', 'Missing: Mobile number');
+  if (!v('f5'))  return showErr('e1', 'Missing: School name');
+  if (!v('f6'))  return showErr('e1', 'Missing: City or town');
+  if (!v('f7'))  return showErr('e1', 'Missing: Postal code');
   if (v('f7').length < 4) return showErr('e1', 'Postal code must be 4 digits');
 
-  R.first = v('f1'); R.last = v('f2'); R.email = v('f3').toLowerCase(); R.pw = pw;
+  R.first = v('f1'); R.last = v('f2');
+  R.email = v('f3').toLowerCase(); R.pw = pw;
   R.mobile = '+27' + v('f4'); R.school = v('f5');
   R.city = v('f6'); R.postal = v('f7');
   R.full = R.first + ' ' + R.last;
 
-  document.getElementById('f12').value = R.school;
+  var f12 = document.getElementById('f12');
+  if (f12) f12.value = R.school;
+
   goTo(2);
 }
 
+// ── STEP 2 — ELIGIBILITY ──────────────────────────────────────────────────────
 var eligAnswers = {};
+
 function answerElig(qid, val) {
   eligAnswers[qid] = val;
   var yBtn = document.getElementById(qid + '-yes');
@@ -1048,11 +1056,12 @@ function step2() {
   hideErr('e2');
   var required = ['eq1','eq2','eq3','eq4','eq5','eq6'];
   for (var i = 0; i < required.length; i++) {
-    if (!eligAnswers[required[i]]) return showErr('e2', 'Please answer all questions above before continuing.');
+    if (!eligAnswers[required[i]])
+      return showErr('e2', 'Please answer all questions above before continuing.');
     if (eligAnswers[required[i]] === 'no') { saveAsSupporter(); return; }
   }
-  if (!v('f8')) return showErr('e2', 'Please select your gender.');
-  if (!v('f9')) return showErr('e2', 'Please enter your golf club name.');
+  if (!v('f8'))  return showErr('e2', 'Please select your gender.');
+  if (!v('f9'))  return showErr('e2', 'Please enter your golf club name.');
   if (!v('f10')) return showErr('e2', 'Please enter your HNA number.');
   if (v('f10').indexOf('2700') !== 0) return showErr('e2', 'HNA number must start with 2700.');
   if (!v('f11')) return showErr('e2', 'Please enter your handicap index.');
@@ -1060,9 +1069,9 @@ function step2() {
   goTo(3);
 }
 
+// ── PARTNER OPTIONS ───────────────────────────────────────────────────────────
 function partnerChoice(type) {
   R.partnerChoice = type;
-  // Highlight selected card, clear others
   var opts = ['popt1','popt2','popt3'];
   var vals = ['has_partner','invite_later','needs_matching'];
   for (var i = 0; i < opts.length; i++) {
@@ -1075,60 +1084,58 @@ function partnerChoice(type) {
   if (type === 'has_partner') {
     setTimeout(function(){ goTo(4); }, 180);
   } else {
-    // invite_later or needs_matching — skip partner details, go to payment
     R.p2first = ''; R.p2last = ''; R.p2email = ''; R.p2mobile = ''; R.p2full = '';
     setTimeout(function(){ goTo(5); }, 180);
   }
 }
 
+// ── STEP 3 — PARTNER DETAILS ──────────────────────────────────────────────────
 function step3() {
   hideErr('e3');
-  if (!v('f13')) return showErr('e3', 'Missing: Partner first name.');
-  if (!v('f14')) return showErr('e3', 'Missing: Partner surname.');
+  if (!v('f13')) return showErr('e3', 'Missing: Partner first name');
+  if (!v('f14')) return showErr('e3', 'Missing: Partner surname');
+  if (!v('f16')) return showErr('e3', 'Missing: Partner mobile number');
   if (v('f15') && v('f15').indexOf('@') < 0) return showErr('e3', 'Invalid partner email — must contain @.');
-  if (!v('f16')) return showErr('e3', 'Missing: Partner mobile number.');
-
-  R.p2first = v('f13'); R.p2last = v('f14'); R.p2email = v('f15') ? v('f15').toLowerCase() : '';
-  R.p2mobile = '+27' + v('f16'); R.p2full = R.p2first + ' ' + R.p2last;
+  R.p2first = v('f13'); R.p2last = v('f14');
+  R.p2email = v('f15') ? v('f15').toLowerCase() : '';
+  R.p2mobile = '+27' + v('f16');
+  R.p2full = R.p2first + ' ' + R.p2last;
   goTo(5);
 }
 
+// ── PAYMENT ───────────────────────────────────────────────────────────────────
 function payNow(type) {
   R.payType = type;
-  R.payRef = 'ASC-' + R.postal + '-' + Date.now().toString().slice(-5);
-  R.payAmt = type === 'team' ? 'R2,800.00' : 'R1,500.00';
-  document.getElementById('pay-choice').style.display = 'none';
-  document.getElementById('payref').textContent = R.payRef;
-  document.getElementById('payamt').textContent = R.payAmt;
-  document.getElementById('pay-eft').style.display = 'block';
+  R.payAmt  = type === 'team' ? 'R2,800.00' : 'R1,500.00';
+  document.getElementById('pay-choice').style.display   = 'none';
+  document.getElementById('pay-details').style.display  = 'block';
+  document.getElementById('pay-amt-display').textContent = R.payAmt;
 }
 
 function payLater() {
   R.payType = 'later';
-  document.getElementById('pay-choice').style.display = 'none';
+  document.getElementById('pay-choice').style.display    = 'none';
   document.getElementById('pay-later-msg').style.display = 'block';
 }
 
-function cp(txt) { navigator.clipboard.writeText(txt).catch(function(){}); }
-function cpRef() { cp(R.payRef || ''); }
-
-function gotPOP(input) {
+function handlePOP(input) {
   popFile = input.files[0];
   if (popFile) {
-    document.getElementById('popname').textContent = 'Selected: ' + popFile.name;
-    document.getElementById('btnsubmit').style.display = 'block';
+    var el = document.getElementById('pop-filename');
+    if (el) el.textContent = popFile.name;
   }
 }
 
+// ── TEAM NUMBER ───────────────────────────────────────────────────────────────
 function teamNum() {
-  return R.school.replace(/[^a-zA-Z]/g, '').substring(0, 3).toUpperCase() + Date.now().toString().slice(-5);
+  var school = (R.school || '').replace(/[^a-zA-Z]/g, '').substring(0, 3).toUpperCase();
+  var rand = Math.floor(1000 + Math.random() * 9000);
+  return school + rand;
 }
 
+// ── SAVE REGISTRATION ─────────────────────────────────────────────────────────
 async function saveReg(payStatus, popUrl) {
-  // Create Supabase auth account so player can log in
-  try {
-    await sb.auth.signUp({ email: R.email, password: R.pw });
-  } catch(e) {}
+  try { await sb.auth.signUp({ email: R.email, password: R.pw }); } catch(e) {}
   var tn = teamNum();
   R.teamNum = tn;
   await sb.from('players').upsert({
@@ -1142,15 +1149,14 @@ async function saveReg(payStatus, popUrl) {
     eligibility_status: 'pending', registration_source: 'web'
   }, { onConflict: 'email' });
 
-  // Only create partner record if they entered partner details
   if (R.p2email && R.p2email.indexOf('@') > 0) {
     await sb.from('players').upsert({
       full_name: R.p2full, email: R.p2email, mobile: R.p2mobile,
       school_name: R.school, team_number: tn,
       payment_status: R.payType === 'team' ? payStatus : 'unpaid',
       partner_status: 'has_partner',
-      eligibility_status: 'pending',
-      invited_by: R.email, registration_source: 'web_invite'
+      eligibility_status: 'pending', invited_by: R.email,
+      registration_source: 'web_invite'
     }, { onConflict: 'email' });
   }
 }
@@ -1161,14 +1167,15 @@ async function submitPay() {
   btn.innerHTML = '<span class="spin"></span>Submitting...';
   btn.disabled = true;
   try {
-    var ext = popFile.name.split('.').pop();
+    var ext  = popFile.name.split('.').pop();
     var fname = 'pop/' + R.email + '-' + Date.now() + '.' + ext;
-    var up = await sb.storage.from('proofs').upload(fname, popFile, { upsert: true });
-    var url = up.data ? SB_URL + '/storage/v1/object/public/proofs/' + fname : null;
+    var up   = await sb.storage.from('proofs').upload(fname, popFile, { upsert: true });
+    var url  = up.data ? SB_URL + '/storage/v1/object/public/proofs/' + fname : null;
     await saveReg('pending_verification', url);
-    showSuccess('You are Officially Entered!', 'Your registration and proof of payment have been received. We will verify and confirm your entry within 24 hours.');
+    showSuccess('You are Officially Entered!',
+      'Your registration and proof of payment have been received. We will verify and confirm your entry within 24 hours.');
   } catch(e) {
-    showErr('e5_pay', 'Something went wrong. Please try again or email admin@alumnigolf.net');
+    showErr('e5_pay', 'Something went wrong. Please try again or email admin&#64;alumnigolf.net');
     btn.innerHTML = 'Submit Registration and Proof of Payment';
     btn.disabled = false;
   }
@@ -1180,9 +1187,10 @@ async function submitLater() {
   btn.disabled = true;
   try {
     await saveReg('unpaid', null);
-    showSuccess('Registration Received!', 'Your registration has been received. Your place is held for 7 days. Payment instructions have been emailed to you.');
+    showSuccess('Registration Received!',
+      'Your registration has been received. Your place is held for 7 days. Payment instructions have been emailed to you.');
   } catch(e) {
-    showErr('e5_pay', 'Something went wrong. Please try again or email admin@alumnigolf.net');
+    showErr('e5_pay', 'Something went wrong. Please try again or email admin&#64;alumnigolf.net');
     btn.innerHTML = 'Complete Registration — Pay Later';
     btn.disabled = false;
   }
@@ -1190,11 +1198,21 @@ async function submitLater() {
 
 function showSuccess(title, msg) {
   document.getElementById('suc-title').textContent = title;
-  document.getElementById('suc-msg').textContent = msg;
+  document.getElementById('suc-msg').textContent   = msg;
   goTo(6);
 }
 
+// ── AUTO LOGIN IF SESSION ─────────────────────────────────────────────────────
 sb.auth.getSession().then(function(r) {
   if (r.data && r.data.session) {
     var em = r.data.session.user.email;
     sb.from('players').select('payment_status').eq('email', em).maybeSingle().then(function(res) {
+      if (res.data && res.data.payment_status === 'paid') {
+        window.location.href = 'portal.html';
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
