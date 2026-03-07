@@ -121,10 +121,16 @@ footer a{color:var(--gold);text-decoration:none;}
         <h2 style="font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--navy);">Player Portal</h2>
         <p style="color:var(--text2);font-size:13px;margin-top:4px;">Log in with your registered email</p>
       </div>
-      <div id="login-error" class="alert alert-error" style="display:none;"></div>
-      <div class="form-group"><label>Email Address</label><input type="email" id="login-email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()" /></div>
-      <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" /></div>
-      <button type="button" class="btn-primary" onclick="doLogin()">Sign In to Portal</button>
+      <div id="login-error" style="display:none;padding:14px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:16px;background:rgba(192,57,43,0.1);border:1.5px solid rgba(192,57,43,0.4);color:#c0392b;line-height:1.5;"></div>
+      <div id="login-success" style="display:none;padding:14px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:16px;background:rgba(39,174,96,0.1);border:1.5px solid rgba(39,174,96,0.4);color:#27ae60;line-height:1.5;"></div>
+      <div class="form-group"><label>Email Address</label><input type="email" id="login-email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="email" /></div>
+      <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password" /></div>
+      <button type="button" class="btn-primary" id="login-btn" onclick="doLogin()">Sign In to Portal</button>
+      <div style="text-align:center;margin-top:14px;font-size:13px;color:var(--text2);">
+        <a href="#" onclick="showForgot();return false;" style="color:var(--gold);font-weight:600;">Forgot your password?</a>
+        &nbsp;&bull;&nbsp;
+        <a href="#" onclick="showEmailHelp();return false;" style="color:var(--text2);">Lost access to email?</a>
+      </div>
       <div style="text-align:center;margin-top:14px;">
         <a href="#" onclick="showForgot();return false;" style="font-size:13px;color:var(--navy);font-weight:600;text-decoration:underline;">Forgot your password?</a>
       </div>
@@ -190,73 +196,62 @@ footer a{color:var(--gold);text-decoration:none;}
   <p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#89e8ede4e0e7c9e8e5fce4e7e0eee6e5efa7e7ecfd"><span class="__cf_email__" data-cfemail="88e9ece5e1e6c8e9e4fde5e6e1efe7e4eea6e6edfc">[email&#160;protected]</span></a></p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentPlayer = null;
 
+// ── EMAIL HELP ──────────────────────────────────────────────────────────────
 function showEmailHelp() {
   document.getElementById('sec-login').style.display = 'none';
   document.getElementById('forgot-section').style.display = 'none';
   document.getElementById('email-help-section').style.display = 'block';
-  window.scrollTo(0, 0);
+  window.scrollTo(0,0);
 }
 function hideEmailHelp() {
   document.getElementById('email-help-section').style.display = 'none';
   document.getElementById('sec-login').style.display = 'block';
 }
 async function submitEmailHelp() {
-  var name = document.getElementById('help-name').value.trim();
+  var name    = document.getElementById('help-name').value.trim();
   var surname = document.getElementById('help-surname').value.trim();
-  var mobile = document.getElementById('help-mobile').value.trim();
-  var school = document.getElementById('help-school').value.trim();
+  var mobile  = document.getElementById('help-mobile').value.trim();
+  var school  = document.getElementById('help-school').value.trim();
   var newemail = document.getElementById('help-newemail').value.trim().toLowerCase();
-  var msg = document.getElementById('help-msg');
-
-  if (!name) return showHelpMsg('Please enter your first name.', false);
+  if (!name)    return showHelpMsg('Please enter your first name.', false);
   if (!surname) return showHelpMsg('Please enter your surname.', false);
   if (!mobile || mobile.length < 9) return showHelpMsg('Please enter your 9-digit mobile number.', false);
-  if (!school) return showHelpMsg('Please enter your school name.', false);
+  if (!school)  return showHelpMsg('Please enter your school name.', false);
   if (!newemail || newemail.indexOf('@') < 0) return showHelpMsg('Please enter a valid new email address.', false);
-
-  var btn = event.target;
-  btn.textContent = 'Sending...';
-  btn.disabled = true;
-
+  var btn = event.target; btn.textContent = 'Sending...'; btn.disabled = true;
   try {
     await sb.from('account_recovery_requests').insert({
-      full_name: name + ' ' + surname,
-      mobile: '+27' + mobile,
-      school_name: school,
-      new_email: newemail,
-      status: 'pending',
+      full_name: name + ' ' + surname, mobile: '+27' + mobile,
+      school_name: school, new_email: newemail, status: 'pending',
       created_at: new Date().toISOString()
     });
     showHelpMsg('Recovery request sent! We will verify your details and contact you on +27' + mobile + ' within 24 hours.', true);
-    btn.textContent = 'Send Recovery Request';
-    btn.disabled = false;
   } catch(e) {
-    var mailto = 'mailto:admin@alumnigolf.net?subject=Account%20Recovery&body=Name%3A%20' + encodeURIComponent(name + ' ' + surname) + '%0AMobile%3A%2027' + mobile + '%0ASchool%3A%20' + encodeURIComponent(school) + '%0ANew%20Email%3A%20' + encodeURIComponent(newemail);
-    showHelpMsg('Automatic request failed. Please email us directly: <a href="' + mailto + '" style="color:var(--gold);font-weight:700;">admin@alumnigolf.net</a>', false);
-    btn.textContent = 'Send Recovery Request';
-    btn.disabled = false;
+    var ml = 'mailto:admin&#64;alumnigolf.net?subject=Account%20Recovery&body=Name%3A%20' + encodeURIComponent(name+' '+surname) + '%0AMobile%3A%2027' + mobile + '%0ASchool%3A%20' + encodeURIComponent(school) + '%0ANew%20Email%3A%20' + encodeURIComponent(newemail);
+    showHelpMsg('Could not send automatically. Please email us: <a href="' + ml + '" style="color:var(--gold);font-weight:700;">admin&#64;alumnigolf.net</a>', false);
   }
+  btn.textContent = 'Send Recovery Request'; btn.disabled = false;
 }
-function showHelpMsg(text, success) {
+function showHelpMsg(text, ok) {
   var el = document.getElementById('help-msg');
   el.innerHTML = text;
-  el.style.background = success ? 'rgba(39,174,96,0.1)' : 'rgba(192,57,43,0.1)';
-  el.style.color = success ? '#27ae60' : '#c0392b';
-  el.style.border = success ? '1px solid rgba(39,174,96,0.3)' : '1px solid rgba(192,57,43,0.3)';
-  el.style.display = 'block';
+  el.style.cssText = 'display:block;padding:12px;border-radius:8px;font-size:13px;' +
+    (ok ? 'background:rgba(39,174,96,0.1);color:#27ae60;border:1px solid rgba(39,174,96,0.3);'
+        : 'background:rgba(192,57,43,0.1);color:#c0392b;border:1px solid rgba(192,57,43,0.3);');
 }
 
+// ── FORGOT PASSWORD ─────────────────────────────────────────────────────────
 function showForgot() {
   document.getElementById('sec-login').style.display = 'none';
   document.getElementById('forgot-section').style.display = 'block';
-  window.scrollTo(0, 0);
+  window.scrollTo(0,0);
 }
 function hideForgot() {
   document.getElementById('forgot-section').style.display = 'none';
@@ -266,107 +261,174 @@ async function sendReset() {
   var email = document.getElementById('forgot-email').value.trim().toLowerCase();
   var msg = document.getElementById('forgot-msg');
   if (!email || email.indexOf('@') < 0) {
-    msg.textContent = 'Please enter a valid email address.';
-    msg.style.background = 'rgba(192,57,43,0.1)';
-    msg.style.color = '#c0392b';
-    msg.style.display = 'block';
-    return;
+    msg.style.cssText = 'display:block;padding:12px;border-radius:8px;font-size:13px;background:rgba(192,57,43,0.1);color:#c0392b;border:1px solid rgba(192,57,43,0.3);';
+    msg.textContent = 'Please enter a valid email address.'; return;
   }
-  var btn = event.target;
-  btn.textContent = 'Sending...';
-  btn.disabled = true;
-  var redirectUrl = window.location.origin + '/portal.html';
-  var res = await sb.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
-  btn.textContent = 'Send Reset Link';
-  btn.disabled = false;
+  var btn = event.target; btn.textContent = 'Sending...'; btn.disabled = true;
+  var res = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/portal.html' });
+  btn.textContent = 'Send Reset Link'; btn.disabled = false;
   if (res.error) {
-    msg.textContent = 'Something went wrong. Please try again or contact admin@alumnigolf.net';
-    msg.style.background = 'rgba(192,57,43,0.1)';
-    msg.style.color = '#c0392b';
+    msg.style.cssText = 'display:block;padding:12px;border-radius:8px;font-size:13px;background:rgba(192,57,43,0.1);color:#c0392b;border:1px solid rgba(192,57,43,0.3);';
+    msg.textContent = 'Something went wrong. Please try again or contact us.';
   } else {
-    msg.textContent = 'Reset link sent! Check your email inbox (and spam folder). The link expires in 1 hour.';
-    msg.style.background = 'rgba(39,174,96,0.1)';
-    msg.style.color = '#27ae60';
+    msg.style.cssText = 'display:block;padding:12px;border-radius:8px;font-size:13px;background:rgba(39,174,96,0.1);color:#27ae60;border:1px solid rgba(39,174,96,0.3);';
+    msg.textContent = 'Reset link sent! Check your inbox and spam folder. The link expires in 1 hour.';
   }
-  msg.style.display = 'block';
 }
 
+// ── LOGIN ───────────────────────────────────────────────────────────────────
 async function doLogin() {
-  const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const pass = document.getElementById('login-password').value;
-  const err = document.getElementById('login-error');
+  var email = document.getElementById('login-email').value.trim().toLowerCase();
+  var pass  = document.getElementById('login-password').value;
+  var err   = document.getElementById('login-error');
+  var btn   = document.getElementById('login-btn');
   err.style.display = 'none';
-  if (!email || !pass) { err.textContent = 'Please enter your email and password.'; err.style.display='block'; return; }
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-  if (error) { err.textContent = 'Incorrect email or password. Use the Forgot Password link below if you need to reset it.'; err.style.display='block'; return; }
-  await loadDashboard(email);
+
+  if (!email) {
+    err.textContent = '\u26a0 Please enter your email address.';
+    err.style.display = 'block';
+    document.getElementById('login-email').focus(); return;
+  }
+  if (!pass) {
+    err.textContent = '\u26a0 Please enter your password.';
+    err.style.display = 'block';
+    document.getElementById('login-password').focus(); return;
+  }
+
+  btn.textContent = 'Signing in\u2026'; btn.disabled = true;
+
+  try {
+    var result = await sb.auth.signInWithPassword({ email: email, password: pass });
+    if (result.error) {
+      var emsg = result.error.message ? result.error.message.toLowerCase() : '';
+      if (emsg.includes('invalid login') || emsg.includes('invalid credentials')) {
+        err.textContent = '\u26a0 Incorrect email or password. Please check and try again.';
+      } else if (emsg.includes('email not confirmed')) {
+        err.textContent = '\u26a0 Please verify your email address first. Check your inbox for a confirmation email.';
+      } else {
+        err.textContent = '\u26a0 ' + (result.error.message || 'Sign in failed. Please try again.');
+      }
+      err.style.display = 'block';
+      btn.textContent = 'Sign In to Portal'; btn.disabled = false;
+      return;
+    }
+    await loadDashboard(email);
+  } catch(e) {
+    err.textContent = '\u26a0 Something went wrong. Please check your connection and try again.';
+    err.style.display = 'block';
+    btn.textContent = 'Sign In to Portal'; btn.disabled = false;
+  }
 }
 
+// ── DASHBOARD ───────────────────────────────────────────────────────────────
 async function loadDashboard(email) {
-  const { data: player } = await sb.from('players').select('*').eq('email', email).maybeSingle();
-  if (!player) return;
+  var result = await sb.from('players').select('*').eq('email', email).maybeSingle();
+  var player = result.data;
+  if (!player) {
+    var err = document.getElementById('login-error');
+    err.textContent = 'No player account found for this email. Please register first.';
+    err.style.display = 'block'; return;
+  }
   currentPlayer = player;
   document.getElementById('sec-login').classList.remove('active');
   document.getElementById('sec-dashboard').classList.add('active');
   document.getElementById('dash-name').textContent = 'Welcome, ' + (player.full_name || 'Player') + '!';
-  document.getElementById('dash-school').textContent = (player.school || '') + (player.team_number ? ' · Team: ' + player.team_number : '');
+  document.getElementById('dash-school').textContent =
+    (player.school_name || '') + (player.team_number ? '  ·  Team: ' + player.team_number : '');
 
-  const payBadge = player.payment_status === 'paid' ? '<span class="badge badge-green">✅ Paid</span>' :
-    player.payment_status === 'pending_verification' ? '<span class="badge badge-gold">⏳ Pending Verification</span>' :
-    '<span class="badge badge-red">❌ Unpaid</span>';
-  const eligBadge = player.eligibility_status === 'eligible' ? '<span class="badge badge-green">✅ Eligible</span>' : '<span class="badge badge-grey">⏳ Pending</span>';
+  var payBadge = player.payment_status === 'paid'
+    ? '<span class="badge badge-green">&#10003; Paid</span>'
+    : player.payment_status === 'pending_verification'
+    ? '<span class="badge badge-gold">&#8987; Pending Verification</span>'
+    : '<span class="badge badge-red">&#10007; Unpaid</span>';
+  var eligBadge = player.eligibility_status === 'eligible'
+    ? '<span class="badge badge-green">&#10003; Eligible</span>'
+    : '<span class="badge badge-grey">&#8987; Pending Review</span>';
 
-  document.getElementById('dash-info').innerHTML = `
-    <div class="info-row"><span class="label">Email</span><span class="value">${player.email}</span></div>
-    <div class="info-row"><span class="label">Mobile</span><span class="value">${player.mobile||'—'}</span></div>
-    <div class="info-row"><span class="label">School</span><span class="value">${player.school||'—'}</span></div>
-    <div class="info-row"><span class="label">Golf Club</span><span class="value">${player.golf_club||'—'}</span></div>
-    <div class="info-row"><span class="label">HNA Number</span><span class="value">${player.hna_number||'—'}</span></div>
-    <div class="info-row"><span class="label">Handicap Index</span><span class="value">${player.handicap_index||'—'}</span></div>
-    <div class="info-row"><span class="label">Team</span><span class="value">${player.team_number||'—'}</span></div>
-    <div class="info-row"><span class="label">Division</span><span class="value">${player.division_name||'Not yet assigned'}</span></div>
-    <div class="info-row"><span class="label">Payment</span><span class="value">${payBadge}</span></div>
-    <div class="info-row"><span class="label">Eligibility</span><span class="value">${eligBadge}</span></div>
-  `;
+  document.getElementById('dash-info').innerHTML =
+    row('Email',            player.email || '—') +
+    row('Mobile',           player.mobile || '—') +
+    row('School',           player.school_name || '—') +
+    row('Golf Club',        player.golf_club || '—') +
+    row('HNA Number',       player.hna_number || '—') +
+    row('Handicap Index',   player.handicap_index || '—') +
+    row('Team',             player.team_number || '—') +
+    row('Division',         player.division_name || 'Not yet assigned') +
+    row('Payment',          payBadge) +
+    row('Eligibility',      eligBadge);
 
-  if (player.payment_status === 'unpaid') document.getElementById('payment-card').style.display = 'block';
+  if (player.payment_status !== 'paid' && player.payment_status !== 'pending_verification') {
+    document.getElementById('payment-card').style.display = 'block';
+  }
 
-  // Load matches
   if (player.team_number) {
-    const { data: matches } = await sb.from('matches').select('*')
-      .or(`home_team.eq.${player.team_number},away_team.eq.${player.team_number}`)
+    var mres = await sb.from('matches').select('*')
+      .or('home_team.eq.' + player.team_number + ',away_team.eq.' + player.team_number)
       .order('round_number');
-    if (matches && matches.length > 0) {
+    if (mres.data && mres.data.length > 0) {
       document.getElementById('matches-card').style.display = 'block';
-      document.getElementById('matches-list').innerHTML = matches.map(m => {
-        const isHome = m.home_team === player.team_number;
-        const opponent = isHome ? m.away_team : m.home_team;
-        const statusBadge = m.match_status === 'completed' ? '<span class="badge badge-green">Completed</span>' :
-          m.match_status === 'pending' ? '<span class="badge badge-grey">Pending</span>' : '<span class="badge badge-gold">In Progress</span>';
-        return `<div style="padding:16px 0;border-bottom:1px solid var(--border);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <div><span style="font-size:11px;color:var(--text2);font-weight:700;letter-spacing:1px;">ROUND ${m.round_number}</span></div>
-            ${statusBadge}
-          </div>
-          <div style="font-size:15px;font-weight:600;margin-bottom:4px;">vs <span style="color:var(--navy)">${opponent}</span> ${isHome ? '<span style="font-size:11px;color:var(--gold);">(HOME)</span>' : '<span style="font-size:11px;color:var(--text2);">(AWAY)</span>'}</div>
-          ${m.winner ? `<div style="font-size:13px;color:${m.winner===player.team_number?'var(--green)':'var(--red)'};">Winner: ${m.winner}</div>` : ''}
-          <div class="contact-options" style="margin-top:12px;">
-            <a href="mailto:?subject=Alumni Golf - Round ${m.round_number} Scheduling&body=Hi, I am reaching out to schedule our Round ${m.round_number} match in the Alumni Schools Golf Challenge. Please let me know your availability." class="contact-btn contact-email">📧 Email Opponent</a>
-            <a href="https://wa.me/?text=Hi! I'm reaching out about our Round ${m.round_number} Alumni Schools Golf Challenge match. When are you available?" target="_blank" class="contact-btn contact-whatsapp">💬 WhatsApp</a>
-          </div>
-        </div>`;
+      document.getElementById('matches-list').innerHTML = mres.data.map(function(m) {
+        var isHome = m.home_team === player.team_number;
+        var opponent = isHome ? m.away_team : m.home_team;
+        var statusBadge = m.match_status === 'completed'
+          ? '<span class="badge badge-green">Completed</span>'
+          : m.match_status === 'pending'
+          ? '<span class="badge badge-grey">Pending</span>'
+          : '<span class="badge badge-gold">In Progress</span>';
+        var winnerLine = m.winner
+          ? '<div style="font-size:13px;margin-top:4px;color:' + (m.winner === player.team_number ? '#27ae60' : '#c0392b') + ';">Result: ' + (m.winner === player.team_number ? 'Win' : 'Loss') + (m.score_display ? ' (' + m.score_display + ')' : '') + '</div>'
+          : '';
+        return '<div style="padding:16px 0;border-bottom:1px solid var(--border);">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<span style="font-size:11px;color:var(--text2);font-weight:700;letter-spacing:1px;">ROUND ' + m.round_number + '</span>' +
+          statusBadge + '</div>' +
+          '<div style="font-size:15px;font-weight:600;">vs <span style="color:var(--navy)">' + opponent + '</span> ' +
+          (isHome ? '<span style="font-size:11px;color:var(--gold);">(HOME)</span>' : '<span style="font-size:11px;color:var(--text2);">(AWAY)</span>') + '</div>' +
+          winnerLine + '</div>';
       }).join('');
     }
   }
 }
 
+function row(label, val) {
+  return '<div class="info-row"><span class="label">' + label + '</span><span class="value">' + val + '</span></div>';
+}
+
+// ── PAYMENT UPLOAD ──────────────────────────────────────────────────────────
 async function submitPortalPayment() {
-  const file = document.getElementById('portal-pop').files[0];
+  var file = document.getElementById('portal-pop').files[0];
   if (!file) return;
-  const btn = document.getElementById('portal-pay-btn');
+  var btn = document.getElementById('portal-pay-btn');
   btn.innerHTML = '<span class="spinner"></span>Uploading...';
   btn.disabled = true;
-  const ext = file.name.split('.').pop();
-  const fileName = `pop/${currentPlayer.email}-${Date.now()}.${ext}`;
-  await sb.storage.from('proofs').upload(fileName, file, { upsert: true });
- 
+  var ext = file.name.split('.').pop();
+  var fileName = 'pop/' + currentPlayer.email + '-' + Date.now() + '.' + ext;
+  var upres = await sb.storage.from('proofs').upload(fileName, file, { upsert: true });
+  var url = upres.data ? SUPABASE_URL + '/storage/v1/object/public/proofs/' + fileName : null;
+  await sb.from('players').update({
+    payment_status: 'pending_verification',
+    proof_of_payment_url: url
+  }).eq('email', currentPlayer.email);
+  btn.innerHTML = '&#10003; Uploaded — Pending Verification';
+  btn.style.background = '#27ae60';
+  document.getElementById('portal-pay-success').style.display = 'block';
+  currentPlayer.payment_status = 'pending_verification';
+}
+
+// ── SIGN OUT ────────────────────────────────────────────────────────────────
+async function doLogout() {
+  await sb.auth.signOut();
+  currentPlayer = null;
+  document.getElementById('sec-dashboard').classList.remove('active');
+  document.getElementById('sec-login').classList.add('active');
+}
+
+// ── AUTO LOGIN IF SESSION EXISTS ────────────────────────────────────────────
+sb.auth.getSession().then(function(r) {
+  if (r.data && r.data.session) {
+    loadDashboard(r.data.session.user.email);
+  }
+});
+</script>
+</body>
+</html>

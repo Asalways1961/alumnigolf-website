@@ -632,17 +632,60 @@ footer a{color:var(--gold);text-decoration:none;}
   <div class="card">
     <div class="card-header">
       <div class="card-icon">&#10003;</div>
-      <div><h2>Eligibility Confirmation</h2><p>Please confirm all of the following</p></div>
+      <div><h2>Eligibility Check</h2><p>All questions must be answered Yes to enter</p></div>
     </div>
     <div class="err" id="e2"></div>
-    <div class="elig-wrap">
-      <h3>Please tick each item to confirm:</h3>
-      <div class="chk" onclick="this.classList.toggle('on')"><div class="chk-box"></div><div class="chk-txt">I am no longer enrolled as a learner at any school and am a bona fide alumnus of a South African school.</div></div>
-      <div class="chk" onclick="this.classList.toggle('on')"><div class="chk-box"></div><div class="chk-txt">I am at least 18 years of age.</div></div>
-      <div class="chk" onclick="this.classList.toggle('on')"><div class="chk-box"></div><div class="chk-txt">I hold a valid, active Golf RSA HNA (Handicapping Network Africa) handicap and am in good standing at my club.</div></div>
-      <div class="chk" onclick="this.classList.toggle('on')"><div class="chk-box"></div><div class="chk-txt">Both members of my team attended the same South African school.</div></div>
-      <div class="chk" onclick="this.classList.toggle('on')"><div class="chk-box"></div><div class="chk-txt">I agree to the tournament rules, code of conduct, and terms and conditions.</div></div>
-      <div class="chk" onclick="this.classList.toggle('on')"><div class="chk-box"></div><div class="chk-txt">I understand that payment must be completed to secure my team entry.</div></div>
+
+    <div id="ineligible-block" style="display:none;background:rgba(192,57,43,0.07);border:2px solid rgba(192,57,43,0.3);border-radius:12px;padding:28px 24px;text-align:center;margin-bottom:16px;">
+      <div style="font-size:44px;margin-bottom:12px;">&#128530;</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:#c0392b;margin-bottom:12px;">Sorry, you are not eligible to enter the competition.</div>
+      <div style="font-size:13px;color:#666;line-height:1.8;margin-bottom:18px;">You have been registered as a <strong>Supporter</strong> of the Alumni Schools Golf Challenge.<br>Thank you for your interest — we hope to see you at the event!<br><br>If you have any questions please contact our admin:<br><a href="mailto:admin&#64;alumnigolf.net" style="color:var(--navy);font-weight:700;">admin&#64;alumnigolf.net</a></div>
+    </div>
+
+    <div id="elig-questions">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;padding:12px 16px;background:rgba(27,58,107,0.05);border-radius:8px;">&#8505; All questions must be answered <strong style="color:#27ae60;">Yes</strong> to proceed. Any <strong style="color:#c0392b;">No</strong> will register you as a Supporter only.</div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq1">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Are you no longer enrolled as a learner at any school and are a bona fide alumnus of a South African school?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq1-yes" onclick="answerElig('eq1','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq1-no"  onclick="answerElig('eq1','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq2">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Are you at least 18 years of age?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq2-yes" onclick="answerElig('eq2','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq2-no"  onclick="answerElig('eq2','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq3">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Do you hold a valid, active Golf RSA HNA (Handicapping Network Africa) handicap and are in good standing at your club?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq3-yes" onclick="answerElig('eq3','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq3-no"  onclick="answerElig('eq3','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq4">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Will both members of your team be alumni of the same South African school?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq4-yes" onclick="answerElig('eq4','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq4-no"  onclick="answerElig('eq4','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq5">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Do you agree to the tournament rules, code of conduct, and terms and conditions?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq5-yes" onclick="answerElig('eq5','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq5-no"  onclick="answerElig('eq5','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq6">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Do you understand that payment must be completed to secure your team entry?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq6-yes" onclick="answerElig('eq6','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq6-no"  onclick="answerElig('eq6','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
     </div>
     <div class="golf-block">
       <h3>Golf Membership Details</h3>
@@ -967,16 +1010,45 @@ function step1() {
   goTo(2);
 }
 
+var eligAnswers = {};
+function answerElig(qid, val) {
+  eligAnswers[qid] = val;
+  var yBtn = document.getElementById(qid + '-yes');
+  var nBtn = document.getElementById(qid + '-no');
+  var yOn  = 'flex:1;padding:10px;border-radius:8px;border:2px solid #27ae60;background:rgba(39,174,96,0.12);font-size:13px;font-weight:700;cursor:pointer;color:#27ae60;';
+  var nOn  = 'flex:1;padding:10px;border-radius:8px;border:2px solid #c0392b;background:rgba(192,57,43,0.12);font-size:13px;font-weight:700;cursor:pointer;color:#c0392b;';
+  var off  = 'flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;color:var(--text2);';
+  if (val === 'yes') { yBtn.style.cssText = yOn; nBtn.style.cssText = off; }
+  else               { nBtn.style.cssText = nOn; yBtn.style.cssText = off; saveAsSupporter(); }
+}
+
+async function saveAsSupporter() {
+  try { await sb.auth.signUp({ email: R.email, password: R.pw }); } catch(e) {}
+  try {
+    await sb.from('players').upsert({
+      full_name: R.full, email: R.email, mobile: R.mobile,
+      school_name: R.school, city: R.city, postal_code: R.postal,
+      eligibility_status: 'ineligible', player_type: 'supporter',
+      payment_status: 'unpaid', registration_source: 'web'
+    }, { onConflict: 'email' });
+  } catch(e) {}
+  document.getElementById('elig-questions').style.display = 'none';
+  document.getElementById('ineligible-block').style.display = 'block';
+  hideErr('e2');
+}
+
 function step2() {
   hideErr('e2');
-  var ticks = document.querySelectorAll('#s2 .chk.on').length;
-  if (ticks < 6) return showErr('e2', 'Please tick all ' + (6 - ticks) + ' remaining confirmation items above.');
-  if (!v('f8')) return showErr('e2', 'Missing: Please select your gender.');
-  if (!v('f9')) return showErr('e2', 'Missing: Golf club name.');
-  if (!v('f10')) return showErr('e2', 'Missing: HNA handicap number.');
+  var required = ['eq1','eq2','eq3','eq4','eq5','eq6'];
+  for (var i = 0; i < required.length; i++) {
+    if (!eligAnswers[required[i]]) return showErr('e2', 'Please answer all questions above before continuing.');
+    if (eligAnswers[required[i]] === 'no') { saveAsSupporter(); return; }
+  }
+  if (!v('f8')) return showErr('e2', 'Please select your gender.');
+  if (!v('f9')) return showErr('e2', 'Please enter your golf club name.');
+  if (!v('f10')) return showErr('e2', 'Please enter your HNA number.');
   if (v('f10').indexOf('2700') !== 0) return showErr('e2', 'HNA number must start with 2700.');
-  if (!v('f11')) return showErr('e2', 'Missing: Handicap index.');
-
+  if (!v('f11')) return showErr('e2', 'Please enter your handicap index.');
   R.gender = v('f8'); R.club = v('f9'); R.hna = v('f10'); R.handicap = v('f11');
   goTo(3);
 }
