@@ -5,6 +5,7 @@
 <title>My Portal — Alumni Schools Golf Challenge</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <style>
 :root{--navy:#1B3A6B;--navy-dark:#0f2347;--gold:#C9A84C;--gold-dim:rgba(201,168,76,0.15);--white:#fff;--off-white:#f8f6f0;--text:#1a1a2e;--text2:#555;--border:rgba(27,58,107,0.12);--green:#27ae60;--red:#c0392b;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -198,10 +199,8 @@ footer a{color:var(--gold);text-decoration:none;}
 </footer>
 
 <script>
-const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = createClient(window.SB_URL, window.SB_KEY);
 let currentPlayer = null;
 
 // ── EMAIL HELP ──────────────────────────────────────────────────────────────

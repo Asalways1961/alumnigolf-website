@@ -6,6 +6,7 @@
 <title>Alumni Schools Golf Challenge — Register</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <style>
 :root {
   --navy:#1B3A6B; --navy-dark:#0f2347; --navy-light:#2a4f8f;
@@ -936,9 +937,9 @@ footer a{color:var(--gold);text-decoration:none;}
 </footer>
 
 <script>
-var SB_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
-var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
-var sb = supabase.createClient(SB_URL, SB_KEY);
+
+
+var sb = supabase.createClient(window.SB_URL, window.SB_KEY);
 var R = {};
 var popFile = null;
 
