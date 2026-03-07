@@ -600,6 +600,28 @@ footer a{color:var(--gold);text-decoration:none;}
       <div class="fg"><label>Postal Code <span class="r">*</span></label><input type="text" id="f7" placeholder="e.g. 7550" maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></div>
     </div>
     <div class="info">&#9888; <strong>Important:</strong> Your postal code determines your division. Please ensure it is 100% accurate.</div>
+
+    <!-- POPIA CONSENT -->
+    <div style="background:rgba(27,58,107,0.05);border:1.5px solid rgba(27,58,107,0.15);border-radius:12px;padding:18px 20px;margin:20px 0;">
+      <div style="font-weight:700;color:var(--navy);font-size:14px;margin-bottom:8px;">&#128274; Privacy &amp; POPIA Consent</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:14px;">
+        In accordance with the <strong>Protection of Personal Information Act (POPIA)</strong>, we need your consent
+        to collect and process your personal information for the purpose of administering the Alumni Schools Golf Challenge.<br><br>
+        Your information will be used to: manage your registration and entry, communicate tournament details,
+        verify your eligibility, and process payments. Your data will not be sold or shared with third parties
+        without your consent. You may request access to or deletion of your data at any time by contacting
+        <strong>admin&#64;alumnigolf.net</strong>.
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+        <input type="checkbox" id="popia-consent" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--navy);">
+        <span style="font-size:13px;color:var(--text);line-height:1.5;">
+          I have read and understand the above. I consent to Legacy Event Ventures (Pty) Ltd collecting and
+          processing my personal information for the purposes of the Alumni Schools Golf Challenge,
+          in accordance with POPIA. <span style="color:var(--red);">*</span>
+        </span>
+      </label>
+    </div>
+
     <button type="button" class="btn btn-gold" id="btn1" onclick="step1()">Continue to Eligibility Check &#8594;</button>
     <div class="login-link">Already registered? <a href="portal.html">Log in to your portal</a></div>
   </div>
@@ -920,6 +942,7 @@ function v(id) { return document.getElementById(id).value.trim(); }
 
 function step1() {
   hideErr('e1');
+  if (!document.getElementById('popia-consent').checked) return showErr('e1', 'You must read and accept the POPIA consent above to continue.');
   if (!v('f1')) return showErr('e1', 'Missing: First name');
   if (!v('f2')) return showErr('e1', 'Missing: Surname');
   if (!v('f3')) return showErr('e1', 'Missing: Email address');
