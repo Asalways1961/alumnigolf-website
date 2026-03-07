@@ -813,7 +813,7 @@ footer a{color:var(--gold);text-decoration:none;}
   <p style="margin-top:5px;">Honouring tradition. Celebrating excellence.</p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 var SB_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 var sb = supabase.createClient(SB_URL, SB_KEY);
@@ -1021,4 +1021,13 @@ function showSuccess(title, msg) {
 sb.auth.getSession().then(function(r) {
   if (r.data && r.data.session) {
     var em = r.data.session.user.email;
-    sb.fro
+    sb.from('players').select('payment_status').eq('email', em).maybeSingle().then(function(res) {
+      if (res.data && res.data.payment_status === 'paid') {
+        window.location.href = 'portal.html';
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
