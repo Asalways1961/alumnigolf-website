@@ -642,7 +642,7 @@ footer a { color:var(--gold); text-decoration:none; }
           </div>
           <div id="pop-selected" style="display:none; margin-top:10px; padding:10px 14px; background:#f0faf4; border:2px solid var(--green); border-radius:8px; font-size:13px; color:var(--green); font-weight:600;"></div>
           <div style="font-size:12px; color:var(--text2); margin-top:10px; line-height:1.6;">
-            Alternatively, email your proof of payment to <strong><a href="mailto:asmgolf123@gmail.com" style="color:var(--navy);">asmgolf123@gmail.com</a></strong> with your name and reference number.
+            Alternatively, email your proof of payment to <strong><a href="/cdn-cgi/l/email-protection#e4859789838b8882d5d6d7a48389858d88ca878b89" style="color:var(--navy);"><span class="__cf_email__" data-cfemail="f190829c969e9d97c0c3c2b1969c90989ddf929e9c">[email&#160;protected]</span></a></strong> with your name and reference number.
           </div>
           <div class="field-err" id="err-pop" style="margin-top:8px;"></div>
 
@@ -691,7 +691,7 @@ footer a { color:var(--gold); text-decoration:none; }
   <p>&#169; 2026 Alumni Schools Golf Challenge | <a href="contact.html">Contact Us</a></p>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const { createClient } = supabase;
@@ -934,7 +934,19 @@ function showHardlock(title, body) {
 }
 
 async function saveStep2() {
-  if (!reg.email) { alert('Session lost — please refresh and start again.'); return; }
+  // Rebuild reg from DOM if sessionStorage lost it
+  const emailVal = document.getElementById('f-email') ? document.getElementById('f-email').value.trim().toLowerCase() : '';
+  const nameVal = document.getElementById('f-name') ? document.getElementById('f-name').value.trim() : '';
+  const surnameVal = document.getElementById('f-surname') ? document.getElementById('f-surname').value.trim() : '';
+  const mobileVal = document.getElementById('f-mobile') ? document.getElementById('f-mobile').value.trim() : '';
+  if (emailVal && !reg.email) {
+    reg.email = emailVal;
+    reg.full_name = (nameVal && surnameVal) ? nameVal + ' ' + surnameVal : '';
+    reg.mobile = mobileVal ? '+27' + mobileVal : '';
+    reg.school = selectedSchool ? selectedSchool.name : '';
+    sessionStorage.setItem('ag_reg', JSON.stringify(reg));
+  }
+  if (!reg.email) { alert('Session lost — please go back to Step 1 and re-enter your details.'); return; }
   let ok = true;
 
   // Validate checkboxes
@@ -1426,13 +1438,4 @@ function showSuccess() {
   const msgs = {
     has_partner:  'Your place will be secured as soon as your partner has completed the registration process and all fees are paid.',
     invite_later: 'You will need to invite your partner prior to your place being fully secured.',
-    need_partner: 'You have been placed in the player pool and will be notified as soon as we find someone who went to the same school living within a 50km radius from you.',
-  };
-  document.getElementById('success-message').innerHTML = msgs[selectedPartnerOption] || '';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// session check moved to DOMContentLoaded
-</script>
-</body>
-</html>
+    need_partner: 'You have been placed in the player pool and will be notified as soon as we find someone who went to the same school living within a
