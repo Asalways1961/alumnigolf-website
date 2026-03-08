@@ -209,7 +209,7 @@ footer a{color:rgba(255,255,255,.5);}
       <div class="field">
         <label>School You Represent *</label>
         <div class="dd-wrap" id="school-wrap">
-          <input type="text" id="f-school" placeholder="Type first 3 letters of your school..." autocomplete="off" />
+          <input type="text" id="f-school" placeholder="Type to search, or enter school name manually..." autocomplete="off" />
           <div class="dd" id="school-dd"></div>
         </div>
         <div class="confirmed" id="school-conf" style="display:none">
@@ -652,7 +652,11 @@ async function saveStep1() {
   if (!surname) { ferr('err-surname',true); ierr('f-surname',true); ok=false; } else { ferr('err-surname',false); ierr('f-surname',false); }
   if (!/^[0-9]{9}$/.test(mobile)) { ferr('err-mobile',true); document.getElementById('mob-wrap').classList.add('err'); ok=false; } else { ferr('err-mobile',false); document.getElementById('mob-wrap').classList.remove('err'); }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { ferr('err-email',true); ierr('f-email',true); ok=false; } else { ferr('err-email',false); ierr('f-email',false); }
-  if (!selectedSchool) { ferr('err-school',true); ok=false; } else { ferr('err-school',false); }
+  if (!selectedSchool) {
+    var typedSchool = document.getElementById('f-school').value.trim();
+    if (typedSchool) { selectedSchool = {id: null, name: typedSchool}; } else { ferr('err-school',true); ok=false; }
+  }
+  if (selectedSchool) ferr('err-school',false);
   if (!pwValid) { ferr('err-pw',true); ok=false; } else { ferr('err-pw',false); }
   if (pw !== pw2) { ferr('err-pw2',true); ok=false; } else { ferr('err-pw2',false); }
   if (!ok) return;
@@ -779,8 +783,9 @@ async function submitPayment() {
   try {
   var ok=true;
   if (!selPartnerOpt) { ferr('err-partner',true); ok=false; }
-  if (!selPayOpt) { ferr('err-pay',true); ok=false; }
   if (!selWhenOpt) { ferr('err-when',true); ok=false; }
+  // Payment amount only required if paying now
+  if (selWhenOpt==='now' && !selPayOpt) { ferr('err-pay',true); ok=false; } else { ferr('err-pay',false); }
   if (!ok) return;
 
   if (selPartnerOpt==='have') {
