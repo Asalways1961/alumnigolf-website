@@ -378,11 +378,69 @@ footer a { color:var(--gold); text-decoration:none; }
 
     </div>
 
-    <!-- ══ STEP 3 placeholder ══ -->
+    <!-- ══ STEP 3: TOURNAMENT ENTRY ══ -->
     <div class="step-section" id="sec-3">
-      <div class="card-heading">Partner Details</div>
-      <div class="card-sub">Step 3 of 4 — Your playing partner</div>
-      <p style="color:var(--text2);font-size:14px;padding:20px 0;">Coming next...</p>
+      <div class="card-heading">Tournament Entry</div>
+      <div class="card-sub">Step 3 of 4 — Your golf &amp; location details</div>
+
+      <!-- CLUB -->
+      <div class="field-block">
+        <label>Golf Club Membership *</label>
+        <div class="school-wrap">
+          <input type="text" id="f-club" placeholder="Type first 3 letters of your club name..." autocomplete="off" oninput="searchClubs(this.value)" />
+          <div class="school-dropdown" id="club-dd"></div>
+        </div>
+        <div class="school-confirmed" id="club-confirmed" style="display:none;">
+          <span>&#10003;</span>
+          <span class="sname" id="club-confirmed-name"></span>
+          <button class="school-change-btn" onclick="changeClub()">Change</button>
+        </div>
+        <div class="field-err" id="err-club">Please select your golf club</div>
+      </div>
+
+      <!-- HANDICAP INDEX -->
+      <div class="field-block">
+        <label>Current Handicap Index *</label>
+        <input type="number" id="f-handicap" placeholder="e.g. 14.2" min="0" max="54" step="0.1"
+          oninput="this.value = this.value.replace(/[^0-9.]/g,'')" />
+        <div style="font-size:11px; color:var(--text2); margin-top:5px;">Enter your current World Handicap System (WHS) Handicap Index</div>
+        <div class="field-err" id="err-handicap">Please enter a valid Handicap Index between 0 and 54</div>
+      </div>
+
+      <!-- HNA NUMBER -->
+      <div class="field-block">
+        <label>HNA Handicap Number *</label>
+        <div style="display:flex; align-items:center; gap:0;">
+          <div style="padding:14px; background:#eef2f9; border:2px solid var(--navy); border-right:none; border-radius:10px 0 0 10px; font-size:15px; font-weight:700; color:var(--navy); white-space:nowrap; flex-shrink:0;">2700</div>
+          <input type="text" id="f-hna" placeholder="followed by your number" maxlength="10"
+            oninput="this.value=this.value.replace(/\D/g,'')"
+            style="border-radius:0 10px 10px 0 !important; border-left:none !important;" />
+        </div>
+        <div style="font-size:11px; color:var(--text2); margin-top:5px;">All South African HNA numbers begin with <strong>2700</strong>. Enter the digits after 2700.</div>
+        <div class="field-err" id="err-hna">Please enter your HNA number (digits after the 2700 prefix)</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- CITY -->
+      <div class="field-block">
+        <label>City / Town *</label>
+        <input type="text" id="f-city" placeholder="e.g. George" autocomplete="address-level2" />
+        <div class="field-err" id="err-city">Please enter your city or town</div>
+      </div>
+
+      <!-- POSTAL CODE -->
+      <div class="field-block">
+        <label>Postal Code *</label>
+        <input type="text" id="f-postal" placeholder="e.g. 6529" maxlength="4"
+          oninput="this.value=this.value.replace(/\D/g,'')" />
+        <div style="font-size:12px; background:#fff8e8; border:1px solid var(--gold); border-radius:8px; padding:10px 12px; margin-top:8px; color:#7a5c00; line-height:1.5;">
+          &#9888; <strong>Important:</strong> Your postal code determines which Division your team will be placed in. Please ensure it is 100% correct — an incorrect postal code will result in incorrect division placement. Only 4-digit South African postal codes are accepted.
+        </div>
+        <div class="field-err" id="err-postal">Postal code must be exactly 4 digits</div>
+      </div>
+
+      <button class="btn-next" id="btn-step3" onclick="saveStep3()">Save &amp; Continue &#8594;</button>
       <button class="btn-back" onclick="goStep(2)">&#8592; Back</button>
     </div>
 
@@ -743,6 +801,111 @@ function showDoc(key) {
 function closeDoc() {
   document.getElementById('doc-modal').style.display = 'none';
 }
+// ── CLUBS LIST ───────────────────────────────────────────────────────────────
+const SA_CLUBS = ["Aberdeen Golf Club", "Adelaide Golf Club", "Afrikander Golf Club", "Akasia Country Club", "Albertinia Golf Club", "Alexander Golf Club", "Alexandria Golf Club", "Aliwal North Golf Club", "Allanridge Golf Club", "Amandelbult Golf Club", "Amanzimtoti Country Club", "Amatikulu Country Club", "Amersfoort Golf Club", "Amphitheatre Golf Club", "Arabella Country Estate", "Arendskraal Golf Club", "Arnot Golf Club", "Atlantic Beach Golf Club", "Avion Park Golf Club", "Badplaas Golf Club,", "Bank Golf Club", "Barberton Golf Club", "Barkly East Golf Club", "Beaufort West Golf Club", "Bedford Golf Club", "Beeshoek Golf Club", "Belfast Golf Club", "Bellville Golf Club", "Benoni Country Club", "Berg Rivier Golf Club", "Bethal Golf Club", "Bethlehem Golf Club", "Bethulie Golf Club", "Black Mountain Golf Club", "Black Rock Golf Club", "Blair Atholl", "Bloemfontein Golf Club", "Bloemhof Golf Club", "Blue Valley Golf and Country Estate", "Bluff National Park Golf Club", "Blyvooruitzicht Golf Club", "Boggomsbaai Golf Club", "Bonnievale Golf Club", "Bosch Hoek Golf Club", "Bothaville Golf Club", "Brandfort Golf Club", "Bredasdorp Golf Club", "Bronkhorstspruit Golf Club", "Bryanston Country Club", "Bultfontein Golf Club", "Burgersdorp Golf Club", "Bushman Sands Golf Club", "Butterworth Country Club", "Caledon Golf Club", "Calvinia Golf Club", "Camelot Country Club", "Carnarvon Golf Club", "Carolina Golf Club", "Cathcart Golf Club", "Cathedral Peak Golf Club", "Cato Ridge Country Club", "Centurion Country Club", "Ceres Golf Club", "Champagne Sports Resort", "Christiana Golf Club", "Chrome Golf Club", "Citrusdal Golf Club", "Clanwilliam Golf Club", "Clarens Golf and Trout Estate", "Clocolan Golf Club", "Clovelly Country Club", "Cmr Golf Club", "Colesberg Golf Club", "Cotswold Downs", "Cradock Golf Club", "Creighton Golf Estate", "Crocodile Golf Course", "Crown Mines Golf Club", "Cullinan Golf Club", "Dainfern Country Club", "Darling Golf Club", "Darnall Country Club", "Daveyton Golf Club", "De Zalze Golf Club", "Delareyville Golf Club", "Delmas Golf Club", "Devonvale Golf and Wine Estate", "Dewetsdorp Golf Club", "Dolphin Creek Golf Estate", "Dordrecht Golf Club", "Douglas Golf Club", "Drakensig Golf Club", "Dunblane Golf and Trout Estate", "Dundee Country Club", "Durban Country Club", "Durban Deep Golf Club", "Durban Golf Club", "Durbanville Golf Club", "Eagle Canyon Country Club", "Eagles Creek Golf and Nature Estate", "East London Golf Club", "Ebotse Golf and Country Estate", "Edenburg Golf Club", "Elements Private Golf Reserve", "Elliot Golf Club", "Els Club - Copperleaf", "Emfuleni Golf Estate", "Empangeni Country Club", "Engineers Golf Club", "Erinvale Golf Club", "Ermelo Country Club", "Erpm Golf Club", "Eshowe Hills Eco Estate", "Estcourt Golf Club", "Euphoria Golf and Lifestyle Estate", "Eureka Golf Club", "Excelsior Golf Club", "Eye of Africa Golf Estate", "Fairview Golf Estate", "Fish River  Country Club", "Fort Beaufort Golf Club", "Frankfort Golf Club", "Fynbos Golf and Country Estate", "Gansbaai Golf Club", "Gary Player Country Club", "George Golf Club", "Germiston Golf Club", "Glencoe Correctional Services Golf Club", "Glendower Golf Club", "Glengarry Country Club", "Glenvista Country Club", "Goldfields West Golf Club", "Gonubie Golf Club", "Goose Valley Golf Club", "Gowrie Farm Golf Club", "Graaff Reinet Golf Club", "Graceland Country Club", "Grahamstown Golf Club", "Greenside Colliery Golf Club", "Greytown Country Club", "Groblersdal Golf Club", "Hankey Golf Club", "Hanover Golf Club", "Hans Merensky Hotel and Golf Estate", "Harding Golf Club", "Harrismith Country Club", "Hartswater Golf Club", "Heidelberg Country Club", "Heidelberg Golf Club", "Heilbron Country Club", "Helderberg Village Golf Club", "Hermanus Golf Club", "Heron Banks Golf and River Estate", "Hex Valley Golf Club", "Hillside Golf Club", "Holly Country Club", "Hoopstad Golf Club", "Hopetown Golf Club", "Hotazel Golf Club", "Houghton Golf Club", "Howick Golf Club", "Humewood Golf Club", "Hunters Rest Golf Course", "Indwe Golf Club", "Irene Country Club", "Ixopo Golf Club", "Jackal Creek Golf Estate", "Jacobsdal Golf Club", "Jagersfontein Golf Club", "Jan Kempdorp Golf Club", "Jeffreys Bay Golf Club", "Kakamas Golf Club", "Kameeldoring Country Club", "Katberg Eco Golf Course", "Kei Mouth Country Club", "Kempton Park Golf Club", "Kenhardt Golf Club", "Kensington Golf Club", "Kestell Golf Club", "Kilbarchan Golf Club", "Killarney Country Club", "Kimberley Golf Club", "King David Golf Club", "King Williams Town Golf Club", "Kingswood Golf Estate", "Kinross Golf Club", "Kirkwood Golf Club", "Kleinmond Golf Club", "Klerksdorp Golf Club", "Kliprivier Country Club", "Kloof Country Club", "Knysna Golf Club", "Koffiefontein Golf Club", "Kokstad Golf Club", "Komatipoort Golf Club", "Komga Sports Club", "Koro Creek Country Club", "Koster Golf Club", "Kragga Kamma Golf Club", "Kriel Golf Club", "Kroonstad Correctional Services Golf Club", "Kroonstad Country Club", "Kruger Park Lodge Golf Club", "Krugersdorp Golf Club", "Kuilsrivier Golf Club", "Kuruman Country Club", "Kwambonambi Golf Club", "Kyalami Country Club", "Ladismith Golf Club", "Lady Grey Golf Club", "Ladybrand Sports Club", "Ladysmith Country Club", "Laingsburg Golf Club", "Lambertsbaai Golf Club", "Landboukollege Golf Club", "Langebaan Country Estate", "Langkloof Golf Club", "Le Grand George Golf Course", "Leeudoringstad Golf Club", "Leeuwkop Golf Club", "Legend Golf and Safari Resort", "Leopard Creek Country Club", "Leopard Park Golf Club", "Lichtenburg Golf Club", "Lime Acres Golf Club", "Lindley Golf Club", "Linksfield Golf Club", "Lions Rock Golf Lodge", "Lizard Point Golf Estate", "Loeriesfontein Golf Club", "Lost City Golf Club", "Louis Trichardt Golf Club", "Lutzville Golf Club", "Lydenburg Golf Club", "Maccauvlei Golf Club", "Maclear Country Club and Golf Estate", "Magalies Park Country Club", "Magersfontein Memorial Golf Club and Country Estate", "Maidstone Golf Club", "Malelane Golf Club", "Malmesbury Golf Club (Mount Royal Golf and Country Estate)", "Mandini Sports Club", "Marble Hall Golf Club", "Margate Country Club", "Maritzburg Golf Club", "Marquard Golf Club", "Matatiele Golf Club", "Melmoth Golf Club", "Messina Golf Club", "Metropolitan Golf Club", "Meyerton Golf Club", "Middelburg Country Club", "Middelburg Golf Club", "Millvale Golf Estate", "Milnerton Golf Club", "Modderfontein Golf Club", "Mogol Golf Club", "Molteno Country Club", "Monks Cowl Country Club", "Montagu Golf Club", "Montagu at Fancourt", "Monzi Golf Club", "Mooi River Country Club", "Mooinooi Golf Club", "Moorreesburg Golf Club", "Morgenzon Golf Club", "Morningside Farm Golf Club", "Mossel Bay Golf Club", "Mount Edgecombe Country Club", "Mowbray Golf Club", "Mthatha Country Club", "Mtunzini Country Club", "Mzingazi Golf Estate", "Naboomspruit Golf Club", "Nelspruit Golf Club", "Newcastle Golf Club", "Nigel Golf Club", "Noodsberg Country Club", "Noupoort Golf Club", "Observatory Golf Club", "Ohenimuri Country Club", "Oppenheimer Park Golf Club", "Orangedene Country Club", "Orkney Golf Club", "Ottosdal Golf Club", "Oubaai Golf Resort and Spa", "Oudtshoorn Golf Club", "Outeniqua at Fancourt", "Paarl Golf Club", "Papwa Sewgolum Golf Course", "Parkview Golf Club", "Parow Golf Club", "Parys Golf Club", "Paulpietersburg Country Club", "Pearl Valley Golf & Country Estate", "Pebble Rock Golf Club", "Pecanwood Golf and Country Club", "Petrus Steyn Golf Club", "Pezula Championship Golf Course", "Piet Retief Country Club", "Piketberg Golf Club", "Pilgrims Rest Golf Club", "Pinnacle Point Golf Club", "Plettenberg Bay Country Club", "Pollak Park Golf Club", "Polokwane Golf Club", "Pongola Golf Club", "Port Edward Country Club", "Port Elizabeth Golf Club", "Port Shepstone Country Club", "Porterville Golf Club", "Potchefstroom Country Club", "Pretoria Country Club", "Pretoria Golf Club", "Prieska Golf Club", "Prince Albert Golf Club", "Prince"s Grant Golf Estate", "Pullenshope Golf Club", "Queenstown Golf Club", "Randfontein Golf and Country Club", "Randpark Golf Club", "Reading Country Club", "Reitz Golf Club", "Reivilo Golf Club", "Richmond Country Club", "Richmond Golf Club", "Riversdale Golf Club", "Riviera on Vaal Country Club", "Riviersonderend Golf Club", "Robertson Golf Club", "Rondebosch Golf Club", "Roodepoort Country Club", "Rooiberg Golf Club", "Royal Cape Golf Club", "Royal Johannesburg and Kensington Golf Club", "Royal Northland Golf Club", "Royal Oak Country Club", "Royal Port Alfred Golf Club", "Rustenburg Golf Club", "Sabi River Bungalows Golf Club", "Sabie Country Club", "Saint Cathryn"s Golf Estate", "Saint Francis Bay Golf Club", "Sakabula Golf Club", "Saldanha Military Golf Club", "San Lameer Country Club", "Sand River Golf Club", "Sandonia Golf Club", "Sandy Lane Golf Club", "Sani Pass Golf Club", "Sannieshof Golf Club", "Saps Mechanical School Golf Club", "Schoeman Park Golf Club", "Schweizer Reneke Golf Club", "Scottburgh Golf Club", "Seasons Eco Golf Estate", "Sedibeng Country Club", "Selborne Country Club", "Senekal Golf Club", "Serengeti Golf and Wildlife Estate", "Services Golf Club", "Shark River Golf Club", "Shelley Point Golf Club", "Silver Lakes Golf and Country Club", "Simbithi Country Club", "Simola Golf and Country Estate", "Simon"s Town Country Club", "Sishen Golf Club", "Skukuza Golf Club", "Smithfield Golf Club", "Somerset East Golf Club", "Somerset West Golf Club", "Southbroom Golf Club", "Southdowns Country Club", "Soutpansberg Golf Club", "Soweto Country Club", "Springbok Golf Club", "Springs Golf Club", "St Francis Links", "Stafford Hill Golf and Polo Estate", "Standerton Country Club", "State Mines Country Club", "Steenberg Golf Club", "Stella Golf Club", "Stellenbosch Golf Club", "Steynsberg Golf Club", "Stilbaai Golf Club", "Strand Golf Club", "Stutterheim Country Club", "Summerfield Golf Club", "Sutherland Golf Club", "Swartklip Golf Club", "Swellendam Golf Club", "Tempe Golf Club", "Thabazimbi Golf Club", "The Club at Steyn City", "The Country Club Johannesburg", "The Lake Club - Benoni", "The Links at Fancourt", "The River Club", "Theewaterskloof Golf Club", "Theunissen Golf Club", "Tsitsikamma Coastal Golf Estate", "Tweefontein Golf Club", "Tweespruit Golf Club", "Tzaneen Country Club", "Uitenhage Golf Club", "Ulco Golf Club", "Umdoni Park Golf Club", "Umfolozi Golf Club", "Umhlali Country Club", "Umkomaas Golf Club", "Underberg Country Club", "Uniondale Golf Club", "University of Limpopo Golf Club", "Upington Golf Club", "Utrecht Country Club", "Vaal de Grace Golf Estate", "Ventersdorp Golf Club", "Venterspost Golf Club", "Victoria Country Club", "Victoria West Golf Club", "Viljoenskroon Golf Club", "Volksrust Golf Club", "Vrede Golf Club", "Vredenburg Golf Club", "Vredendal Golf Club", "Vryburg Golf Club", "Vryheid Golf Club", "Walker Park Golf Club", "Walmer", "Wanderers Golf Club", "Waterford Golf and River Estate", "Waterkloof Golf Club", "Waterpan Golf Club", "Wedgewood Park Country Club", "Wellington Golf Club", "Wesselsbron Golf Club", "West Bank Golf Club", "Westlake Golf Club", "Westminster Golf Club", "White River Country Club", "Whites Golf Club", "Wild Coast Sun Country Club", "Williston Golf Club", "Willowmore Golf Club", "Windsor Park Golf Course", "Wingate Park Country Club", "Witbank Golf Club", "Wolmaransstad Golf Club", "Woodhill Country Club", "Worcester Golf Club", "Zastron Golf Club", "Zebediela Country Club", "Zebula Golf Estate and Spa", "Zeerust Country Club", "Zimbali Country Club", "Zwartenbosch Golf and Lifestyle Estate", "Zwartkop Country Club", "de Aar Country Club", "de Hoek Golf Club"];
+
+// ── CLUB SEARCH ───────────────────────────────────────────────────────────────
+let selectedClub = null;
+
+function searchClubs(val) {
+  const dd = document.getElementById('club-dd');
+  document.getElementById('club-confirmed').style.display = 'none';
+  document.getElementById('f-club').style.display = 'block';
+  selectedClub = null;
+  if (val.length < 3) { dd.classList.remove('open'); return; }
+  const q = val.toLowerCase();
+  let matches = SA_CLUBS.filter(c => c.toLowerCase().startsWith(q));
+  if (matches.length < 3) {
+    SA_CLUBS.forEach(c => { if (!matches.includes(c) && c.toLowerCase().includes(q)) matches.push(c); });
+  }
+  matches = matches.slice(0, 12);
+  dd.innerHTML = matches.map(c =>
+    `<div class="school-option" onclick="selectClub('${c.replace(/'/g, "&apos;")}')">${c}</div>`
+  ).join('');
+  dd.classList.add('open');
+}
+
+function selectClub(name) {
+  selectedClub = name;
+  document.getElementById('f-club').style.display = 'none';
+  document.getElementById('club-dd').classList.remove('open');
+  document.getElementById('club-confirmed-name').textContent = name;
+  document.getElementById('club-confirmed').style.display = 'flex';
+  document.getElementById('err-club').style.display = 'none';
+}
+
+function changeClub() {
+  selectedClub = null;
+  const inp = document.getElementById('f-club');
+  inp.style.display = 'block';
+  inp.value = '';
+  inp.focus();
+  document.getElementById('club-confirmed').style.display = 'none';
+  document.getElementById('club-dd').classList.remove('open');
+}
+
+// ── STEP 3 SAVE ───────────────────────────────────────────────────────────────
+async function saveStep3() {
+  ['err-club','err-handicap','err-hna','err-city','err-postal'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  ['f-handicap','f-hna','f-city','f-postal'].forEach(id => {
+    document.getElementById(id).classList.remove('has-error');
+  });
+
+  const handicap = parseFloat(document.getElementById('f-handicap').value);
+  const hna      = document.getElementById('f-hna').value.trim();
+  const city     = document.getElementById('f-city').value.trim();
+  const postal   = document.getElementById('f-postal').value.trim();
+  let ok = true;
+
+  if (!selectedClub) { document.getElementById('err-club').style.display = 'block'; ok = false; }
+  if (!document.getElementById('f-handicap').value || isNaN(handicap) || handicap < 0 || handicap > 54) {
+    document.getElementById('f-handicap').classList.add('has-error');
+    document.getElementById('err-handicap').style.display = 'block'; ok = false;
+  }
+  if (!hna || hna.length < 1) {
+    document.getElementById('f-hna').classList.add('has-error');
+    document.getElementById('err-hna').style.display = 'block'; ok = false;
+  }
+  if (!city) {
+    document.getElementById('f-city').classList.add('has-error');
+    document.getElementById('err-city').style.display = 'block'; ok = false;
+  }
+  if (!postal || postal.length !== 4) {
+    document.getElementById('f-postal').classList.add('has-error');
+    document.getElementById('err-postal').style.display = 'block'; ok = false;
+  }
+  if (!ok) return;
+
+  const btn = document.getElementById('btn-step3');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  const fullHNA = '2700' + hna;
+
+  const { error } = await sb.from('players').upsert({
+    email:          reg.email,
+    club:           selectedClub,
+    handicap_index: handicap,
+    hna_number:     fullHNA,
+    city:           city,
+    postal_code:    postal,
+  }, { onConflict: 'email' });
+
+  if (error) console.warn('Step 3 save error:', error.message);
+
+  reg.club           = selectedClub;
+  reg.handicap_index = handicap;
+  reg.hna_number     = fullHNA;
+  reg.city           = city;
+  reg.postal_code    = postal;
+
+  btn.disabled = false;
+  btn.textContent = 'Save & Continue →';
+  goStep(4);
+}
+
 sb.auth.getSession().then(({ data: { session } }) => {
   if (session) {
     sb.from('players').select('email').eq('email', session.user.email).maybeSingle().then(({ data }) => {
