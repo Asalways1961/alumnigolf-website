@@ -673,8 +673,8 @@ footer a { color:var(--gold); text-decoration:none; }
         <div style="font-size:22px; font-weight:700; color:var(--navy); background:#f0f5ff; border:2px solid var(--navy); border-radius:12px; padding:14px 20px; margin-bottom:24px;" id="success-team-name">—</div>
         <div id="success-message" style="font-size:13px; color:var(--text2); line-height:1.8; margin-bottom:28px; padding:16px; background:#f8faff; border-radius:10px; border:1px solid #dce8ff;"></div>
         <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-          <a href="index.html" style="display:inline-block; padding:14px 28px; background:white; border:2px solid var(--navy); border-radius:10px; font-size:14px; font-weight:700; color:var(--navy); text-decoration:none;">🏠 Go to Website</a>
-          <a href="portal.html" style="display:inline-block; padding:14px 28px; background:var(--navy-dark); border-radius:10px; font-size:14px; font-weight:700; color:white; text-decoration:none;">👤 Player Login &#8594;</a>
+          <button onclick="window.location.href='index.html'" style="display:inline-block; padding:14px 28px; background:white; border:2px solid var(--navy); border-radius:10px; font-size:14px; font-weight:700; color:var(--navy); cursor:pointer; font-family:'DM Sans',sans-serif;">🏠 Go to Website</button>
+          <button onclick="window.location.href='portal.html'" style="display:inline-block; padding:14px 28px; background:var(--navy-dark); border:none; border-radius:10px; font-size:14px; font-weight:700; color:white; cursor:pointer; font-family:'DM Sans',sans-serif;">👤 Player Login →</button>
         </div>
       </div>
 
@@ -697,7 +697,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let reg = {};
+let reg = JSON.parse(sessionStorage.getItem('ag_reg') || '{}');
 let selectedSchool = null;
 let pwValid = false;
 
@@ -862,6 +862,7 @@ async function saveStep1() {
     school: selectedSchool.name,
     password: pw,
   };
+  sessionStorage.setItem('ag_reg', JSON.stringify(reg));
 
   // Save partial player record now — auth account created at final step
   const { error: dbErr } = await sb.from('players').upsert({
@@ -934,6 +935,7 @@ function showHardlock(title, body) {
 }
 
 async function saveStep2() {
+  if (!reg.email) { alert('Session lost — please refresh and start again.'); return; }
   let ok = true;
 
   // Validate checkboxes
@@ -957,7 +959,7 @@ async function saveStep2() {
   if (!ok) return;
 
   // Save partial data to Supabase regardless of eligibility outcome
-  await sb.from('players').upsert({
+  const { error: s2err } = await sb.from('players').upsert({
     email:            reg.email,
     full_name:        reg.full_name,
     mobile:           reg.mobile,
@@ -970,24 +972,34 @@ async function saveStep2() {
     payment_status:   'unpaid',
     registration_complete: false,
   }, { onConflict: 'email' });
+  if (s2err) console.warn('Step 2 save error:', s2err.message);
 
   // Check hard locks
   if (ynState.school === 'yes') {
-    await sb.from('players').upsert({ email: reg.email, eligibility_status: 'ineligible' }, { onConflict: 'email' });
+    await sb.from('players').upsert({
+      email: reg.email, full_name: reg.full_name, mobile: reg.mobile, school: reg.school,
+      eligibility_status: 'ineligible'
+    }, { onConflict: 'email' });
     showHardlock(
       'Registration Not Permitted — Current Learner',
       'Unfortunately, the Alumni Schools Golf Challenge is open exclusively to alumni who have already completed their schooling. As a current learner, you are not eligible to enter as a player. You are welcome to follow the tournament as a Supporter.'
     ); return;
   }
   if (ynState.handicap === 'no') {
-    await sb.from('players').upsert({ email: reg.email, eligibility_status: 'ineligible' }, { onConflict: 'email' });
+    await sb.from('players').upsert({
+      email: reg.email, full_name: reg.full_name, mobile: reg.mobile, school: reg.school,
+      eligibility_status: 'ineligible'
+    }, { onConflict: 'email' });
     showHardlock(
       'Registration Not Permitted — No Valid HNA Handicap',
       'A current, active HNA (Handicap Network Africa) registered handicap is a mandatory requirement for all participants. Players without an official handicap are not permitted to enter. You are welcome to obtain an HNA handicap through your local GolfRSA-affiliated club and register in a future season. In the meantime, you may register as a Supporter.'
     ); return;
   }
   if (ynState.age === 'no') {
-    await sb.from('players').upsert({ email: reg.email, eligibility_status: 'ineligible' }, { onConflict: 'email' });
+    await sb.from('players').upsert({
+      email: reg.email, full_name: reg.full_name, mobile: reg.mobile, school: reg.school,
+      eligibility_status: 'ineligible'
+    }, { onConflict: 'email' });
     showHardlock(
       'Registration Not Permitted — Age Requirement Not Met',
       'All participants must be at least 18 years of age at the time of registration. Unfortunately you do not meet this requirement and are not eligible to enter as a player. You are welcome to register as a Supporter.'
@@ -998,6 +1010,7 @@ async function saveStep2() {
   await sb.from('players').upsert({ email: reg.email, eligibility_status: 'eligible', popia_accepted: true, rules_accepted: true }, { onConflict: 'email' });
   reg.popia_accepted = true;
   reg.rules_accepted = true;
+  sessionStorage.setItem('ag_reg', JSON.stringify(reg));
   goStep(3);
 }
 
@@ -1075,6 +1088,7 @@ function changeClub() {
 
 // ── STEP 3 SAVE ───────────────────────────────────────────────────────────────
 async function saveStep3() {
+  if (!reg.email) { alert('Session lost — please refresh and start again.'); return; }
   ['err-club','err-handicap','err-hna','err-city','err-postal'].forEach(id => {
     document.getElementById(id).style.display = 'none';
   });
@@ -1115,6 +1129,9 @@ async function saveStep3() {
 
   const { error } = await sb.from('players').upsert({
     email:          reg.email,
+    full_name:      reg.full_name,
+    mobile:         reg.mobile,
+    school:         reg.school,
     club:           selectedClub,
     handicap_index: handicap,
     hna_number:     fullHNA,
@@ -1129,6 +1146,7 @@ async function saveStep3() {
   reg.hna_number     = fullHNA;
   reg.city           = city;
   reg.postal_code    = postal;
+  sessionStorage.setItem('ag_reg', JSON.stringify(reg));
 
   btn.disabled = false;
   btn.textContent = 'Save & Continue →';
@@ -1209,6 +1227,9 @@ async function sendPartnerInvite() {
   // Save partner details to captain's record
   await sb.from('players').upsert({
     email:          reg.email,
+    full_name:      reg.full_name,
+    mobile:         reg.mobile,
+    school:         reg.school,
     partner_status: 'has_partner',
     partner_name:   partnerName,
     partner_mobile: partnerMobile,
@@ -1335,6 +1356,9 @@ async function submitPayment() {
   // Save to players table
   await sb.from('players').upsert({
     email:                 reg.email,
+    full_name:             reg.full_name,
+    mobile:                reg.mobile,
+    school:                reg.school,
     partner_status:        selectedPartnerOption,
     payment_status:        popFile ? 'pending_verification' : 'unpaid',
     payment_type:          selectedPayAmount,
@@ -1346,8 +1370,10 @@ async function submitPayment() {
   }, { onConflict: 'email' });
 
   // Create auth account now that registration is complete
-  await sb.auth.signUp({ email: reg.email, password: reg.password });
+  const { data: authData, error: authErr } = await sb.auth.signUp({ email: reg.email, password: reg.password });
+  if (authErr) console.warn('Auth signUp error:', authErr.message);
 
+  sessionStorage.removeItem('ag_reg');
   btn.disabled = false;
   btn.textContent = '✅ Complete Registration →';
   showSuccess();
@@ -1364,6 +1390,9 @@ async function submitPayLater(e) {
 
   await sb.from('players').upsert({
     email:                 reg.email,
+    full_name:             reg.full_name,
+    mobile:                reg.mobile,
+    school:                reg.school,
     partner_status:        selectedPartnerOption,
     payment_status:        'unpaid',
     payment_type:          selectedPayAmount,
@@ -1372,8 +1401,10 @@ async function submitPayLater(e) {
     registration_complete: true,
   }, { onConflict: 'email' });
 
-  await sb.auth.signUp({ email: reg.email, password: reg.password });
+  const { data: authData2, error: authErr2 } = await sb.auth.signUp({ email: reg.email, password: reg.password });
+  if (authErr2) console.warn('Auth signUp error:', authErr2.message);
 
+  sessionStorage.removeItem('ag_reg');
   window.location.href = dest;
 }
 
