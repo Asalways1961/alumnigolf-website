@@ -318,7 +318,7 @@ footer a{color:rgba(255,255,255,.5);}
       <div class="field">
         <label>Golf Club Membership *</label>
         <div class="dd-wrap" id="club-wrap">
-          <input type="text" id="f-club" placeholder="Type your golf club name..." autocomplete="off" />
+          <input type="text" id="f-club" placeholder="Type to search, or enter club name manually..." autocomplete="off" />
           <div class="dd" id="club-dd"></div>
         </div>
         <div class="confirmed" id="club-conf" style="display:none">
@@ -615,8 +615,10 @@ function setYN(key, val) {
   ynState[key] = val;
   var ids = { sch:['yn-sch-no','yn-sch-yes'], hcp:['yn-hcp-yes','yn-hcp-no'], age:['yn-age-yes','yn-age-no'], same:['yn-same-yes'] };
   (ids[key]||[]).forEach(function(id){ var el=document.getElementById(id); if(el){ el.classList.remove('sel-yes','sel-no'); } });
+  // Good answers get green, bad answers get red
+  var goodAnswers = { sch:'no', hcp:'yes', age:'yes', same:'yes' };
   var el = document.getElementById('yn-'+key+'-'+val);
-  if (el) el.classList.add('sel-'+val);
+  if (el) el.classList.add(val === goodAnswers[key] ? 'sel-yes' : 'sel-no');
   if (key==='sch') document.getElementById('hl-school').classList.toggle('show', val==='yes');
   if (key==='hcp') document.getElementById('hl-hcp').classList.toggle('show', val==='no');
   if (key==='age') document.getElementById('hl-age').classList.toggle('show', val==='no');
@@ -698,7 +700,12 @@ async function saveStep3() {
   var postal = document.getElementById('f-postal').value.trim();
   var ok = true;
 
-  if (!selectedClub) { ferr('err-club',true); ok=false; } else { ferr('err-club',false); }
+  // Accept typed club name if nothing selected from dropdown
+  if (!selectedClub) {
+    var typed = document.getElementById('f-club').value.trim();
+    if (typed) { selectedClub = typed; } else { ferr('err-club',true); ok=false; }
+  }
+  if (selectedClub) ferr('err-club',false);
   if (isNaN(hcap)||hcap<0||hcap>54) { ferr('err-hcap',true); ierr('f-hcap',true); ok=false; } else { ferr('err-hcap',false); ierr('f-hcap',false); }
   if (!hna) { ferr('err-hna',true); ok=false; } else { ferr('err-hna',false); }
   if (!city) { ferr('err-city',true); ierr('f-city',true); ok=false; } else { ferr('err-city',false); ierr('f-city',false); }
@@ -769,6 +776,7 @@ async function assignTeamNumber(school) {
 }
 
 async function submitPayment() {
+  try {
   var ok=true;
   if (!selPartnerOpt) { ferr('err-partner',true); ok=false; }
   if (!selPayOpt) { ferr('err-pay',true); ok=false; }
@@ -814,6 +822,7 @@ async function submitPayment() {
   document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});
   document.getElementById('sec-success').classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
+  } catch(err) { console.error('submitPayment error:', err); alert('Error: '+err.message); if(document.getElementById('btn-s4')) document.getElementById('btn-s4').disabled=false; }
 }
 
 async function submitPayLater(e) {
