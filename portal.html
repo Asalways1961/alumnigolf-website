@@ -369,6 +369,7 @@
           <div class="stat-grid" id="overview-stats">
             <div class="loading"><div class="spinner"></div></div>
           </div>
+          <div id="partner-status-block"></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
             <div class="card">
               <div class="card-title">🎯 Upcoming Matches</div>
@@ -404,6 +405,13 @@
 
         <!-- PROFILE -->
         <section class="section" id="sec-profile">
+
+          <!-- PARTNER PANEL -->
+          <div class="card" style="max-width:500px;margin-bottom:20px;" id="partner-panel">
+            <div class="card-title" id="partner-panel-title">🤝 Partner Details</div>
+            <div id="partner-panel-content"><div class="loading"><div class="spinner"></div></div></div>
+          </div>
+
           <div class="card" style="max-width:500px;">
             <div class="card-title">👤 My Profile</div>
             <div id="profile-form">
@@ -534,7 +542,7 @@ async function loadApp(email) {
   const initials = (player.full_name || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   document.getElementById('player-avatar').textContent = initials;
   document.getElementById('player-name-sidebar').textContent = player.full_name || '—';
-  document.getElementById('player-school-sidebar').textContent = player.school_name || '—';
+  document.getElementById('player-school-sidebar').textContent = player.school || '—';
   document.getElementById('player-team-sidebar').textContent = player.team_number ? 'Team ' + player.team_number : 'Unassigned';
 
   // Payment badge in topbar
@@ -548,6 +556,36 @@ async function loadApp(email) {
   }
 
   loadOverview();
+
+  // Show payment prompt if outstanding
+  if (player.payment_status !== 'paid' && player.payment_status !== 'pending_verification') {
+    setTimeout(() => showPaymentPrompt(), 600);
+  }
+}
+
+function showPaymentPrompt() {
+  const existing = document.getElementById('payment-prompt-modal');
+  if (existing) return;
+  const modal = document.createElement('div');
+  modal.id = 'payment-prompt-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.innerHTML = `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:400px;width:100%;text-align:center;box-shadow:var(--shadow);">
+      <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px;">Payment Outstanding</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6;">Your entry fee is still outstanding. Your place is not secured until payment is received.</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button onclick="document.getElementById('payment-prompt-modal').remove();showSection('payment');"
+          style="padding:12px 24px;background:var(--gold);color:#000;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">
+          💳 Pay Now
+        </button>
+        <button onclick="document.getElementById('payment-prompt-modal').remove();"
+          style="padding:12px 24px;background:transparent;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;">
+          Later
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
 }
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
@@ -587,12 +625,43 @@ async function loadOverview() {
   const eligColor = currentPlayer.eligibility_status === 'eligible' ? 'var(--green)' : 'var(--gold)';
 
   document.getElementById('overview-stats').innerHTML = `
-    <div class="stat-card"><div class="stat-label">My Team</div><div class="stat-value">${currentPlayer.team_number || '—'}</div><div class="stat-sub">${currentPlayer.school_name || '—'}</div></div>
+    <div class="stat-card"><div class="stat-label">My Team</div><div class="stat-value">${currentPlayer.team_number || '—'}</div><div class="stat-sub">${currentPlayer.school || '—'}</div></div>
     <div class="stat-card"><div class="stat-label">Matches</div><div class="stat-value">${played}/${total}</div><div class="stat-sub">Played / Scheduled</div></div>
     <div class="stat-card"><div class="stat-label">Wins</div><div class="stat-value" style="color:var(--green)">${wins}</div><div class="stat-sub">${played > 0 ? Math.round((wins/played)*100) + '% win rate' : 'No matches yet'}</div></div>
     <div class="stat-card"><div class="stat-label">Payment</div><div class="stat-value" style="color:${payColor};font-size:16px;margin-top:10px;">${currentPlayer.payment_status || 'unpaid'}</div><div class="stat-sub" style="margin-top:6px;">Entry fee status</div></div>
     <div class="stat-card"><div class="stat-label">Eligibility</div><div class="stat-value" style="color:${eligColor};font-size:16px;margin-top:10px;">${currentPlayer.eligibility_status || 'pending'}</div><div class="stat-sub" style="margin-top:6px;">Admin verification</div></div>
   `;
+
+  // Partner status block
+  const partnerBlockEl = document.getElementById('partner-status-block');
+  if (partnerBlockEl) {
+    const ps = currentPlayer.partner_status;
+    const partnerName = currentPlayer.partner_name || null;
+    if (ps === 'has_partner' && partnerName) {
+      partnerBlockEl.innerHTML = `
+        <div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);">
+          <div class="card-title">🤝 Your Partner</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:4px;">${partnerName}</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">${currentPlayer.partner_mobile || ''}</div>
+          <button class="btn-sm btn-outline" onclick="showSection('profile');showPartnerPanel('change')">Change Partner</button>
+        </div>`;
+    } else if (ps === 'invite_later') {
+      partnerBlockEl.innerHTML = `
+        <div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);">
+          <div class="card-title">⏳ Partner Not Yet Invited</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">You chose to invite your partner later. Your place is not fully secured until your partner registers.</div>
+          <button class="btn-sm btn-gold" onclick="showSection('profile');showPartnerPanel('invite')">📨 Invite Partner Now</button>
+        </div>`;
+    } else if (ps === 'need_partner') {
+      partnerBlockEl.innerHTML = `
+        <div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);">
+          <div class="card-title">🔍 In the Player Pool</div>
+          <div style="font-size:13px;color:var(--text2);">You are in the player pool. We will notify you as soon as we find a partner from your school within 50km.</div>
+        </div>`;
+    } else {
+      partnerBlockEl.innerHTML = '';
+    }
+  }
 
   // Upcoming matches
   const upcoming = (myMatches || []).filter(m => m.match_status === 'pending').slice(0, 3);
@@ -679,7 +748,30 @@ async function loadPaymentSection() {
   const el = document.getElementById('payment-content');
 
   let statusHtml = '';
-  if (p.payment_status === 'paid') {
+  // Fetch partner payment status if applicable
+  let partnerPaid = false;
+  if (p.partner_mobile) {
+    const { data: partner } = await sb.from('players').select('payment_status').eq('mobile', p.partner_mobile).maybeSingle();
+    partnerPaid = partner?.payment_status === 'paid';
+  }
+  const teamFullyPaid = p.payment_status === 'paid' && (p.payment_type === 'team' || partnerPaid || !p.partner_mobile);
+  const onePlayerPaid = p.payment_status === 'paid' && p.payment_type === 'individual' && p.partner_mobile && !partnerPaid;
+
+  if (teamFullyPaid) {
+    statusHtml = `
+      <div class="payment-status-card paid">
+        <div class="payment-status-icon">✅</div>
+        <div class="payment-status-title" style="color:var(--green)">Team Fully Paid</div>
+        <div class="payment-status-sub">Both players' entry fees have been received and verified. You're all set!</div>
+      </div>`;
+  } else if (onePlayerPaid) {
+    statusHtml = `
+      <div class="payment-status-card pending">
+        <div class="payment-status-icon">⚠️</div>
+        <div class="payment-status-title" style="color:var(--gold)">1 Player Already Paid</div>
+        <div class="payment-status-sub">Your entry fee is confirmed. Your partner's payment of <strong>R1,500</strong> is still outstanding.</div>
+      </div>`;
+  } else if (p.payment_status === 'paid') {
     statusHtml = `
       <div class="payment-status-card paid">
         <div class="payment-status-icon">✅</div>
@@ -698,15 +790,15 @@ async function loadPaymentSection() {
       <div class="payment-status-card unpaid">
         <div class="payment-status-icon">⚠️</div>
         <div class="payment-status-title" style="color:var(--red)">Payment Outstanding</div>
-        <div class="payment-status-sub">Your entry fee of <strong>R500</strong> is still outstanding. Please pay using the bank details below and notify us.</div>
+        <div class="payment-status-sub">Your entry fee of <strong>R1,500</strong> is still outstanding. Please make your EFT payment using the details below.</div>
       </div>
       <div class="bank-box">
-        <div class="bank-row"><span class="bank-key">Bank</span><span class="bank-val">Standard Bank</span></div>
-        <div class="bank-row"><span class="bank-key">Account Name</span><span class="bank-val">Alumni Golf SA</span></div>
-        <div class="bank-row"><span class="bank-key">Account No.</span><span class="bank-val">123 456 789</span></div>
-        <div class="bank-row"><span class="bank-key">Branch Code</span><span class="bank-val">051 001</span></div>
-        <div class="bank-row"><span class="bank-key">Reference</span><span class="bank-val">${p.full_name || 'Your Name'} - ${p.school_name || 'School'}</span></div>
-        <div class="bank-row"><span class="bank-key">Amount</span><span class="bank-val">R500</span></div>
+        <div class="bank-row"><span class="bank-key">Bank</span><span class="bank-val"><!-- TBC --></span></div>
+        <div class="bank-row"><span class="bank-key">Account Name</span><span class="bank-val">Legacy Events Ventures (Pty) Ltd</span></div>
+        <div class="bank-row"><span class="bank-key">Account No.</span><span class="bank-val"><!-- TBC --></span></div>
+        <div class="bank-row"><span class="bank-key">Branch Code</span><span class="bank-val"><!-- TBC --></span></div>
+        <div class="bank-row"><span class="bank-key">Reference</span><span class="bank-val">${p.payment_reference || (p.full_name || 'Your Name')}</span></div>
+        <div class="bank-row"><span class="bank-key">Amount</span><span class="bank-val">${p.payment_type === 'team' ? 'R2,800 (full team)' : 'R1,500 (individual)'}</span></div>
       </div>
       <div style="margin-top:20px;">
         <button class="btn-sm btn-gold" onclick="notifyPaymentSent()">📩 I've Made the Payment</button>
@@ -789,18 +881,130 @@ function loadProfileForm() {
   if (!currentPlayer) return;
   const p = currentPlayer;
   document.getElementById('pf-name').value = p.full_name || '';
-  document.getElementById('pf-school').value = p.school_name || '';
+  document.getElementById('pf-school').value = p.school || '';
   document.getElementById('pf-matric').value = p.year_of_matriculation || '';
-  document.getElementById('pf-phone').value = p.phone_number || '';
-  document.getElementById('pf-handicap').value = p.handicap || '';
+  document.getElementById('pf-phone').value = p.mobile || '';
+  document.getElementById('pf-handicap').value = p.handicap_index || '';
   document.getElementById('pf-email').value = p.email || '';
+  loadPartnerPanel();
+}
+
+function showPartnerPanel(mode) {
+  loadPartnerPanel(mode);
+  const panel = document.getElementById('partner-panel');
+  if (panel) panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function loadPartnerPanel(forceMode) {
+  if (!currentPlayer) return;
+  const ps = currentPlayer.partner_status;
+  const el = document.getElementById('partner-panel-content');
+  const title = document.getElementById('partner-panel-title');
+
+  // Determine what to show
+  if (forceMode === 'invite' || ps === 'invite_later') {
+    title.textContent = '📨 Invite Your Partner';
+    el.innerHTML = renderInviteForm('invite');
+  } else if (forceMode === 'change' || (ps === 'has_partner' && currentPlayer.partner_name)) {
+    title.textContent = '🔄 Change Partner';
+    el.innerHTML = `
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">
+        Current partner: <strong style="color:var(--text)">${currentPlayer.partner_name || '—'}</strong> (${currentPlayer.partner_mobile || '—'})
+      </div>
+      <div style="background:rgba(229,57,53,0.08);border:1px solid rgba(229,57,53,0.3);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--red);margin-bottom:16px;">
+        ⚠️ Changing your partner requires admin approval before the invite is sent. Your current partner will be notified.
+      </div>
+      ${renderInviteForm('change')}`;
+  } else if (ps === 'need_partner') {
+    title.textContent = '🔍 Player Pool';
+    el.innerHTML = `<p style="font-size:13px;color:var(--text2);">You are in the player pool. We will notify you when a match is found from your school within 50km. No action needed.</p>`;
+  } else if (ps === 'has_partner' && !currentPlayer.partner_name) {
+    title.textContent = '📨 Invite Your Partner';
+    el.innerHTML = renderInviteForm('invite');
+  } else {
+    title.textContent = '🤝 Partner';
+    el.innerHTML = `<p style="font-size:13px;color:var(--text2);">Partner: <strong>${currentPlayer.partner_name || 'Not yet assigned'}</strong></p>`;
+  }
+}
+
+function renderInviteForm(mode) {
+  return `
+    <div class="form-group"><label>Partner's First Name *</label><input type="text" id="inv2-name" placeholder="e.g. John" /></div>
+    <div class="form-group"><label>Partner's Surname *</label><input type="text" id="inv2-surname" placeholder="e.g. Smith" /></div>
+    <div class="form-group">
+      <label>Partner's Mobile *</label>
+      <div style="display:flex;">
+        <div style="padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-size:13px;font-weight:700;color:var(--text2);">+27</div>
+        <input type="tel" id="inv2-mobile" placeholder="821234567" maxlength="9" oninput="this.value=this.value.replace(/\D/g,'')" style="border-radius:0 10px 10px 0;border-left:none;" />
+      </div>
+    </div>
+    <div class="form-group"><label>Partner's Email (optional)</label><input type="email" id="inv2-email" placeholder="partner@gmail.com" /></div>
+    <div class="form-group">
+      <label>School</label>
+      <input type="text" id="inv2-school" value="${currentPlayer.school || ''}" readonly style="opacity:0.6;cursor:not-allowed;" />
+    </div>
+    <div id="inv2-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div>
+    <button class="btn-sm btn-gold" onclick="submitPartnerInvite('${mode}')">
+      ${mode === 'change' ? '📨 Submit Change Request to Admin' : '📨 Send Partner Invite'}
+    </button>`;
+}
+
+async function submitPartnerInvite(mode) {
+  const name    = (document.getElementById('inv2-name')?.value || '').trim();
+  const surname = (document.getElementById('inv2-surname')?.value || '').trim();
+  const mobile  = (document.getElementById('inv2-mobile')?.value || '').trim();
+  const email   = (document.getElementById('inv2-email')?.value || '').trim();
+  const errEl   = document.getElementById('inv2-err');
+
+  if (!name || !surname) { errEl.textContent = 'Please enter partner name and surname.'; errEl.style.display='block'; return; }
+  if (!mobile || mobile.length !== 9 || !/^[678]/.test(mobile)) { errEl.textContent = 'Enter a valid 9-digit mobile number.'; errEl.style.display='block'; return; }
+  errEl.style.display = 'none';
+
+  const fullName = name + ' ' + surname;
+  const fullMobile = '+27' + mobile;
+
+  if (mode === 'change') {
+    // Save change request — admin must approve before invite goes out
+    await sb.from('players').upsert({
+      email:          currentPlayer.email,
+      partner_name:   fullName + ' (pending admin approval)',
+      partner_mobile: fullMobile,
+      partner_status: 'has_partner',
+    }, { onConflict: 'email' });
+    toast('Partner change request submitted — awaiting admin approval ✅');
+  } else {
+    // Direct invite
+    await sb.from('players').upsert({
+      email:          currentPlayer.email,
+      partner_name:   fullName,
+      partner_mobile: fullMobile,
+      partner_status: 'has_partner',
+    }, { onConflict: 'email' });
+    // Create placeholder record for partner
+    await sb.from('players').upsert({
+      email:              email || (fullMobile + '@invite.alumnigolf.co.za'),
+      full_name:          fullName,
+      mobile:             fullMobile,
+      school:             currentPlayer.school,
+      invited_by_mobile:  currentPlayer.mobile,
+      invited_by_team:    currentPlayer.team_number || '',
+      eligibility_status: 'pending',
+      payment_status:     'unpaid',
+      registration_complete: false,
+    }, { onConflict: 'email' });
+    currentPlayer.partner_name = fullName;
+    currentPlayer.partner_mobile = fullMobile;
+    currentPlayer.partner_status = 'has_partner';
+    toast('Partner invited successfully ✅');
+  }
+  loadPartnerPanel();
 }
 
 async function saveProfile() {
   const { error } = await sb.from('players').update({
     full_name: document.getElementById('pf-name').value.trim(),
-    phone_number: document.getElementById('pf-phone').value.trim(),
-    handicap: parseFloat(document.getElementById('pf-handicap').value) || null,
+    mobile: document.getElementById('pf-phone').value.trim(),
+    handicap_index: parseFloat(document.getElementById('pf-handicap').value) || null,
   }).eq('email', currentPlayer.email);
 
   if (error) { toast('Error: ' + error.message, 'error'); return; }
