@@ -1,846 +1,427 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alumni Golf — Player Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Portal — Alumni Schools Golf Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <style>
-  :root {
-    --gold: #D4AF37;
-    --gold-light: #f0d060;
-    --gold-dim: rgba(212,175,55,0.15);
-    --bg: #0a0a14;
-    --bg2: #11111e;
-    --bg3: #1a1a2e;
-    --card: #16162a;
-    --border: rgba(255,255,255,0.08);
-    --text: #f0f0f0;
-    --text2: #aaaaaa;
-    --text3: #444466;
-    --green: #4CAF50;
-    --red: #E53935;
-    --radius: 14px;
-    --shadow: 0 4px 24px rgba(0,0,0,0.4);
-    --sidebar-w: 260px;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-
-  /* ── LOGIN ── */
-  #login-screen {
-    display:flex; align-items:center; justify-content:center;
-    min-height:100vh;
-    background-image:
-      radial-gradient(ellipse at 20% 50%, rgba(212,175,55,0.05) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, rgba(27,58,107,0.1) 0%, transparent 50%);
-  }
-  .login-box {
-    background:var(--card); border:1px solid var(--border); border-radius:20px;
-    padding:48px 40px; width:100%; max-width:420px; box-shadow:var(--shadow);
-  }
-  .login-logo { text-align:center; margin-bottom:8px; }
-  .login-logo h1 { font-family:'Cormorant Garamond',serif; font-size:34px; color:var(--gold); letter-spacing:2px; }
-  .login-logo p { color:var(--text2); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-top:4px; }
-  .divider { height:1px; background:var(--border); margin:24px 0; }
-  .form-group { margin-bottom:16px; }
-  .form-group label { display:block; color:var(--text2); font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
-  .form-group input {
-    width:100%; padding:12px 16px; background:var(--bg2); border:1px solid var(--border);
-    border-radius:10px; color:var(--text); font-size:14px; font-family:'DM Sans',sans-serif;
-    transition:border-color 0.2s;
-  }
-  .form-group input:focus { outline:none; border-color:var(--gold); }
-  .form-group input::placeholder { color:var(--text3); }
-  .btn-primary {
-    width:100%; padding:14px; background:var(--gold); color:#000; border:none;
-    border-radius:10px; font-size:14px; font-weight:700; letter-spacing:0.5px;
-    cursor:pointer; transition:opacity 0.2s; font-family:'DM Sans',sans-serif;
-  }
-  .btn-primary:hover { opacity:0.9; }
-  .btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
-  .login-error { color:var(--red); font-size:13px; text-align:center; margin-top:12px; display:none; }
-  .login-links { text-align:center; margin-top:16px; font-size:13px; color:var(--text2); }
-  .login-links a { color:var(--gold); text-decoration:none; font-weight:600; }
-  .forgot-link { text-align:center; margin-top:8px; font-size:12px; }
-  .forgot-link a { color:var(--text2); text-decoration:underline; cursor:pointer; }
-
-  /* ── APP LAYOUT ── */
-  #app { display:none; min-height:100vh; }
-  .layout { display:flex; min-height:100vh; }
-
-  /* ── SIDEBAR ── */
-  .sidebar {
-    width:var(--sidebar-w); background:var(--bg2); border-right:1px solid var(--border);
-    display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:100;
-    transition:transform 0.3s;
-  }
-  .sidebar-top {
-    padding:24px 20px 16px;
-    border-bottom:1px solid var(--border);
-  }
-  .sidebar-brand { font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--gold); }
-  .sidebar-brand-sub { font-size:10px; color:var(--text3); letter-spacing:2px; text-transform:uppercase; margin-top:2px; }
-
-  .player-profile {
-    padding:20px;
-    border-bottom:1px solid var(--border);
-  }
-  .player-avatar {
-    width:48px; height:48px;
-    border-radius:50%;
-    background:var(--gold-dim);
-    border:2px solid var(--gold);
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Cormorant Garamond',serif;
-    font-size:20px; color:var(--gold);
-    font-weight:700;
-    margin-bottom:10px;
-  }
-  .player-name { font-size:14px; font-weight:600; }
-  .player-school { font-size:12px; color:var(--text2); margin-top:2px; }
-  .player-team { margin-top:8px; }
-
-  .nav { flex:1; padding:12px 0; overflow-y:auto; }
-  .nav-item {
-    display:flex; align-items:center; gap:12px; padding:11px 20px;
-    color:var(--text2); font-size:13px; font-weight:500; cursor:pointer;
-    border-left:3px solid transparent; transition:all 0.15s;
-  }
-  .nav-item:hover { color:var(--text); background:rgba(255,255,255,0.04); }
-  .nav-item.active { color:var(--gold); background:var(--gold-dim); border-left-color:var(--gold); }
-  .nav-item .icon { font-size:16px; width:20px; text-align:center; }
-
-  .sidebar-footer {
-    padding:16px 20px;
-    border-top:1px solid var(--border);
-    display:flex; flex-direction:column; gap:10px;
-  }
-  .btn-signout {
-    width:100%; padding:9px; background:transparent; border:1px solid var(--border);
-    border-radius:8px; color:var(--text2); font-size:12px; cursor:pointer;
-    font-family:'DM Sans',sans-serif; transition:all 0.15s;
-  }
-  .btn-signout:hover { border-color:var(--red); color:var(--red); }
-
-  /* ── MAIN ── */
-  .main { margin-left:var(--sidebar-w); flex:1; }
-  .topbar {
-    height:64px; background:var(--bg2); border-bottom:1px solid var(--border);
-    display:flex; align-items:center; justify-content:space-between;
-    padding:0 28px; position:sticky; top:0; z-index:50;
-  }
-  .topbar-title { font-size:18px; font-weight:600; }
-  .content { padding:28px; max-width:1100px; }
-
-  /* ── SECTIONS ── */
-  .section { display:none; }
-  .section.active { display:block; }
-
-  /* ── CARDS ── */
-  .card {
-    background:var(--card); border:1px solid var(--border);
-    border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
-  }
-  .card-title { font-size:12px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; }
-
-  /* ── STAT GRID ── */
-  .stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:16px; margin-bottom:24px; }
-  .stat-card {
-    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-    padding:18px; position:relative; overflow:hidden;
-  }
-  .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--gold); }
-  .stat-label { font-size:10px; color:var(--text2); font-weight:600; letter-spacing:1px; text-transform:uppercase; }
-  .stat-value { font-size:28px; font-weight:700; margin:8px 0 4px; font-family:'Cormorant Garamond',serif; }
-  .stat-sub { font-size:11px; color:var(--text3); }
-
-  /* ── BADGE ── */
-  .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
-  .badge-green { background:rgba(76,175,80,0.15); color:var(--green); }
-  .badge-red { background:rgba(229,57,53,0.15); color:var(--red); }
-  .badge-gold { background:var(--gold-dim); color:var(--gold); }
-  .badge-grey { background:rgba(255,255,255,0.08); color:var(--text2); }
-
-  /* ── TABLE ── */
-  .table-wrap { overflow-x:auto; }
-  table { width:100%; border-collapse:collapse; font-size:13px; }
-  th { padding:10px 14px; text-align:left; color:var(--text2); font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; border-bottom:1px solid var(--border); }
-  td { padding:12px 14px; border-bottom:1px solid var(--border); vertical-align:middle; }
-  tr:last-child td { border-bottom:none; }
-  tr:hover td { background:rgba(255,255,255,0.02); }
-
-  /* ── PAYMENT CARD ── */
-  .payment-status-card {
-    border-radius:var(--radius);
-    padding:24px;
-    margin-bottom:20px;
-    border:1px solid;
-  }
-  .payment-status-card.paid { background:rgba(76,175,80,0.08); border-color:rgba(76,175,80,0.3); }
-  .payment-status-card.pending { background:rgba(212,175,55,0.08); border-color:rgba(212,175,55,0.3); }
-  .payment-status-card.unpaid { background:rgba(229,57,53,0.08); border-color:rgba(229,57,53,0.3); }
-  .payment-status-icon { font-size:36px; margin-bottom:10px; }
-  .payment-status-title { font-size:18px; font-weight:700; margin-bottom:4px; }
-  .payment-status-sub { font-size:13px; color:var(--text2); }
-
-  /* ── BANK DETAILS ── */
-  .bank-box {
-    background:var(--bg2); border:1px solid var(--border); border-radius:10px;
-    padding:16px; margin-top:16px;
-  }
-  .bank-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--border); font-size:13px; }
-  .bank-row:last-child { border-bottom:none; }
-  .bank-key { color:var(--text2); }
-  .bank-val { font-weight:600; color:var(--gold); }
-
-  /* ── FORM INPUTS ── */
-  .form-group { margin-bottom:16px; }
-  .form-group label { display:block; font-size:11px; color:var(--text2); font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
-  .form-group input, .form-group select {
-    width:100%; padding:10px 14px; background:var(--bg2); border:1px solid var(--border);
-    border-radius:8px; color:var(--text); font-size:13px; font-family:'DM Sans',sans-serif;
-  }
-  .form-group input:focus, .form-group select:focus { outline:none; border-color:var(--gold); }
-
-  .btn-sm {
-    padding:9px 18px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;
-    font-family:'DM Sans',sans-serif; border:none; transition:all 0.2s;
-  }
-  .btn-gold { background:var(--gold); color:#000; }
-  .btn-gold:hover { opacity:0.9; }
-  .btn-outline { background:transparent; border:1px solid var(--border); color:var(--text2); }
-  .btn-outline:hover { border-color:var(--gold); color:var(--gold); }
-
-  /* ── MATCH CARD ── */
-  .match-card {
-    background:var(--bg2); border:1px solid var(--border); border-radius:12px;
-    padding:16px; margin-bottom:12px; transition:border-color 0.2s;
-  }
-  .match-card:hover { border-color:rgba(212,175,55,0.3); }
-  .match-teams {
-    display:flex; align-items:center; gap:12px;
-    font-size:14px; font-weight:600; margin-bottom:8px;
-  }
-  .match-vs { color:var(--text2); font-size:11px; font-weight:400; }
-  .match-meta { display:flex; gap:16px; font-size:12px; color:var(--text2); flex-wrap:wrap; }
-
-  /* ── LOADING ── */
-  .loading { text-align:center; padding:40px; color:var(--text2); }
-  .spinner { display:inline-block; width:28px; height:28px; border:3px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; }
-  @keyframes spin { to { transform:rotate(360deg); } }
-
-  /* ── RESPONSIVE ── */
-  @media(max-width:768px) {
-    .sidebar { transform:translateX(-100%); }
-    .sidebar.open { transform:translateX(0); }
-    .main { margin-left:0; }
-    .content { padding:16px; }
-    .stat-grid { grid-template-columns:1fr 1fr; }
-    .hamburger { display:flex !important; }
-  }
-  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:4px; }
-  .hamburger span { width:22px; height:2px; background:var(--text); border-radius:2px; }
-
-  /* toast */
-  #toast {
-    position:fixed; bottom:24px; right:24px; background:var(--card);
-    border:1px solid var(--border); border-radius:10px; padding:12px 20px;
-    font-size:13px; box-shadow:var(--shadow); z-index:9999;
-    transform:translateY(80px); opacity:0; transition:all 0.3s;
-  }
-  #toast.show { transform:translateY(0); opacity:1; }
-  #toast.success { border-left:3px solid var(--green); }
-  #toast.error { border-left:3px solid var(--red); }
-
-  /* no-account screen */
-  .no-account {
-    text-align:center; padding:60px 20px;
-  }
-  .no-account .icon { font-size:48px; margin-bottom:16px; }
-  .no-account h2 { font-family:'Cormorant Garamond',serif; font-size:28px; color:var(--gold); margin-bottom:8px; }
-  .no-account p { color:var(--text2); font-size:14px; margin-bottom:24px; line-height:1.6; }
+:root{--navy:#1B3A6B;--navy-dark:#0f2347;--gold:#C9A84C;--gold-dim:rgba(201,168,76,0.15);--white:#fff;--off-white:#f8f6f0;--text:#1a1a2e;--text2:#555;--border:rgba(27,58,107,0.12);--green:#27ae60;--red:#c0392b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);min-height:100vh;}
+nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:70px;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-logo span{font-family:'Cormorant Garamond',serif;color:var(--white);font-size:20px;font-weight:600;}
+.nav-links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:500;margin-left:28px;transition:color 0.2s;}
+.nav-links a:hover{color:var(--gold);}
+.main{max-width:800px;margin:0 auto;padding:40px 20px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px;box-shadow:0 4px 20px rgba(27,58,107,0.08);}
+.card h2{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--navy);margin-bottom:8px;}
+.login-box{max-width:420px;margin:60px auto;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--navy);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.form-group input{width:100%;padding:12px 16px;background:var(--off-white);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color 0.2s;}
+.form-group input:focus{outline:none;border-color:var(--gold);}
+.btn-primary{width:100%;padding:14px;background:var(--gold);color:var(--navy-dark);border:none;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;}
+.btn-outline{width:100%;padding:12px;background:transparent;color:var(--navy);border:2px solid var(--navy);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-green{background:rgba(39,174,96,0.15);color:var(--green);}
+.badge-red{background:rgba(192,57,43,0.15);color:var(--red);}
+.badge-gold{background:var(--gold-dim);color:var(--gold);}
+.badge-grey{background:rgba(0,0,0,0.08);color:var(--text2);}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.info-row:last-child{border-bottom:none;}
+.info-row .label{color:var(--text2);font-size:12px;}
+.info-row .value{font-weight:600;}
+.section{display:none;}.section.active{display:block;}
+.alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;}
+.alert-error{background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:var(--red);}
+.contact-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.contact-btn{padding:14px;border-radius:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.2s;display:block;}
+.contact-email{background:var(--navy);color:white;}
+.contact-whatsapp{background:#25D366;color:white;}
+.contact-email:hover,.contact-whatsapp:hover{opacity:0.9;transform:translateY(-1px);}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(0,0,0,0.2);border-top-color:var(--navy);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+footer{background:var(--navy-dark);color:rgba(255,255,255,0.5);text-align:center;padding:24px;font-size:12px;border-top:2px solid var(--gold);}
+footer a{color:var(--gold);text-decoration:none;}
 </style>
 </head>
 <body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>Alumni Schools Golf Challenge</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="register.html">Register</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
 
-<div id="toast"></div>
+<div style="background:linear-gradient(135deg,var(--navy-dark),var(--navy));padding:40px 20px;text-align:center;border-bottom:2px solid var(--gold);">
+  <h1 style="font-family:'Cormorant Garamond',serif;color:white;font-size:36px;font-weight:700;margin-bottom:8px;">Player Portal</h1>
+  <div style="width:60px;height:3px;background:var(--gold);margin:12px auto;border-radius:2px;"></div>
+  <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:rgba(255,255,255,0.9);font-style:italic;font-weight:600;letter-spacing:1px;margin-bottom:6px;">Honouring tradition. Celebrating excellence.</p>
+  <div style="width:180px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto;"></div>
+</div>
 
-<!-- ── LOGIN ── -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">
-      <h1>⛳ Alumni Golf</h1>
-      <p>Player Portal</p>
+<div class="main">
+  <!-- LOGIN -->
+
+  <!-- FORGOT PASSWORD -->
+  <div id="forgot-section" style="display:none;" style="display:none;max-width:420px;margin:0 auto;">
+    <div class="card" style="margin-top:20px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:6px;">&#128274; Reset Your Password</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">Enter your registered email address and we will send you a password reset link.</p>
+      <div id="forgot-msg" style="display:none;padding:12px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:12px;"></div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="forgot-email" placeholder="your@email.com" />
+      </div>
+      <button type="button" class="btn-primary" onclick="sendReset()">Send Reset Link</button>
+      <button type="button" class="btn-outline" onclick="hideForgot()" style="margin-top:8px;">&#8592; Back to Login</button>
+      <div style="margin-top:16px;padding:12px;background:rgba(27,58,107,0.05);border-radius:8px;font-size:12px;color:var(--text2);text-align:center;line-height:1.6;">
+        <strong>Don't have access to your email anymore?</strong><br>
+        Email us at admin&#64;alumnigolf&#46;net
+        or <a href="https://wa.me/27000000000?text=Hi%2C%20I%20need%20help%20with%20my%20Alumni%20Golf%20portal%20login." target="_blank" style="color:#25D366;font-weight:700;">WhatsApp us</a>
+        and we will verify your identity and update your account manually.
+      </div>
     </div>
-    <div class="divider"></div>
-    <div class="form-group">
-      <label>Email Address</label>
-      <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email" />
+  </div>
+
+  <!-- EMAIL HELP SECTION -->
+  <div id="email-help-section" style="display:none;max-width:420px;margin:0 auto;">
+    <div class="card" style="margin-top:20px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:4px;">&#128274; Account Recovery</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">
+        Please fill in your details below. We will verify your identity and manually restore your access within 24 hours.
+      </p>
+      <div id="help-msg" style="display:none;padding:12px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:12px;"></div>
+      <div class="form-group"><label>Full Name</label><input type="text" id="help-name" placeholder="First name and surname" /></div>
+      <div class="form-group"><label>Surname</label><input type="text" id="help-surname" placeholder="Surname" /></div>
+      <div class="form-group"><label>Mobile Number</label>
+        <div style="display:flex;">
+          <div style="padding:12px 13px;background:#e8e4dc;border:1.5px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-weight:700;color:var(--navy);font-size:14px;">+27</div>
+          <input type="tel" id="help-mobile" placeholder="821234567" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'')" style="border-radius:0 10px 10px 0;" />
+        </div>
+      </div>
+      <div class="form-group"><label>School Name</label><input type="text" id="help-school" placeholder="Your school" /></div>
+      <div class="form-group"><label>New Email Address <span style="color:var(--gold)">*</span></label>
+        <input type="email" id="help-newemail" placeholder="The email you want to use going forward" />
+        <div style="font-size:11px;color:var(--text2);margin-top:4px;">We will update your account to this new email once verified.</div>
+      </div>
+      <button type="button" class="btn-primary" onclick="submitEmailHelp()">Send Recovery Request</button>
+      <button type="button" class="btn-outline" onclick="hideEmailHelp()" style="margin-top:8px;">&#8592; Back to Login</button>
     </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"
-        onkeydown="if(event.key==='Enter')doLogin()" />
+  </div>
+
+  <div class="section active" id="sec-login">
+    <div class="card login-box">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:48px;margin-bottom:12px;">🏌️</div>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--navy);">Player Portal</h2>
+        <p style="color:var(--text2);font-size:13px;margin-top:4px;">Log in with your registered email</p>
+      </div>
+      <div id="login-error" style="display:none;padding:14px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:16px;background:rgba(192,57,43,0.1);border:1.5px solid rgba(192,57,43,0.4);color:#c0392b;line-height:1.5;"></div>
+      <div id="login-success" style="display:none;padding:14px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:16px;background:rgba(39,174,96,0.1);border:1.5px solid rgba(39,174,96,0.4);color:#27ae60;line-height:1.5;"></div>
+      <div class="form-group"><label>Email Address</label><input type="email" id="login-email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="email" /></div>
+      <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password" /></div>
+      <button type="button" class="btn-primary" id="login-btn" onclick="doLogin()">Sign In to Portal</button>
+      <div style="text-align:center;margin-top:14px;font-size:13px;color:var(--text2);">
+        <a href="#" onclick="showForgot();return false;" style="color:var(--gold);font-weight:600;">Forgot your password?</a>
+        &nbsp;&bull;&nbsp;
+        <a href="#" onclick="showEmailHelp();return false;" style="color:var(--text2);">Lost access to email?</a>
+      </div>
+      <div style="height:1px;background:var(--border);margin:20px 0;"></div>
+      <div style="text-align:center;margin-top:14px;">
+        <a href="#" onclick="showForgot();return false;" style="font-size:13px;color:var(--navy);font-weight:600;text-decoration:underline;">Forgot your password?</a>
+      </div>
+      <div style="margin-top:10px;padding:14px;background:rgba(27,58,107,0.05);border-radius:8px;font-size:12px;color:var(--text2);text-align:center;line-height:1.6;">
+        &#128274; <strong>Lost access to your email?</strong><br>
+        Contact admin to update your account:<br>
+        admin&#64;alumnigolf&#46;net
+        &nbsp;|&nbsp;
+        <a href="https://wa.me/27000000000?text=Hi%2C%20I%20need%20help%20accessing%20my%20Alumni%20Golf%20portal." target="_blank" style="color:#25D366;font-weight:700;">WhatsApp Us</a>
+      </div>
+      <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--text2);">
+        Not registered? <a href="register.html" style="color:var(--navy);font-weight:600;">Register here</a>
+      </div>
     </div>
-    <button class="btn-primary" id="login-btn" onclick="doLogin()">SIGN IN</button>
-    <div class="login-error" id="login-error"></div>
-    <div class="forgot-link" style="margin-top:12px;">
-      <a onclick="doForgotPassword()">Forgot password?</a>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="section" id="sec-dashboard">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
+        <div>
+          <h2 id="dash-name">Welcome back!</h2>
+          <p style="color:var(--text2);font-size:13px;" id="dash-school"></p>
+        </div>
+        <button class="btn-outline" style="width:auto;padding:8px 20px;" onclick="doLogout()">Sign Out</button>
+      </div>
+      <div id="dash-info"></div>
     </div>
-    <div class="divider"></div>
-    <div class="login-links">
-      Not registered yet? <a href="/register.html">Create account →</a>
+
+    <!-- PAYMENT SECTION -->
+    <div class="card" id="payment-card" style="display:none;">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--navy);margin-bottom:16px;">💳 Complete Payment</h2>
+      <p style="font-size:14px;color:var(--text2);margin-bottom:20px;">Your spot is on hold. Please complete payment to officially confirm your entry.</p>
+      <div style="background:var(--navy-dark);border-radius:12px;padding:24px;">
+        <div style="color:var(--gold);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;">Banking Details — EFT</div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="color:rgba(255,255,255,0.5);font-size:12px;">Account Name</span><span style="color:white;font-weight:600;font-size:13px;">LEGACY EVENT VENTURES (PTY) LTD</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="color:rgba(255,255,255,0.5);font-size:12px;">Bank</span><span style="color:white;font-weight:600;font-size:13px;">FNB — Cape Gate</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="color:rgba(255,255,255,0.5);font-size:12px;">Account Number</span><span style="color:white;font-weight:600;font-size:13px;">63192217123</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="color:rgba(255,255,255,0.5);font-size:12px;">Branch Code</span><span style="color:white;font-weight:600;font-size:13px;">251945</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;"><span style="color:rgba(255,255,255,0.5);font-size:12px;">Amount</span><span style="color:var(--gold);font-weight:700;font-size:18px;">R1,500.00</span></div>
+      </div>
+      <div style="margin-top:16px;">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--navy);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Upload Proof of Payment</label>
+        <div style="border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;" onclick="document.getElementById('portal-pop').click()">
+          <div style="font-size:24px;">📎</div>
+          <p style="color:var(--text2);font-size:13px;margin-top:8px;">Click to upload proof of payment</p>
+          <p id="portal-pop-name" style="color:var(--navy);font-weight:600;margin-top:6px;"></p>
+        </div>
+        <input type="file" id="portal-pop" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="this.nextElementSibling.style.display='block';document.getElementById('portal-pop-name').textContent='✅ '+this.files[0].name;" />
+        <button class="btn-primary" id="portal-pay-btn" style="display:none;" onclick="submitPortalPayment()">Submit Proof of Payment</button>
+      </div>
+    </div>
+
+    <!-- MATCHES -->
+    <div class="card" id="matches-card" style="display:none;">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--navy);margin-bottom:16px;">🎯 My Matches</h2>
+      <div id="matches-list"></div>
     </div>
   </div>
 </div>
 
-<!-- ── APP ── -->
-<div id="app">
-  <div class="layout">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-top">
-        <div class="sidebar-brand">⛳ Alumni Golf</div>
-        <div class="sidebar-brand-sub">Player Portal</div>
-      </div>
-
-      <div class="player-profile" id="sidebar-profile">
-        <div class="player-avatar" id="player-avatar">?</div>
-        <div class="player-name" id="player-name-sidebar">Loading...</div>
-        <div class="player-school" id="player-school-sidebar">—</div>
-        <div class="player-team">
-          <span class="badge badge-grey" id="player-team-sidebar">Team —</span>
-        </div>
-      </div>
-
-      <nav class="nav">
-        <div class="nav-item active" onclick="showSection('overview')"><span class="icon">🏠</span>Overview</div>
-        <div class="nav-item" onclick="showSection('matches')"><span class="icon">🎯</span>My Matches</div>
-        <div class="nav-item" onclick="showSection('payment')"><span class="icon">💳</span>Payment</div>
-        <div class="nav-item" onclick="showSection('standings')"><span class="icon">🏆</span>Standings</div>
-        <div class="nav-item" onclick="showSection('profile')"><span class="icon">👤</span>My Profile</div>
-      </nav>
-
-      <div class="sidebar-footer">
-        <button class="btn-signout" onclick="doLogout()">Sign Out</button>
-      </div>
-    </aside>
-
-    <!-- MAIN -->
-    <main class="main">
-      <header class="topbar">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">
-            <span></span><span></span><span></span>
-          </div>
-          <span class="topbar-title" id="section-title">Overview</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <span id="topbar-payment-badge"></span>
-        </div>
-      </header>
-
-      <div class="content">
-
-        <!-- No account found -->
-        <div id="no-account-screen" style="display:none;">
-          <div class="no-account">
-            <div class="icon">⚠️</div>
-            <h2>No Player Account Found</h2>
-            <p>
-              You are logged in but we couldn't find a player profile linked to your email.<br>
-              This usually means registration didn't complete properly.<br><br>
-              Please register again to create your player profile.
-            </p>
-            <a href="/register.html">
-              <button class="btn-sm btn-gold" style="font-size:14px;padding:12px 28px;">Register Now →</button>
-            </a>
-            <div style="margin-top:16px;">
-              <button class="btn-sm btn-outline" onclick="doLogout()">Sign Out</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- OVERVIEW -->
-        <section class="section active" id="sec-overview">
-          <div class="stat-grid" id="overview-stats">
-            <div class="loading"><div class="spinner"></div></div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-            <div class="card">
-              <div class="card-title">🎯 Upcoming Matches</div>
-              <div id="upcoming-matches-list"><div class="loading"><div class="spinner"></div></div></div>
-            </div>
-            <div class="card">
-              <div class="card-title">📢 Latest News</div>
-              <div id="broadcasts-overview"><div class="loading"><div class="spinner"></div></div></div>
-            </div>
-          </div>
-        </section>
-
-        <!-- MATCHES -->
-        <section class="section" id="sec-matches">
-          <div class="card" style="margin-bottom:20px;">
-            <div class="card-title">🎯 All My Matches</div>
-            <div id="all-matches-list"><div class="loading"><div class="spinner"></div></div></div>
-          </div>
-        </section>
-
-        <!-- PAYMENT -->
-        <section class="section" id="sec-payment">
-          <div id="payment-content"><div class="loading"><div class="spinner"></div></div></div>
-        </section>
-
-        <!-- STANDINGS -->
-        <section class="section" id="sec-standings">
-          <div class="card">
-            <div class="card-title">🏆 Division Standings</div>
-            <div id="standings-content"><div class="loading"><div class="spinner"></div></div></div>
-          </div>
-        </section>
-
-        <!-- PROFILE -->
-        <section class="section" id="sec-profile">
-          <div class="card" style="max-width:500px;">
-            <div class="card-title">👤 My Profile</div>
-            <div id="profile-form">
-              <div class="form-group"><label>Full Name</label><input type="text" id="pf-name" /></div>
-              <div class="form-group"><label>School</label><input type="text" id="pf-school" readonly style="opacity:0.6" /></div>
-              <div class="form-group"><label>Year of Matriculation</label><input type="text" id="pf-matric" readonly style="opacity:0.6" /></div>
-              <div class="form-group"><label>Phone / WhatsApp</label><input type="tel" id="pf-phone" /></div>
-              <div class="form-group"><label>Handicap</label><input type="number" id="pf-handicap" min="0" max="54" step="0.1" /></div>
-              <div class="form-group"><label>Email</label><input type="email" id="pf-email" readonly style="opacity:0.5" /></div>
-              <div style="margin-top:20px;display:flex;gap:10px;">
-                <button class="btn-sm btn-gold" onclick="saveProfile()">Save Changes</button>
-              </div>
-            </div>
-          </div>
-          <div class="card" style="max-width:500px;margin-top:20px;">
-            <div class="card-title">🔒 Change Password</div>
-            <div class="form-group"><label>New Password</label><input type="password" id="new-password" placeholder="At least 8 characters" /></div>
-            <div class="form-group"><label>Confirm New Password</label><input type="password" id="new-password2" placeholder="Repeat password" /></div>
-            <button class="btn-sm btn-outline" onclick="changePassword()" style="margin-top:4px;">Update Password</button>
-          </div>
-        </section>
-
-      </div>
-    </main>
-  </div>
-</div>
+<footer>
+  <p>© 2026 Alumni Schools Golf Challenge | admin&#64;alumnigolf&#46;net</p>
+</footer>
 
 <script>
-// ── SUPABASE ──────────────────────────────────────────────────────────────────
-const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-
+const sb = createClient(window.SB_URL, window.SB_KEY);
 let currentPlayer = null;
 
-// ── TOAST ─────────────────────────────────────────────────────────────────────
-function toast(msg, type='success') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = `show ${type}`;
-  setTimeout(() => t.className = '', 3000);
+// ── EMAIL HELP ──────────────────────────────────────────────────────────────
+function showEmailHelp() {
+  document.getElementById('sec-login').style.display = 'none';
+  document.getElementById('forgot-section').style.display = 'none';
+  document.getElementById('email-help-section').style.display = 'block';
+  window.scrollTo(0,0);
+}
+function hideEmailHelp() {
+  document.getElementById('email-help-section').style.display = 'none';
+  document.getElementById('sec-login').style.display = 'block';
+}
+async function submitEmailHelp() {
+  var name    = document.getElementById('help-name').value.trim();
+  var surname = document.getElementById('help-surname').value.trim();
+  var mobile  = document.getElementById('help-mobile').value.trim();
+  var school  = document.getElementById('help-school').value.trim();
+  var newemail = document.getElementById('help-newemail').value.trim().toLowerCase();
+  if (!name)    return showHelpMsg('Please enter your first name.', false);
+  if (!surname) return showHelpMsg('Please enter your surname.', false);
+  if (!mobile || mobile.length < 9) return showHelpMsg('Please enter your 9-digit mobile number.', false);
+  if (!school)  return showHelpMsg('Please enter your school name.', false);
+  if (!newemail || newemail.indexOf('@') < 0) return showHelpMsg('Please enter a valid new email address.', false);
+  var btn = event.target; btn.textContent = 'Sending...'; btn.disabled = true;
+  try {
+    await sb.from('account_recovery_requests').insert({
+      full_name: name + ' ' + surname, mobile: '+27' + mobile,
+      school_name: school, new_email: newemail, status: 'pending',
+      created_at: new Date().toISOString()
+    });
+    showHelpMsg('Recovery request sent! We will verify your details and contact you on +27' + mobile + ' within 24 hours.', true);
+  } catch(e) {
+    showHelpMsg('Could not send automatically. Please email <strong>admin&#64;alumnigolf&#46;net</strong> with your name, mobile number, school and new email address.', false);
+  }
+  btn.textContent = 'Send Recovery Request'; btn.disabled = false;
+}
+function showHelpMsg(text, ok) {
+  var el = document.getElementById('help-msg');
+  el.innerHTML = text;
+  el.style.cssText = 'display:block;padding:12px;border-radius:8px;font-size:13px;' +
+    (ok ? 'background:rgba(39,174,96,0.1);color:#27ae60;border:1px solid rgba(39,174,96,0.3);'
+        : 'background:rgba(192,57,43,0.1);color:#c0392b;border:1px solid rgba(192,57,43,0.3);');
 }
 
-// ── AUTH ──────────────────────────────────────────────────────────────────────
+// ── FORGOT PASSWORD ─────────────────────────────────────────────────────────
+function showForgot() {
+  document.getElementById('sec-login').style.display = 'none';
+  document.getElementById('forgot-section').style.display = 'block';
+  window.scrollTo(0,0);
+}
+function hideForgot() {
+  document.getElementById('forgot-section').style.display = 'none';
+  document.getElementById('sec-login').style.display = 'block';
+}
+async function sendReset() {
+  var email = document.getElementById('forgot-email').value.trim().toLowerCase();
+  var msg = document.getElementById('forgot-msg');
+  if (!email || email.indexOf('@') < 0) {
+    msg.style.cssText = 'display:block;padding:12px;border-radius:8px;font-size:13px;background:rgba(192,57,43,0.1);color:#c0392b;border:1px solid rgba(192,57,43,0.3);';
+    msg.textContent = 'Please enter a valid email address.'; return;
+  }
+  var btn = event.target; btn.textContent = 'Sending...'; btn.disabled = true;
+  var res = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/portal.html' });
+  btn.textContent = 'Send Reset Link'; btn.disabled = false;
+  if (res.error) {
+    msg.style.cssText = 'display:block;padding:12px;border-radius:8px;font-size:13px;background:rgba(192,57,43,0.1);color:#c0392b;border:1px solid rgba(192,57,43,0.3);';
+    msg.textContent = 'Something went wrong. Please try again or contact us.';
+  } else {
+    msg.style.cssText = 'display:block;padding:12px;border-radius:8px;font-size:13px;background:rgba(39,174,96,0.1);color:#27ae60;border:1px solid rgba(39,174,96,0.3);';
+    msg.textContent = 'Reset link sent! Check your inbox and spam folder. The link expires in 1 hour.';
+  }
+}
+
+// ── LOGIN ───────────────────────────────────────────────────────────────────
 async function doLogin() {
-  const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const pass = document.getElementById('login-password').value;
-  const err = document.getElementById('login-error');
-  const btn = document.getElementById('login-btn');
+  var email = document.getElementById('login-email').value.trim().toLowerCase();
+  var pass  = document.getElementById('login-password').value;
+  var err   = document.getElementById('login-error');
+  var btn   = document.getElementById('login-btn');
   err.style.display = 'none';
 
-  if (!email || !pass) {
-    err.textContent = 'Please enter your email and password.';
-    err.style.display = 'block';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'Signing in...';
-
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-
-  if (error) {
-    err.textContent = error.message.includes('Invalid login') || error.message.includes('invalid_credentials')
-      ? 'Incorrect email or password.'
-      : error.message;
-    err.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = 'SIGN IN';
-    return;
-  }
-
-  await loadApp(data.user.email);
-}
-
-async function doForgotPassword() {
-  const email = document.getElementById('login-email').value.trim();
   if (!email) {
-    const err = document.getElementById('login-error');
-    err.textContent = 'Enter your email address above first.';
+    err.textContent = '\u26a0 Please enter your email address.';
     err.style.display = 'block';
-    return;
+    document.getElementById('login-email').focus(); return;
   }
-  const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/portal.html'
-  });
-  if (error) {
-    toast('Error: ' + error.message, 'error');
-  } else {
-    toast('Password reset email sent! Check your inbox.');
+  if (!pass) {
+    err.textContent = '\u26a0 Please enter your password.';
+    err.style.display = 'block';
+    document.getElementById('login-password').focus(); return;
+  }
+
+  btn.textContent = 'Signing in\u2026'; btn.disabled = true;
+
+  try {
+    var result = await sb.auth.signInWithPassword({ email: email, password: pass });
+    if (result.error) {
+      // Show exact Supabase error for debugging
+      err.textContent = '\u26a0 Supabase says: ' + result.error.message + ' (status: ' + result.error.status + ')';
+      err.style.display = 'block';
+      btn.textContent = 'Sign In to Portal'; btn.disabled = false;
+      return;
+    }
+    await loadDashboard(email);
+  } catch(e) {
+    err.textContent = '\u26a0 Something went wrong. Please check your connection and try again.';
+    err.style.display = 'block';
+    btn.textContent = 'Sign In to Portal'; btn.disabled = false;
   }
 }
 
+// ── DASHBOARD ───────────────────────────────────────────────────────────────
+async function loadDashboard(email) {
+  var result = await sb.from('players').select('*').eq('email', email).maybeSingle();
+  var player = result.data;
+  if (!player) {
+    var err = document.getElementById('login-error');
+    err.textContent = 'No player account found for this email. Please register first.';
+    err.style.display = 'block'; return;
+  }
+  currentPlayer = player;
+  document.getElementById('sec-login').classList.remove('active');
+  document.getElementById('sec-dashboard').classList.add('active');
+  document.getElementById('dash-name').textContent = 'Welcome, ' + (player.full_name || 'Player') + '!';
+  document.getElementById('dash-school').textContent =
+    (player.school_name || '') + (player.team_number ? '  ·  Team: ' + player.team_number : '');
+
+  var payBadge = player.payment_status === 'paid'
+    ? '<span class="badge badge-green">&#10003; Paid</span>'
+    : player.payment_status === 'pending_verification'
+    ? '<span class="badge badge-gold">&#8987; Pending Verification</span>'
+    : '<span class="badge badge-red">&#10007; Unpaid</span>';
+  var eligBadge = player.eligibility_status === 'eligible'
+    ? '<span class="badge badge-green">&#10003; Eligible</span>'
+    : '<span class="badge badge-grey">&#8987; Pending Review</span>';
+
+  document.getElementById('dash-info').innerHTML =
+    row('Email',            player.email || '—') +
+    row('Mobile',           player.mobile || '—') +
+    row('School',           player.school_name || '—') +
+    row('Golf Club',        player.golf_club || '—') +
+    row('HNA Number',       player.hna_number || '—') +
+    row('Handicap Index',   player.handicap_index || '—') +
+    row('Team',             player.team_number || '—') +
+    row('Division',         player.division_name || 'Not yet assigned') +
+    row('Payment',          payBadge) +
+    row('Eligibility',      eligBadge);
+
+  if (player.payment_status !== 'paid' && player.payment_status !== 'pending_verification') {
+    document.getElementById('payment-card').style.display = 'block';
+  }
+
+  if (player.team_number) {
+    var mres = await sb.from('matches').select('*')
+      .or('home_team.eq.' + player.team_number + ',away_team.eq.' + player.team_number)
+      .order('round_number');
+    if (mres.data && mres.data.length > 0) {
+      document.getElementById('matches-card').style.display = 'block';
+      document.getElementById('matches-list').innerHTML = mres.data.map(function(m) {
+        var isHome = m.home_team === player.team_number;
+        var opponent = isHome ? m.away_team : m.home_team;
+        var statusBadge = m.match_status === 'completed'
+          ? '<span class="badge badge-green">Completed</span>'
+          : m.match_status === 'pending'
+          ? '<span class="badge badge-grey">Pending</span>'
+          : '<span class="badge badge-gold">In Progress</span>';
+        var winnerLine = m.winner
+          ? '<div style="font-size:13px;margin-top:4px;color:' + (m.winner === player.team_number ? '#27ae60' : '#c0392b') + ';">Result: ' + (m.winner === player.team_number ? 'Win' : 'Loss') + (m.score_display ? ' (' + m.score_display + ')' : '') + '</div>'
+          : '';
+        return '<div style="padding:16px 0;border-bottom:1px solid var(--border);">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<span style="font-size:11px;color:var(--text2);font-weight:700;letter-spacing:1px;">ROUND ' + m.round_number + '</span>' +
+          statusBadge + '</div>' +
+          '<div style="font-size:15px;font-weight:600;">vs <span style="color:var(--navy)">' + opponent + '</span> ' +
+          (isHome ? '<span style="font-size:11px;color:var(--gold);">(HOME)</span>' : '<span style="font-size:11px;color:var(--text2);">(AWAY)</span>') + '</div>' +
+          winnerLine + '</div>';
+      }).join('');
+    }
+  }
+}
+
+function row(label, val) {
+  return '<div class="info-row"><span class="label">' + label + '</span><span class="value">' + val + '</span></div>';
+}
+
+// ── PAYMENT UPLOAD ──────────────────────────────────────────────────────────
+async function submitPortalPayment() {
+  var file = document.getElementById('portal-pop').files[0];
+  if (!file) return;
+  var btn = document.getElementById('portal-pay-btn');
+  btn.innerHTML = '<span class="spinner"></span>Uploading...';
+  btn.disabled = true;
+  var ext = file.name.split('.').pop();
+  var fileName = 'pop/' + currentPlayer.email + '-' + Date.now() + '.' + ext;
+  var upres = await sb.storage.from('proofs').upload(fileName, file, { upsert: true });
+  var url = upres.data ? SUPABASE_URL + '/storage/v1/object/public/proofs/' + fileName : null;
+  await sb.from('players').update({
+    payment_status: 'pending_verification',
+    proof_of_payment_url: url
+  }).eq('email', currentPlayer.email);
+  btn.innerHTML = '&#10003; Uploaded — Pending Verification';
+  btn.style.background = '#27ae60';
+  document.getElementById('portal-pay-success').style.display = 'block';
+  currentPlayer.payment_status = 'pending_verification';
+}
+
+// ── SIGN OUT ────────────────────────────────────────────────────────────────
 async function doLogout() {
   await sb.auth.signOut();
   currentPlayer = null;
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('no-account-screen').style.display = 'none';
-  document.getElementById('login-btn').disabled = false;
-  document.getElementById('login-btn').textContent = 'SIGN IN';
+  document.getElementById('sec-dashboard').classList.remove('active');
+  document.getElementById('sec-login').classList.add('active');
 }
 
-async function loadApp(email) {
-  // Fetch player profile from players table
-  const { data: player, error } = await sb.from('players')
-    .select('*')
-    .eq('email', email.toLowerCase())
-    .maybeSingle();
-
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.getElementById('login-btn').disabled = false;
-  document.getElementById('login-btn').textContent = 'SIGN IN';
-
-  if (!player) {
-    // Auth exists but no player row — show helpful message
-    document.getElementById('no-account-screen').style.display = 'block';
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    return;
-  }
-
-  currentPlayer = player;
-  document.getElementById('no-account-screen').style.display = 'none';
-
-  // Populate sidebar
-  const initials = (player.full_name || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-  document.getElementById('player-avatar').textContent = initials;
-  document.getElementById('player-name-sidebar').textContent = player.full_name || '—';
-  document.getElementById('player-school-sidebar').textContent = player.school_name || '—';
-  document.getElementById('player-team-sidebar').textContent = player.team_number ? 'Team ' + player.team_number : 'Unassigned';
-
-  // Payment badge in topbar
-  const payBadge = document.getElementById('topbar-payment-badge');
-  if (player.payment_status === 'paid') {
-    payBadge.innerHTML = '<span class="badge badge-green">✓ Paid</span>';
-  } else if (player.payment_status === 'pending_verification') {
-    payBadge.innerHTML = '<span class="badge badge-gold">⏳ Payment Pending</span>';
-  } else {
-    payBadge.innerHTML = '<span class="badge badge-red">⚠ Payment Outstanding</span>';
-  }
-
-  loadOverview();
-}
-
-// ── NAVIGATION ────────────────────────────────────────────────────────────────
-const titles = {
-  overview: 'Overview', matches: 'My Matches', payment: 'Payment',
-  standings: 'Standings', profile: 'My Profile'
-};
-function showSection(name) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('sec-' + name).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => {
-    if (n.textContent.trim().toLowerCase().includes(name)) n.classList.add('active');
-  });
-  document.getElementById('section-title').textContent = titles[name] || name;
-  document.getElementById('sidebar').classList.remove('open');
-
-  if (name === 'matches') loadMyMatches();
-  if (name === 'payment') loadPaymentSection();
-  if (name === 'standings') loadStandings();
-  if (name === 'profile') loadProfileForm();
-}
-
-// ── OVERVIEW ──────────────────────────────────────────────────────────────────
-async function loadOverview() {
-  if (!currentPlayer) return;
-
-  // Stats
-  const { data: myMatches } = await sb.from('matches').select('*')
-    .or(`home_team.eq.${currentPlayer.team_number},away_team.eq.${currentPlayer.team_number}`);
-
-  const played = (myMatches || []).filter(m => m.match_status === 'completed').length;
-  const wins = (myMatches || []).filter(m => m.winner === currentPlayer.team_number).length;
-  const total = (myMatches || []).length;
-
-  const payColor = currentPlayer.payment_status === 'paid' ? 'var(--green)' : currentPlayer.payment_status === 'pending_verification' ? 'var(--gold)' : 'var(--red)';
-  const eligColor = currentPlayer.eligibility_status === 'eligible' ? 'var(--green)' : 'var(--gold)';
-
-  document.getElementById('overview-stats').innerHTML = `
-    <div class="stat-card"><div class="stat-label">My Team</div><div class="stat-value">${currentPlayer.team_number || '—'}</div><div class="stat-sub">${currentPlayer.school_name || '—'}</div></div>
-    <div class="stat-card"><div class="stat-label">Matches</div><div class="stat-value">${played}/${total}</div><div class="stat-sub">Played / Scheduled</div></div>
-    <div class="stat-card"><div class="stat-label">Wins</div><div class="stat-value" style="color:var(--green)">${wins}</div><div class="stat-sub">${played > 0 ? Math.round((wins/played)*100) + '% win rate' : 'No matches yet'}</div></div>
-    <div class="stat-card"><div class="stat-label">Payment</div><div class="stat-value" style="color:${payColor};font-size:16px;margin-top:10px;">${currentPlayer.payment_status || 'unpaid'}</div><div class="stat-sub" style="margin-top:6px;">Entry fee status</div></div>
-    <div class="stat-card"><div class="stat-label">Eligibility</div><div class="stat-value" style="color:${eligColor};font-size:16px;margin-top:10px;">${currentPlayer.eligibility_status || 'pending'}</div><div class="stat-sub" style="margin-top:6px;">Admin verification</div></div>
-  `;
-
-  // Upcoming matches
-  const upcoming = (myMatches || []).filter(m => m.match_status === 'pending').slice(0, 3);
-  const upcomingEl = document.getElementById('upcoming-matches-list');
-  if (!upcoming.length) {
-    upcomingEl.innerHTML = '<p style="color:var(--text3);font-size:13px;">No upcoming matches found</p>';
-  } else {
-    upcomingEl.innerHTML = upcoming.map(m => `
-      <div class="match-card">
-        <div class="match-teams">
-          <span style="color:${m.home_team === currentPlayer.team_number ? 'var(--gold)' : ''}">${m.home_team}</span>
-          <span class="match-vs">vs</span>
-          <span style="color:${m.away_team === currentPlayer.team_number ? 'var(--gold)' : ''}">${m.away_team}</span>
-        </div>
-        <div class="match-meta">
-          <span>Round ${m.round_number}</span>
-          <span class="badge badge-grey">${m.match_status}</span>
-        </div>
-      </div>`).join('');
-  }
-
-  // Broadcasts
-  const { data: broadcasts } = await sb.from('broadcasts').select('title,message,created_at').order('created_at', { ascending: false }).limit(5);
-  const bcEl = document.getElementById('broadcasts-overview');
-  if (!broadcasts || !broadcasts.length) {
-    bcEl.innerHTML = '<p style="color:var(--text3);font-size:13px;">No announcements yet</p>';
-  } else {
-    bcEl.innerHTML = broadcasts.map(b => `
-      <div style="padding:12px 0;border-bottom:1px solid var(--border);">
-        <div style="font-weight:600;font-size:13px;margin-bottom:3px;">${b.title || '—'}</div>
-        <div style="font-size:12px;color:var(--text2);">${b.message || ''}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:4px;">${new Date(b.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}</div>
-      </div>`).join('');
-  }
-}
-
-// ── MY MATCHES ────────────────────────────────────────────────────────────────
-async function loadMyMatches() {
-  if (!currentPlayer) return;
-  const { data: matches } = await sb.from('matches').select('*')
-    .or(`home_team.eq.${currentPlayer.team_number},away_team.eq.${currentPlayer.team_number}`)
-    .order('round_number', { ascending: true });
-
-  const el = document.getElementById('all-matches-list');
-  if (!matches || !matches.length) {
-    el.innerHTML = '<p style="color:var(--text3);font-size:13px;padding:12px 0;">No matches found for your team</p>';
-    return;
-  }
-
-  const statusBadge = { completed: 'badge-green', disputed: 'badge-red', in_progress: 'badge-gold', pending: 'badge-grey' };
-  el.innerHTML = matches.map(m => {
-    const isHome = m.home_team === currentPlayer.team_number;
-    const opponent = isHome ? m.away_team : m.home_team;
-    const won = m.winner === currentPlayer.team_number;
-    const lost = m.winner && m.winner !== currentPlayer.team_number && m.winner !== 'bye';
-    const resultBadge = m.match_status === 'completed'
-      ? `<span class="badge ${won ? 'badge-green' : lost ? 'badge-red' : 'badge-grey'}">${won ? '✓ Won' : lost ? '✗ Lost' : 'Bye'}</span>`
-      : '';
-    return `
-      <div class="match-card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
-          <div>
-            <div class="match-teams">
-              <span style="color:var(--gold)">${currentPlayer.team_number}</span>
-              <span class="match-vs">vs</span>
-              <span>${opponent}</span>
-              ${m.score_display ? `<span style="color:var(--gold);font-size:13px;margin-left:8px;">${m.score_display}</span>` : ''}
-            </div>
-            <div class="match-meta">
-              <span>Round ${m.round_number}</span>
-              <span class="badge ${statusBadge[m.match_status] || 'badge-grey'}">${m.match_status}</span>
-              ${resultBadge}
-            </div>
-          </div>
-        </div>
-      </div>`;
-  }).join('');
-}
-
-// ── PAYMENT ───────────────────────────────────────────────────────────────────
-async function loadPaymentSection() {
-  if (!currentPlayer) return;
-  const p = currentPlayer;
-  const el = document.getElementById('payment-content');
-
-  let statusHtml = '';
-  if (p.payment_status === 'paid') {
-    statusHtml = `
-      <div class="payment-status-card paid">
-        <div class="payment-status-icon">✅</div>
-        <div class="payment-status-title" style="color:var(--green)">Payment Confirmed</div>
-        <div class="payment-status-sub">Your entry fee has been received and verified. You're all set!</div>
-      </div>`;
-  } else if (p.payment_status === 'pending_verification') {
-    statusHtml = `
-      <div class="payment-status-card pending">
-        <div class="payment-status-icon">⏳</div>
-        <div class="payment-status-title" style="color:var(--gold)">Payment Under Review</div>
-        <div class="payment-status-sub">We've received your payment details and are verifying. This usually takes 1–2 business days.</div>
-      </div>`;
-  } else {
-    statusHtml = `
-      <div class="payment-status-card unpaid">
-        <div class="payment-status-icon">⚠️</div>
-        <div class="payment-status-title" style="color:var(--red)">Payment Outstanding</div>
-        <div class="payment-status-sub">Your entry fee of <strong>R500</strong> is still outstanding. Please pay using the bank details below and notify us.</div>
-      </div>
-      <div class="bank-box">
-        <div class="bank-row"><span class="bank-key">Bank</span><span class="bank-val">Standard Bank</span></div>
-        <div class="bank-row"><span class="bank-key">Account Name</span><span class="bank-val">Alumni Golf SA</span></div>
-        <div class="bank-row"><span class="bank-key">Account No.</span><span class="bank-val">123 456 789</span></div>
-        <div class="bank-row"><span class="bank-key">Branch Code</span><span class="bank-val">051 001</span></div>
-        <div class="bank-row"><span class="bank-key">Reference</span><span class="bank-val">${p.full_name || 'Your Name'} - ${p.school_name || 'School'}</span></div>
-        <div class="bank-row"><span class="bank-key">Amount</span><span class="bank-val">R500</span></div>
-      </div>
-      <div style="margin-top:20px;">
-        <button class="btn-sm btn-gold" onclick="notifyPaymentSent()">📩 I've Made the Payment</button>
-      </div>`;
-  }
-
-  el.innerHTML = `
-    <div style="max-width:560px;">
-      ${statusHtml}
-      <div style="margin-top:20px;font-size:13px;color:var(--text2);">
-        <strong>Payment Method on Record:</strong> ${p.payment_method || '—'}<br>
-        <strong>Reference:</strong> ${p.payment_reference || '—'}
-      </div>
-    </div>`;
-}
-
-async function notifyPaymentSent() {
-  const { error } = await sb.from('players')
-    .update({ payment_status: 'pending_verification' })
-    .eq('email', currentPlayer.email);
-  if (error) { toast('Error: ' + error.message, 'error'); return; }
-  currentPlayer.payment_status = 'pending_verification';
-  toast('Thanks! Payment marked as sent — admin will verify shortly ✅');
-  loadPaymentSection();
-  document.getElementById('topbar-payment-badge').innerHTML = '<span class="badge badge-gold">⏳ Payment Pending</span>';
-}
-
-// ── STANDINGS ─────────────────────────────────────────────────────────────────
-async function loadStandings() {
-  const { data: divs } = await sb.from('divisions').select('*').order('name');
-  const { data: divTeams } = await sb.from('division_teams').select('*');
-  const { data: matches } = await sb.from('matches').select('*').eq('match_status', 'completed');
-
-  const el = document.getElementById('standings-content');
-  if (!divs || !divs.length) { el.innerHTML = '<p style="color:var(--text3);font-size:13px;">No divisions found</p>'; return; }
-
-  // Find player's division
-  const myDivTeam = currentPlayer?.team_number ? (divTeams || []).find(dt => dt.team_number === currentPlayer.team_number) : null;
-  const myDivId = myDivTeam?.division_id;
-
-  el.innerHTML = divs.map(div => {
-    const teams = (divTeams || []).filter(t => t.division_id === div.id);
-    const divMatches = (matches || []).filter(m => m.division_id === div.id);
-    const isMyDiv = div.id === myDivId;
-
-    // Build win table
-    const standings = teams.map(t => {
-      const tn = t.team_number;
-      const played = divMatches.filter(m => m.home_team === tn || m.away_team === tn).length;
-      const wins = divMatches.filter(m => m.winner === tn).length;
-      const losses = played - wins;
-      return { team: tn, played, wins, losses };
-    }).sort((a, b) => b.wins - a.wins || a.losses - b.losses);
-
-    return `
-      <div style="margin-bottom:32px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <strong style="font-size:15px;">${div.name}</strong>
-          ${isMyDiv ? '<span class="badge badge-gold">My Division</span>' : ''}
-        </div>
-        <table>
-          <thead><tr>
-            <th>Team</th><th>P</th><th>W</th><th>L</th>
-          </tr></thead>
-          <tbody>
-            ${standings.map(s => `<tr ${s.team === currentPlayer?.team_number ? 'style="background:var(--gold-dim)"' : ''}>
-              <td style="font-weight:600">${s.team} ${s.team === currentPlayer?.team_number ? '⭐' : ''}</td>
-              <td>${s.played}</td>
-              <td style="color:var(--green)">${s.wins}</td>
-              <td style="color:var(--red)">${s.losses}</td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>`;
-  }).join('');
-}
-
-// ── PROFILE ───────────────────────────────────────────────────────────────────
-function loadProfileForm() {
-  if (!currentPlayer) return;
-  const p = currentPlayer;
-  document.getElementById('pf-name').value = p.full_name || '';
-  document.getElementById('pf-school').value = p.school_name || '';
-  document.getElementById('pf-matric').value = p.year_of_matriculation || '';
-  document.getElementById('pf-phone').value = p.phone_number || '';
-  document.getElementById('pf-handicap').value = p.handicap || '';
-  document.getElementById('pf-email').value = p.email || '';
-}
-
-async function saveProfile() {
-  const { error } = await sb.from('players').update({
-    full_name: document.getElementById('pf-name').value.trim(),
-    phone_number: document.getElementById('pf-phone').value.trim(),
-    handicap: parseFloat(document.getElementById('pf-handicap').value) || null,
-  }).eq('email', currentPlayer.email);
-
-  if (error) { toast('Error: ' + error.message, 'error'); return; }
-  currentPlayer.full_name = document.getElementById('pf-name').value.trim();
-  document.getElementById('player-name-sidebar').textContent = currentPlayer.full_name;
-  toast('Profile updated ✅');
-}
-
-async function changePassword() {
-  const pass = document.getElementById('new-password').value;
-  const pass2 = document.getElementById('new-password2').value;
-  if (!pass || pass.length < 8) { toast('Password must be at least 8 characters', 'error'); return; }
-  if (pass !== pass2) { toast('Passwords do not match', 'error'); return; }
-  const { error } = await sb.auth.updateUser({ password: pass });
-  if (error) { toast('Error: ' + error.message, 'error'); return; }
-  toast('Password updated ✅');
-  document.getElementById('new-password').value = '';
-  document.getElementById('new-password2').value = '';
-}
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
-sb.auth.getSession().then(({ data: { session } }) => {
-  if (session) {
-    loadApp(session.user.email);
+// ── AUTO LOGIN IF SESSION EXISTS ────────────────────────────────────────────
+sb.auth.getSession().then(function(r) {
+  if (r.data && r.data.session) {
+    loadDashboard(r.data.session.user.email);
   }
 });
-
-// Handle password reset redirect
-const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'));
-if (hashParams.get('type') === 'recovery') {
-  // User came back from password reset link — show portal and let them update
-  sb.auth.getSession().then(({ data: { session } }) => {
-    if (session) {
-      loadApp(session.user.email).then(() => {
-        showSection('profile');
-        toast('Set your new password below', 'success');
-      });
-    }
-  });
-}
 </script>
 </body>
 </html>

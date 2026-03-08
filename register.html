@@ -3,735 +3,1226 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alumni Golf — Register</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Alumni Schools Golf Challenge — Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <style>
-  :root {
-    --gold: #D4AF37;
-    --gold-dim: rgba(212,175,55,0.15);
-    --bg: #0a0a14;
-    --bg2: #11111e;
-    --card: #16162a;
-    --border: rgba(255,255,255,0.08);
-    --text: #f0f0f0;
-    --text2: #aaaaaa;
-    --text3: #444466;
-    --green: #4CAF50;
-    --red: #E53935;
-    --radius: 14px;
-    --shadow: 0 8px 40px rgba(0,0,0,0.5);
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    font-family:'DM Sans',sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-    background-image:
-      radial-gradient(ellipse at 15% 50%, rgba(212,175,55,0.06) 0%, transparent 55%),
-      radial-gradient(ellipse at 85% 20%, rgba(27,58,107,0.12) 0%, transparent 50%);
-  }
-
-  .container {
-    width:100%;
-    max-width:520px;
-  }
-
-  .header {
-    text-align:center;
-    margin-bottom:32px;
-  }
-  .header .logo {
-    font-family:'Cormorant Garamond',serif;
-    font-size:38px;
-    color:var(--gold);
-    letter-spacing:2px;
-    line-height:1;
-  }
-  .header .sub {
-    font-size:11px;
-    letter-spacing:3px;
-    text-transform:uppercase;
-    color:var(--text2);
-    margin-top:6px;
-  }
-  .header .tagline {
-    font-size:13px;
-    color:var(--text2);
-    margin-top:16px;
-  }
-
-  .card {
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:20px;
-    padding:36px 32px;
-    box-shadow:var(--shadow);
-  }
-
-  .step-indicator {
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:0;
-    margin-bottom:28px;
-  }
-  .step {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:6px;
-  }
-  .step-dot {
-    width:32px; height:32px;
-    border-radius:50%;
-    border:2px solid var(--border);
-    display:flex; align-items:center; justify-content:center;
-    font-size:12px; font-weight:700;
-    color:var(--text2);
-    transition:all 0.3s;
-  }
-  .step.active .step-dot {
-    border-color:var(--gold);
-    background:var(--gold-dim);
-    color:var(--gold);
-  }
-  .step.done .step-dot {
-    border-color:var(--green);
-    background:rgba(76,175,80,0.15);
-    color:var(--green);
-  }
-  .step-label {
-    font-size:10px;
-    color:var(--text2);
-    text-transform:uppercase;
-    letter-spacing:1px;
-    white-space:nowrap;
-  }
-  .step.active .step-label { color:var(--gold); }
-  .step.done .step-label { color:var(--green); }
-  .step-line {
-    width:48px; height:2px;
-    background:var(--border);
-    margin:0 8px;
-    margin-bottom:20px;
-    transition:background 0.3s;
-  }
-  .step-line.done { background:var(--green); }
-
-  .form-section { display:none; }
-  .form-section.active { display:block; }
-
-  .section-title {
-    font-size:16px;
-    font-weight:700;
-    margin-bottom:4px;
-  }
-  .section-sub {
-    font-size:12px;
-    color:var(--text2);
-    margin-bottom:20px;
-  }
-
-  .form-group {
-    margin-bottom:16px;
-  }
-  .form-row {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-  }
-  @media(max-width:480px) { .form-row { grid-template-columns:1fr; } }
-
-  label {
-    display:block;
-    font-size:11px;
-    font-weight:600;
-    letter-spacing:1px;
-    text-transform:uppercase;
-    color:var(--text2);
-    margin-bottom:6px;
-  }
-  input, select {
-    width:100%;
-    padding:11px 14px;
-    background:var(--bg2);
-    border:1px solid var(--border);
-    border-radius:10px;
-    color:var(--text);
-    font-size:14px;
-    font-family:'DM Sans',sans-serif;
-    transition:border-color 0.2s;
-    -webkit-appearance:none;
-  }
-  input:focus, select:focus {
-    outline:none;
-    border-color:var(--gold);
-  }
-  input::placeholder { color:var(--text3); }
-  select option { background:var(--bg2); }
-
-  .hint {
-    font-size:11px;
-    color:var(--text3);
-    margin-top:4px;
-  }
-
-  .payment-options {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-bottom:16px;
-  }
-  .payment-option {
-    border:2px solid var(--border);
-    border-radius:12px;
-    padding:14px;
-    cursor:pointer;
-    transition:all 0.2s;
-    text-align:center;
-  }
-  .payment-option:hover { border-color:rgba(212,175,55,0.4); }
-  .payment-option.selected {
-    border-color:var(--gold);
-    background:var(--gold-dim);
-  }
-  .payment-option .pay-icon { font-size:24px; margin-bottom:6px; }
-  .payment-option .pay-label { font-size:12px; font-weight:600; }
-  .payment-option .pay-sub { font-size:10px; color:var(--text2); margin-top:2px; }
-
-  .bank-details {
-    background:var(--bg2);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:16px;
-    margin-bottom:16px;
-    display:none;
-  }
-  .bank-details.show { display:block; }
-  .bank-row {
-    display:flex;
-    justify-content:space-between;
-    padding:6px 0;
-    border-bottom:1px solid var(--border);
-    font-size:13px;
-  }
-  .bank-row:last-child { border-bottom:none; }
-  .bank-row .key { color:var(--text2); }
-  .bank-row .val { font-weight:600; color:var(--gold); }
-
-  .entry-fee {
-    background:var(--gold-dim);
-    border:1px solid var(--gold);
-    border-radius:10px;
-    padding:14px 16px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-  }
-  .entry-fee .fee-label { font-size:12px; color:var(--text2); }
-  .entry-fee .fee-amount { font-family:'Cormorant Garamond',serif; font-size:28px; color:var(--gold); font-weight:700; }
-
-  .btn {
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:10px;
-    font-size:14px;
-    font-weight:700;
-    font-family:'DM Sans',sans-serif;
-    letter-spacing:0.5px;
-    cursor:pointer;
-    transition:all 0.2s;
-  }
-  .btn-gold { background:var(--gold); color:#000; }
-  .btn-gold:hover { opacity:0.9; transform:translateY(-1px); }
-  .btn-gold:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-  .btn-outline {
-    background:transparent;
-    border:1px solid var(--border);
-    color:var(--text2);
-    margin-top:10px;
-  }
-  .btn-outline:hover { border-color:var(--gold); color:var(--gold); }
-
-  .btn-row {
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-top:20px;
-  }
-
-  .error-msg {
-    background:rgba(229,57,53,0.12);
-    border:1px solid rgba(229,57,53,0.3);
-    border-radius:8px;
-    padding:10px 14px;
-    color:#ff6b6b;
-    font-size:13px;
-    margin-bottom:14px;
-    display:none;
-  }
-
-  .success-screen {
-    text-align:center;
-    padding:20px 0;
-    display:none;
-  }
-  .success-icon { font-size:56px; margin-bottom:16px; }
-  .success-title {
-    font-family:'Cormorant Garamond',serif;
-    font-size:28px;
-    color:var(--gold);
-    margin-bottom:8px;
-  }
-  .success-sub { font-size:14px; color:var(--text2); line-height:1.6; }
-
-  .divider {
-    height:1px;
-    background:var(--border);
-    margin:20px 0;
-  }
-
-  .login-link {
-    text-align:center;
-    margin-top:20px;
-    font-size:13px;
-    color:var(--text2);
-  }
-  .login-link a {
-    color:var(--gold);
-    text-decoration:none;
-    font-weight:600;
-  }
-  .login-link a:hover { text-decoration:underline; }
-
-  .loading-btn {
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-  }
-  .spinner {
-    width:16px; height:16px;
-    border:2px solid rgba(0,0,0,0.3);
-    border-top-color:#000;
-    border-radius:50%;
-    animation:spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform:rotate(360deg); } }
-
-  .required { color:var(--gold); }
-
-  .password-strength {
-    height:3px;
-    border-radius:2px;
-    background:var(--border);
-    margin-top:6px;
-    overflow:hidden;
-  }
-  .password-strength-bar {
-    height:100%;
-    border-radius:2px;
-    transition:width 0.3s, background 0.3s;
-    width:0%;
-  }
+:root {
+  --navy:#1B3A6B; --navy-dark:#0f2347; --navy-light:#2a4f8f;
+  --gold:#C9A84C; --gold-light:#e8c96a;
+  --white:#fff; --off:#f8f6f0; --text:#1a1a2e; --text2:#555;
+  --border:rgba(27,58,107,0.15); --red:#c0392b; --green:#27ae60;
+  --radius:12px; --shadow:0 8px 32px rgba(27,58,107,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);min-height:100vh;}
+nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:70px;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-logo img{height:40px;}
+.nav-logo span{font-family:'Cormorant Garamond',serif;color:#fff;font-size:20px;font-weight:600;}
+.nav-links{display:flex;gap:28px;}
+.nav-links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);}
+.nav-cta{background:var(--gold);color:var(--navy-dark);padding:9px 22px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;}
+@media(max-width:700px){.nav-links{display:none;}nav{padding:0 16px;}}
+.hero{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 60%,var(--navy-light) 100%);padding:50px 20px 40px;text-align:center;}
+.hero h1{font-family:'Cormorant Garamond',serif;color:#fff;font-size:42px;font-weight:700;margin-bottom:10px;}
+.gold-line{width:60px;height:3px;background:var(--gold);margin:12px auto;}
+.tagline{font-family:'Cormorant Garamond',serif;font-size:22px;color:rgba(255,255,255,0.92);font-style:italic;margin-bottom:8px;}
+.tagline-rule{width:180px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 14px;}
+.hero-sub{color:rgba(255,255,255,0.7);font-size:15px;}
+.steps-bar{background:#fff;border-bottom:1px solid var(--border);padding:16px 20px;display:flex;justify-content:center;align-items:center;gap:0;}
+.stp{display:flex;align-items:center;gap:8px;}
+.stp-num{width:30px;height:30px;border-radius:50%;background:var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+.stp.active .stp-num{background:var(--gold);color:var(--navy-dark);}
+.stp.done .stp-num{background:var(--green);color:#fff;}
+.stp-label{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;}
+.stp.active .stp-label{color:var(--navy);}
+.stp-sep{width:32px;height:2px;background:var(--border);margin:0 6px;}
+.main{max-width:720px;margin:0 auto;padding:32px 16px 80px;}
+.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px;box-shadow:var(--shadow);}
+.card-header{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+.card-icon{font-size:28px;}
+.card-header h2{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--navy);}
+.card-header p{font-size:13px;color:var(--text2);margin-top:2px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+@media(max-width:540px){.frow{grid-template-columns:1fr;}}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:11px;font-weight:700;color:var(--navy);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
+.fg label .r{color:var(--gold);margin-left:2px;}
+.fg input,.fg select,.fg textarea{width:100%;padding:11px 14px;background:var(--off);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color 0.2s;}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.12);}
+.fg .hint{font-size:11px;color:var(--text2);margin-top:4px;}
+.pfix{display:flex;}
+.pfix-lbl{padding:11px 13px;background:#e8e4dc;border:1.5px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-weight:700;color:var(--navy);font-size:14px;white-space:nowrap;}
+.pfix input{border-radius:0 10px 10px 0;}
+.err{display:none;background:rgba(192,57,43,0.1);border:2px solid var(--red);color:var(--red);border-radius:8px;padding:13px 16px;font-size:14px;font-weight:600;margin-bottom:16px;}
+.info{background:rgba(27,58,107,0.06);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--text2);margin-bottom:16px;}
+.info strong{color:var(--navy);}
+.btn{width:100%;padding:15px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;transition:all 0.2s;}
+.btn-gold{background:var(--gold);color:var(--navy-dark);}
+.btn-gold:hover{background:var(--gold-light);}
+.btn-outline{background:transparent;color:var(--navy);border:2px solid var(--navy);}
+.btn-outline:hover{background:var(--navy);color:#fff;}
+.sec{display:none;}
+.sec.active{display:block;}
+.elig-wrap{background:var(--navy-dark);border-radius:12px;padding:22px;margin-bottom:18px;}
+.elig-wrap h3{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+.chk{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;cursor:pointer;user-select:none;}
+.chk-box{width:22px;height:22px;min-width:22px;border-radius:5px;border:2px solid rgba(255,255,255,0.3);margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.chk.on .chk-box{background:var(--gold);border-color:var(--gold);}
+.chk.on .chk-box::after{content:"✓";color:var(--navy-dark);font-weight:900;font-size:13px;}
+.chk-txt{color:rgba(255,255,255,0.82);font-size:13px;line-height:1.5;}
+.golf-block{background:var(--off);border-radius:12px;padding:22px;margin-bottom:18px;}
+.golf-block h3{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--navy);font-weight:700;margin-bottom:14px;}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+@media(max-width:480px){.pay-grid{grid-template-columns:1fr;}}
+.pay-opt{border:2px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;text-align:center;background:#fff;transition:all 0.2s;}
+.pay-opt:hover,.pay-opt.sel{border-color:var(--navy);background:rgba(27,58,107,0.04);}
+.pay-opt .oi{font-size:32px;margin-bottom:10px;}
+.pay-opt h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--navy);}
+.pay-opt .price{font-size:26px;font-weight:700;color:var(--gold);margin:6px 0;}
+.pay-opt p{font-size:12px;color:var(--text2);}
+.bank{background:var(--navy-dark);border-radius:12px;padding:22px;margin:16px 0;}
+.bank h3{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+.bank-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+.bank-row:last-child{border:none;}
+.bank-row .lbl{color:rgba(255,255,255,0.5);font-size:12px;}
+.bank-row .val{color:#fff;font-size:14px;font-weight:600;}
+.copy-btn{background:rgba(201,168,76,0.2);border:1px solid var(--gold);color:var(--gold);padding:3px 9px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.upload{border:2px dashed var(--border);border-radius:10px;padding:26px;text-align:center;cursor:pointer;transition:border-color 0.2s;margin-top:10px;}
+.upload:hover{border-color:var(--gold);}
+.upload p{color:var(--text2);font-size:13px;margin-top:6px;}
+.success-wrap{text-align:center;padding:16px;}
+.success-wrap .ico{font-size:60px;margin-bottom:16px;}
+.success-wrap h2{font-family:'Cormorant Garamond',serif;font-size:34px;color:var(--navy);margin-bottom:10px;}
+.success-wrap p{color:var(--text2);font-size:15px;line-height:1.6;max-width:480px;margin:0 auto 20px;}
+.spin{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:sp 0.7s linear infinite;vertical-align:middle;margin-right:7px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+footer{background:var(--navy-dark);color:rgba(255,255,255,0.5);text-align:center;padding:22px;font-size:12px;border-top:2px solid var(--gold);}
+footer a{color:var(--gold);text-decoration:none;}
+.login-link{text-align:center;margin-top:14px;font-size:13px;color:var(--text2);}
+.login-link a{color:var(--navy);font-weight:600;text-decoration:underline;}
 </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="header">
-    <div class="logo">⛳ Alumni Golf</div>
-    <div class="sub">Schools Alma Mater Challenge</div>
-    <div class="tagline">Create your player account to join the tournament</div>
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="logo.png" alt="Alumni Golf" onerror="this.style.display='none'">
+    <span>Alumni Schools Golf Challenge</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="schools.html">Schools</a>
+    <a href="register.html" class="active">Register</a>
+    <a href="contact.html">Contact</a>
   </div>
+  <a href="portal.html" class="nav-cta">My Portal</a>
+</nav>
 
+<div class="hero">
+  <h1>Register Your Team</h1>
+  <div class="gold-line"></div>
+  <p class="tagline">Honouring tradition. Celebrating excellence.</p>
+  <div class="tagline-rule"></div>
+  <p class="hero-sub">Join the inaugural Alumni Schools Golf Challenge — Season 2026/27</p>
+</div>
+
+<div class="steps-bar">
+  <div class="stp active" id="stp1"><div class="stp-num">1</div><div class="stp-label">Your Details</div></div>
+  <div class="stp-sep"></div>
+  <div class="stp" id="stp2"><div class="stp-num">2</div><div class="stp-label">Eligibility</div></div>
+  <div class="stp-sep"></div>
+  <div class="stp" id="stp3"><div class="stp-num">3</div><div class="stp-label">Partner</div></div>
+  <div class="stp-sep"></div>
+  <div class="stp" id="stp4"><div class="stp-num">4</div><div class="stp-label">Details</div></div>
+  <div class="stp-sep"></div>
+  <div class="stp" id="stp5"><div class="stp-num">5</div><div class="stp-label">Payment</div></div>
+</div>
+
+<div class="main">
+
+<!-- STEP 1 -->
+<div class="sec active" id="s1">
   <div class="card">
+    <div class="card-header">
+      <div class="card-icon">🏌️</div>
+      <div><h2>Player 1 — Captain</h2><p>Enter your personal details</p></div>
+    </div>
+    <div class="err" id="e1"></div>
+    <div class="frow">
+      <div class="fg"><label>First Name <span class="r">*</span></label><input type="text" id="f1" placeholder="First name"></div>
+      <div class="fg"><label>Surname <span class="r">*</span></label><input type="text" id="f2" placeholder="Surname"></div>
+    </div>
+    <div class="fg"><label>Email <span class="r">*</span></label><input type="email" id="f3" placeholder="your@email.com"></div>
+    <div class="fg">
+      <label>Create Password <span class="r">*</span></label>
+      <input type="password" id="f_pw" placeholder="e.g. Golf2026!" oninput="checkPW(this)">
+      <div id="pw-hint" style="font-size:11px;color:var(--text2);margin-top:4px;">
+        Must contain: <strong>8+ characters</strong> &bull; <strong>one uppercase letter</strong> &bull; <strong>one number</strong> &bull; <strong>one special character</strong> (e.g. Golf@2026!)<br>
+        You will use this password to log into your portal.
+      </div>
+      <div id="pw-strength" style="margin-top:8px;font-size:12px;padding:8px;background:rgba(27,58,107,0.04);border-radius:6px;display:none;"></div>
+    </div>
+    <div class="fg">
+      <label>Mobile Number <span class="r">*</span></label>
+      <div class="pfix"><div class="pfix-lbl">+27</div><input type="tel" id="f4" placeholder="821234567" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></div>
+      <div class="hint">9 digits, no leading zero</div>
+    </div>
+    <div class="fg">
+      <label>School <span class="r">*</span></label>
+      <input type="text" id="f5" placeholder="Type to search or enter your school name..." list="school-dl" autocomplete="off">
+      <datalist id="school-dl">
+        <option value="Adelaide HS">
+        <option value="Afrikaans Hoër Meisieskool">
+        <option value="Afrikaanse Hoër Seunskool (Affies)">
+        <option value="Afrikaanse Hoërskool Kroonstad">
+        <option value="Albertinia HS">
+        <option value="Alberton HS">
+        <option value="Alexander Road HS">
+        <option value="Aliwal Noord HS">
+        <option value="Amsterdam HS">
+        <option value="Augsburg Landbougimnasium">
+        <option value="Barkly East HS">
+        <option value="Bastion HS">
+        <option value="Beaconsfield HS">
+        <option value="Bekker, Magaliesburg HS">
+        <option value="Bellville HS">
+        <option value="Bellville Secondary School">
+        <option value="Ben Viljoen HS">
+        <option value="Ben Vorster HS">
+        <option value="Benoni High School">
+        <option value="Berg Rivier HS">
+        <option value="Bergsig HS">
+        <option value="Bethelsdorp HS">
+        <option value="Bloemfontein HTS">
+        <option value="Bloemhof HS">
+        <option value="Bothaville HS">
+        <option value="Brackenfell HS">
+        <option value="Brandwag, HS Benoni">
+        <option value="Brandwag, HS Uitenhage">
+        <option value="Brits HS">
+        <option value="C&N Sekondêre Meisieskool Oranje">
+        <option value="CBC Kimberley">
+        <option value="CBC Pretoria">
+        <option value="CBC, Boksburg">
+        <option value="CBC, Kimberley">
+        <option value="CJ Langenhoven HS">
+        <option value="Calvinia HS">
+        <option value="Cambridge HS">
+        <option value="Capricorn HS">
+        <option value="Carleton Jones HS">
+        <option value="Carnarvon HS">
+        <option value="Centurion HS">
+        <option value="Chaplin High School">
+        <option value="Charleston Hill HS">
+        <option value="Charlie Hofmeyr HS">
+        <option value="Christiana HS">
+        <option value="Churchill High School">
+        <option value="Cillie HS">
+        <option value="Clifton HS">
+        <option value="Cloetesville HS">
+        <option value="Cradock HS">
+        <option value="Cullinan HS">
+        <option value="Curro Durbanville">
+        <option value="Curro Hazeldean">
+        <option value="Curro Heuwelkruin">
+        <option value="Curro Rising Stars team">
+        <option value="DF Akademie HS">
+        <option value="DF Malherbe HS (PE)">
+        <option value="DHS">
+        <option value="DR EG Jansen HS">
+        <option value="Dale College">
+        <option value="Damelin College">
+        <option value="Dan Pienaar HS">
+        <option value="De Aar HS">
+        <option value="De La Salle College">
+        <option value="De Villiers Graaff, HS">
+        <option value="De Vos Malan HS">
+        <option value="Dealesville HS">
+        <option value="Delmas HS">
+        <option value="Despatch HS">
+        <option value="Diamantveld HS">
+        <option value="Dinamika HS">
+        <option value="Diocesan College (Bishops)">
+        <option value="Dirkie Uys, HS">
+        <option value="Dordrecht HS">
+        <option value="Douglas HS">
+        <option value="Dr. Viljoen HS">
+        <option value="Driehoek HS">
+        <option value="Dundee HS">
+        <option value="Durban Girls HS">
+        <option value="Durban HS">
+        <option value="Durbanville HS">
+        <option value="EG Jansen HS">
+        <option value="East London Technikon">
+        <option value="Eden HS">
+        <option value="Eldoraigne HS">
+        <option value="Elliot HS">
+        <option value="Elmar College">
+        <option value="Erasmus HS">
+        <option value="Ermelo HS">
+        <option value="Estcourt HS">
+        <option value="Eton College">
+        <option value="FH Odendaal HS">
+        <option value="Fairmont HS">
+        <option value="Fakkel HS">
+        <option value="Ferdinand Postma HS">
+        <option value="Fichardtpark HS">
+        <option value="Fish Hoek HS">
+        <option value="Florida HS">
+        <option value="Framesby HS">
+        <option value="Franschhoek HS">
+        <option value="Fraserburg HS">
+        <option value="Frikkie Meyer HS">
+        <option value="Garsfontein HS">
+        <option value="Gelofte HS">
+        <option value="Gelvendale HS">
+        <option value="Generaal Hertzog HS">
+        <option value="General Smuts HS">
+        <option value="George HS">
+        <option value="George Watsons' College">
+        <option value="Gerrit Maritz HS">
+        <option value="Gifford, Bulawayo HS">
+        <option value="Gill College">
+        <option value="Glenwood HS">
+        <option value="Good Hope HS">
+        <option value="Goudini, HS">
+        <option value="Graeme College">
+        <option value="Green Point Grammar School">
+        <option value="Greenside HS">
+        <option value="Grens HS">
+        <option value="Grenswag HS">
+        <option value="Grey College Bloemfontein">
+        <option value="Grey College PE">
+        <option value="Griekwastad HS">
+        <option value="HTS Daniel Pienaar">
+        <option value="HTS Drostdy">
+        <option value="Hamilton HS">
+        <option value="Hangklip HS">
+        <option value="Hans Strijdom HS">
+        <option value="Harris School HS">
+        <option value="Harrismith HS">
+        <option value="Hartswater HS">
+        <option value="Hawston HS">
+        <option value="Heidelberg Volkskool">
+        <option value="Helpmekaar Kollege">
+        <option value="Hendrik Verwoerd HS">
+        <option value="Hentie Cilliers HS">
+        <option value="Highlands North HS">
+        <option value="Hill High School">
+        <option value="Hilton College">
+        <option value="Hoogenhout HS">
+        <option value="Hopefield HS">
+        <option value="Hottentots-Holland HS">
+        <option value="Hoër Landbouskool Boland">
+        <option value="Hudson Park High HS">
+        <option value="Hugenote HS Springs">
+        <option value="Hugenote HS Wellington">
+        <option value="Hyde Park HS">
+        <option value="JG Meiring HS">
+        <option value="JJ Pienaar HS">
+        <option value="Jan Viljoen HS">
+        <option value="Jan de Klerk HS">
+        <option value="Jan van Riebeeck HS">
+        <option value="Jansenville HS">
+        <option value="Jeppe HS">
+        <option value="Jeugland HS">
+        <option value="Jim Fouche HS">
+        <option value="Jim Mvabaza HS">
+        <option value="John Orr HS">
+        <option value="John Vorster HTS">
+        <option value="John Walton HS">
+        <option value="Kalahari HS">
+        <option value="Kasselsvlei HS">
+        <option value="Kathu HS">
+        <option value="Kearsney College">
+        <option value="Kempton Park HS">
+        <option value="Kenhardt HS">
+        <option value="Kimberley Boys' High">
+        <option value="Kimberley HTS">
+        <option value="King Alfred's College">
+        <option value="King Edward VII School (KES)">
+        <option value="Kingswood College">
+        <option value="Kirkwood HS">
+        <option value="Klein Nederburg HS">
+        <option value="Klerksdorp HS">
+        <option value="Knysna HS">
+        <option value="Kokstad College">
+        <option value="Kroonstad HS">
+        <option value="Krugersdorp HS">
+        <option value="Kwamfumdo HS">
+        <option value="Kylemore HS">
+        <option value="La Rochelle">
+        <option value="La Rochelle HS">
+        <option value="Ladybrand HS">
+        <option value="Laingsburg HS">
+        <option value="Landbouskool Oakdale">
+        <option value="Langenhoven HS">
+        <option value="Langlaagte HS">
+        <option value="Lenasia HS">
+        <option value="Lichtenburg HS">
+        <option value="Linden HS">
+        <option value="Lindley HS">
+        <option value="Llandovery College">
+        <option value="Louis Botha HTS">
+        <option value="Loyiso HS">
+        <option value="Luckhoff SS">
+        <option value="Maitland HS">
+        <option value="Mandlenkosi HS">
+        <option value="Mansfield HS">
+        <option value="Marais Viljoen HS">
+        <option value="Marandellas HS">
+        <option value="Maria Louw HS">
+        <option value="Marist Brothers Linmeyer">
+        <option value="Maritzburg College">
+        <option value="Marlborough College">
+        <option value="Marlow HS">
+        <option value="Marthinus Wessels HS">
+        <option value="Martin Oosthuizen">
+        <option value="Mary Waters HS">
+        <option value="Menlopark HS">
+        <option value="Merensky HS">
+        <option value="Michaelhouse">
+        <option value="Middelburg (Cape)">
+        <option value="Middelburg (Tvl)">
+        <option value="Middelburg HTS">
+        <option value="Milner HS">
+        <option value="Milnerton HS">
+        <option value="Milton HS">
+        <option value="Montagu HS">
+        <option value="Montana HS">
+        <option value="Monument HS">
+        <option value="Monument HS Nonnas">
+        <option value="Morester Secondary">
+        <option value="Muir College">
+        <option value="Muizenberg HS">
+        <option value="Nelspruit HS">
+        <option value="New College HS">
+        <option value="New Orleans HS">
+        <option value="Nico Malan HS">
+        <option value="Noorder Paarl HS">
+        <option value="Noordheuwel HS">
+        <option value="Northcliff HS">
+        <option value="Northern Cape HS">
+        <option value="Northwood HS">
+        <option value="Ntabankulu HS">
+        <option value="Ntabenkonyana HS">
+        <option value="Nylstroom HS">
+        <option value="Observatory Boys' High">
+        <option value="Olifantshoek HS">
+        <option value="Oos Moot HS">
+        <option value="Oosteind HS">
+        <option value="Oosterlig HS">
+        <option value="Oranje Meisieskool">
+        <option value="Otto du Plessis HS">
+        <option value="Oudtshoorn HS">
+        <option value="Outeniqua HS">
+        <option value="Overberg HS">
+        <option value="Overkruin HS">
+        <option value="Paarl Boys High">
+        <option value="Paarl Gimnasium">
+        <option value="Paarl Girls High">
+        <option value="Pacaltsdorp HS">
+        <option value="Parel Vallei HS">
+        <option value="Parklands College">
+        <option value="Parktown Boys' High">
+        <option value="Parow HS">
+        <option value="Parys HS">
+        <option value="Patriot HS">
+        <option value="Paul Erasmus HS">
+        <option value="Paul Kruger HS">
+        <option value="Paul Roos Gimnasium">
+        <option value="Paul Sauer HS">
+        <option value="Paulus Joubert HS">
+        <option value="Pearson HS">
+        <option value="Peddie HS">
+        <option value="Peterhouse HS">
+        <option value="Piet Potgieter HS">
+        <option value="Pietersburg  HS">
+        <option value="Piketberg HS">
+        <option value="Pinelands HS">
+        <option value="Pinetown Boys High">
+        <option value="Plumstead HS">
+        <option value="Plumtree HS">
+        <option value="Port Natal HS">
+        <option value="Port Rex HS">
+        <option value="Port Shepstone HS">
+        <option value="Porterville HS">
+        <option value="Potchefstroom Boys High">
+        <option value="Potchefstroom Gimnasium">
+        <option value="Potchefstroom Tegnies">
+        <option value="Prestige College">
+        <option value="Pretoria Boys High">
+        <option value="Prieska HS">
+        <option value="Prince Edward HS">
+        <option value="Queen's College">
+        <option value="Randburg HS">
+        <option value="Randfontein HS">
+        <option value="Ravensmead HS">
+        <option value="Reivilo HS">
+        <option value="Repton HS">
+        <option value="Rhenish Girls' High">
+        <option value="Rhodesfield HS">
+        <option value="Riebeeckrand HS">
+        <option value="Riversdal HS">
+        <option value="Rob Ferreira HS">
+        <option value="Robertson HS">
+        <option value="Robinvale HS">
+        <option value="Rondebosch Boys' High">
+        <option value="Roodepoort HS">
+        <option value="Rustenburg HS">
+        <option value="SACS">
+        <option value="Sand du Plessis HS">
+        <option value="Sandown HS">
+        <option value="Sarel Cilliers HS">
+        <option value="Sasolburg HS">
+        <option value="Schoonspruit HS">
+        <option value="Schweizer Reneke">
+        <option value="Scottburgh HS">
+        <option value="Scottsville HS">
+        <option value="Sea Point Boys' High">
+        <option value="Secunda HS">
+        <option value="Selborne College">
+        <option value="Sentraal HS">
+        <option value="Settlers HS">
+        <option value="Shannon HS">
+        <option value="Skurweberg HS">
+        <option value="Spine Road HS">
+        <option value="Springs Boys High">
+        <option value="Springs Technical High">
+        <option value="St Aidan's College">
+        <option value="St Albans HS">
+        <option value="St Andrews, Bloemfontein">
+        <option value="St Andrews, Grahamstown">
+        <option value="St Charles, Pietermaritzburg">
+        <option value="St David's Marist Inanda">
+        <option value="St George's College">
+        <option value="St George's Grammar School">
+        <option value="St Henry's College">
+        <option value="St John's College">
+        <option value="St Michael's College">
+        <option value="St Patrick's Marist College">
+        <option value="St Saviour's Collegiate School">
+        <option value="St Stithians College">
+        <option value="St Thomas HS (PE)">
+        <option value="Standerton HS">
+        <option value="Steenberg HS">
+        <option value="Stellenberg HS">
+        <option value="Stellenbosch HS">
+        <option value="Steyn City School">
+        <option value="Stilfontein HS">
+        <option value="Stirling High School">
+        <option value="Stockdale HS">
+        <option value="Strand HS">
+        <option value="Sundra HS">
+        <option value="Swartberg HS">
+        <option value="Swartland HS">
+        <option value="Swellendam HS">
+        <option value="Thandolwesizwe HS">
+        <option value="The Hill HS">
+        <option value="Thornhill HS">
+        <option value="Thotagauta HS">
+        <option value="Tom Naude HS">
+        <option value="Transvalia HS">
+        <option value="Trio HS">
+        <option value="Trompsburg HS">
+        <option value="Tshireleco HS">
+        <option value="Tsumeb HS">
+        <option value="Tuine HS">
+        <option value="TuksSport HS">
+        <option value="Tulbagh HS">
+        <option value="Tweespruit HS">
+        <option value="Tygerberg HS">
+        <option value="Umtali HS">
+        <option value="Umtata HS">
+        <option value="Union HS">
+        <option value="Unity SS">
+        <option value="Upington HS">
+        <option value="Vanderbijlpark HS">
+        <option value="Vanrhynsdorp HS">
+        <option value="Ventersdorp HS">
+        <option value="Vereeniging MS">
+        <option value="Victoria HS">
+        <option value="Victoria-Wes HS">
+        <option value="Volkskool, Graaff-Reinet">
+        <option value="Volkskool, Heidelberg">
+        <option value="Volkskool, Potchefstroom">
+        <option value="Volksrust HS">
+        <option value="Voortrekker, Bethlehem">
+        <option value="Voortrekker, Boksburg">
+        <option value="Voortrekker, Pietermaritzburg">
+        <option value="Voortrekker, Wynberg">
+        <option value="Voortrekkerhoogte HS">
+        <option value="Vorentoe (Rossmore HS)">
+        <option value="Vredenburg HS">
+        <option value="Vredendal HS">
+        <option value="Vryburg HS">
+        <option value="Vryheid HS">
+        <option value="Warmbad HS">
+        <option value="Warmbaths HS">
+        <option value="Waterkloof HS">
+        <option value="Weenen HS">
+        <option value="Welkom Gimnasium">
+        <option value="Wennie Du Plessis HS">
+        <option value="Wessel Maree HS">
+        <option value="Westerford HS">
+        <option value="Westering HS">
+        <option value="Weston HS">
+        <option value="Westvalia HS">
+        <option value="Westville Boy's High">
+        <option value="Wesvalia HS">
+        <option value="Wilgerivier HS">
+        <option value="Wilgers HS">
+        <option value="Windermere HS">
+        <option value="Windhoek HS">
+        <option value="Windsor HS">
+        <option value="Winterton HS">
+        <option value="Witbank HS">
+        <option value="Witbank HTS">
+        <option value="Witteberg HS">
+        <option value="Wolmaransstad HS">
+        <option value="Wonderboom HS">
+        <option value="Woodridge College">
+        <option value="Worcester Gimnasium">
+        <option value="Wynberg Boys' High">
+        <option value="Wynberg Girls' HS">
+        <option value="Zastron HS">
+        <option value="Zeerust HS">
+        <option value="Zwartkop HS">
+      </datalist>
+      <div class="hint">Type to search 417 schools — or type your full school name if not listed.</div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>City / Town <span class="r">*</span></label><input type="text" id="f6" placeholder="e.g. Cape Town"></div>
+      <div class="fg"><label>Postal Code <span class="r">*</span></label><input type="text" id="f7" placeholder="e.g. 7550" maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></div>
+    </div>
+    <div class="info">&#9888; <strong>Important:</strong> Your postal code determines your division. Please ensure it is 100% accurate.</div>
 
-    <!-- Step Indicators -->
-    <div class="step-indicator">
-      <div class="step active" id="step-1">
-        <div class="step-dot">1</div>
-        <div class="step-label">Account</div>
+    <!-- POPIA CONSENT -->
+    <div style="background:rgba(27,58,107,0.05);border:1.5px solid rgba(27,58,107,0.15);border-radius:12px;padding:18px 20px;margin:20px 0;">
+      <div style="font-weight:700;color:var(--navy);font-size:14px;margin-bottom:8px;">&#128274; Privacy &amp; POPIA Consent</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:14px;">
+        In accordance with the <strong>Protection of Personal Information Act (POPIA)</strong>, we need your consent
+        to collect and process your personal information for the purpose of administering the Alumni Schools Golf Challenge.<br><br>
+        Your information will be used to: manage your registration and entry, communicate tournament details,
+        verify your eligibility, and process payments. Your data will not be sold or shared with third parties
+        without your consent. You may request access to or deletion of your data at any time by contacting
+        <strong>admin&#64;alumnigolf&#46;net</strong>.
       </div>
-      <div class="step-line" id="line-1"></div>
-      <div class="step active" id="step-2" style="opacity:0.4">
-        <div class="step-dot">2</div>
-        <div class="step-label">Details</div>
-      </div>
-      <div class="step-line" id="line-2"></div>
-      <div class="step" id="step-3" style="opacity:0.4">
-        <div class="step-dot">3</div>
-        <div class="step-label">Payment</div>
-      </div>
+      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+        <input type="checkbox" id="popia-consent" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--navy);">
+        <span style="font-size:13px;color:var(--text);line-height:1.5;">
+          I have read and understand the above. I consent to Legacy Event Ventures (Pty) Ltd collecting and
+          processing my personal information for the purposes of the Alumni Schools Golf Challenge,
+          in accordance with POPIA. <span style="color:var(--red);">*</span>
+        </span>
+      </label>
     </div>
 
-    <div class="error-msg" id="error-msg"></div>
-
-    <!-- ── STEP 1: Account ── -->
-    <div class="form-section active" id="form-1">
-      <div class="section-title">Create Your Account</div>
-      <div class="section-sub">Use the email you want to log in with</div>
-
-      <div class="form-group">
-        <label>Full Name <span class="required">*</span></label>
-        <input type="text" id="reg-name" placeholder="e.g. John Smith" autocomplete="name" />
-      </div>
-      <div class="form-group">
-        <label>Email Address <span class="required">*</span></label>
-        <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email" />
-      </div>
-      <div class="form-group">
-        <label>Password <span class="required">*</span></label>
-        <input type="password" id="reg-password" placeholder="Min 8 characters" autocomplete="new-password" oninput="checkPasswordStrength(this.value)" />
-        <div class="password-strength"><div class="password-strength-bar" id="pw-strength-bar"></div></div>
-        <div class="hint" id="pw-hint">At least 8 characters</div>
-      </div>
-      <div class="form-group">
-        <label>Confirm Password <span class="required">*</span></label>
-        <input type="password" id="reg-password2" placeholder="Repeat your password" autocomplete="new-password" />
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-gold" onclick="goToStep2()">Continue →</button>
-      </div>
-    </div>
-
-    <!-- ── STEP 2: Player Details ── -->
-    <div class="form-section" id="form-2">
-      <div class="section-title">Your Player Details</div>
-      <div class="section-sub">We need these to verify your eligibility</div>
-
-      <div class="form-group">
-        <label>School Name <span class="required">*</span></label>
-        <input type="text" id="reg-school" placeholder="e.g. Bishops, SACS, Rondebosch..." />
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Year of Matriculation <span class="required">*</span></label>
-          <input type="number" id="reg-matric" placeholder="e.g. 2018" min="1970" max="2024" />
-        </div>
-        <div class="form-group">
-          <label>SA ID Number</label>
-          <input type="text" id="reg-id" placeholder="13-digit ID (optional)" maxlength="13" />
-          <div class="hint">Used for eligibility verification</div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Cell / WhatsApp Number <span class="required">*</span></label>
-        <input type="tel" id="reg-phone" placeholder="e.g. 0821234567" />
-      </div>
-      <div class="form-group">
-        <label>Handicap (if known)</label>
-        <input type="number" id="reg-handicap" placeholder="e.g. 12" min="0" max="54" step="0.1" />
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-gold" onclick="goToStep3()">Continue →</button>
-        <button class="btn btn-outline" onclick="goBack(1)">← Back</button>
-      </div>
-    </div>
-
-    <!-- ── STEP 3: Payment ── -->
-    <div class="form-section" id="form-3">
-      <div class="section-title">Entry Fee & Payment</div>
-      <div class="section-sub">Select your preferred payment method</div>
-
-      <div class="entry-fee">
-        <div>
-          <div class="fee-label">Entry Fee</div>
-          <div style="font-size:11px;color:var(--text2);margin-top:2px;">Per player — includes all rounds</div>
-        </div>
-        <div class="fee-amount">R500</div>
-      </div>
-
-      <div class="payment-options">
-        <div class="payment-option selected" id="pay-eft" onclick="selectPayment('eft')">
-          <div class="pay-icon">🏦</div>
-          <div class="pay-label">EFT / Bank Transfer</div>
-          <div class="pay-sub">Pay via internet banking</div>
-        </div>
-        <div class="payment-option" id="pay-cash" onclick="selectPayment('cash')">
-          <div class="pay-icon">💵</div>
-          <div class="pay-label">Cash</div>
-          <div class="pay-sub">Pay on the day</div>
-        </div>
-      </div>
-
-      <div class="bank-details show" id="bank-details">
-        <div class="bank-row"><span class="key">Bank</span><span class="val">Standard Bank</span></div>
-        <div class="bank-row"><span class="key">Account Name</span><span class="val">Alumni Golf SA</span></div>
-        <div class="bank-row"><span class="key">Account No.</span><span class="val">123 456 789</span></div>
-        <div class="bank-row"><span class="key">Branch Code</span><span class="val">051 001</span></div>
-        <div class="bank-row"><span class="key">Reference</span><span class="val" id="eft-ref">Your Name + School</span></div>
-      </div>
-
-      <div class="form-group">
-        <label>Payment Reference / Note (optional)</label>
-        <input type="text" id="reg-payref" placeholder="e.g. John Smith EFT 15 March" />
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-gold" id="submit-btn" onclick="submitRegistration()">
-          <span class="loading-btn"><span id="submit-text">Complete Registration ✓</span></span>
-        </button>
-        <button class="btn btn-outline" onclick="goBack(2)">← Back</button>
-      </div>
-    </div>
-
-    <!-- ── SUCCESS ── -->
-    <div class="success-screen" id="success-screen">
-      <div class="success-icon">🎉</div>
-      <div class="success-title">You're Registered!</div>
-      <div class="success-sub">
-        Welcome to the Alumni Golf Schools Challenge.<br>
-        Your account is created and pending admin verification.<br><br>
-        <strong id="success-name"></strong>, check your email for confirmation.
-      </div>
-      <div class="divider"></div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">
-        Payment status: <span id="success-pay-status" style="font-weight:600;color:var(--gold)"></span>
-      </div>
-      <a href="/portal.html" style="display:block;">
-        <button class="btn btn-gold">Go to My Portal →</button>
-      </a>
-    </div>
-
-  </div>
-
-  <div class="login-link">
-    Already registered? <a href="/portal.html">Sign In to Portal</a>
+    <button type="button" class="btn btn-gold" id="btn1" onclick="step1()">Continue to Eligibility Check &#8594;</button>
+    <div class="login-link">Already registered? <a href="portal.html">Log in to your portal</a></div>
   </div>
 </div>
 
+<!-- STEP 2 -->
+<div class="sec" id="s2">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#10003;</div>
+      <div><h2>Eligibility Check</h2><p>All questions must be answered Yes to enter</p></div>
+    </div>
+    <div class="err" id="e2"></div>
+
+    <div id="ineligible-block" style="display:none;background:rgba(192,57,43,0.07);border:2px solid rgba(192,57,43,0.3);border-radius:12px;padding:28px 24px;text-align:center;margin-bottom:16px;">
+      <div style="font-size:44px;margin-bottom:12px;">&#128530;</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:#c0392b;margin-bottom:12px;">Sorry, you are not eligible to enter the competition.</div>
+      <div style="font-size:13px;color:#666;line-height:1.8;margin-bottom:20px;">You have been registered as a <strong>Supporter</strong> of the Alumni Schools Golf Challenge.<br>Thank you for your interest — we hope to see you at the event!<br><br>If you have any questions please contact our admin:<br><strong style="color:var(--navy);">admin&#64;alumnigolf&#46;net</strong></div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="index.html" style="padding:12px 24px;background:var(--navy);color:#fff;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;">&#8592; Return to Website</a>
+        <a href="portal.html" style="padding:12px 24px;background:transparent;border:2px solid var(--navy);color:var(--navy);border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;">Go to My Portal</a>
+      </div>
+    </div>
+
+    <div id="elig-questions">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;padding:12px 16px;background:rgba(27,58,107,0.05);border-radius:8px;">&#8505; All questions must be answered <strong style="color:#27ae60;">Yes</strong> to proceed. Any <strong style="color:#c0392b;">No</strong> will register you as a Supporter only.</div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq1">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Are you no longer enrolled as a learner at any school and are a bona fide alumnus of a South African school?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq1-yes" onclick="answerElig('eq1','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq1-no"  onclick="answerElig('eq1','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq2">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Are you at least 18 years of age?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq2-yes" onclick="answerElig('eq2','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq2-no"  onclick="answerElig('eq2','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq3">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Do you hold a valid, active Golf RSA HNA (Handicapping Network Africa) handicap and are in good standing at your club?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq3-yes" onclick="answerElig('eq3','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq3-no"  onclick="answerElig('eq3','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq4">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Will both members of your team be alumni of the same South African school?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq4-yes" onclick="answerElig('eq4','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq4-no"  onclick="answerElig('eq4','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq5">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Do you agree to the tournament rules, code of conduct, and terms and conditions?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq5-yes" onclick="answerElig('eq5','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq5-no"  onclick="answerElig('eq5','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.02);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;" id="wrap-eq6">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.5;">Do you understand that payment must be completed to secure your team entry?</div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" id="eq6-yes" onclick="answerElig('eq6','yes')" style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10003; Yes</button>
+          <button type="button" id="eq6-no"  onclick="answerElig('eq6','no')"  style="flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;color:var(--text2);">&#10007; No</button>
+        </div>
+      </div>
+    </div>
+    <div id="eligible-only">
+    <div class="golf-block">
+      <h3>Golf Membership Details</h3>
+      <div class="fg">
+        <label>Gender <span class="r">*</span></label>
+        <select id="f8">
+          <option value="">-- Select --</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Golf Club <span class="r">*</span></label>
+        <input type="text" id="f9" placeholder="Type your golf club name..." list="club-dl" autocomplete="off">
+        <datalist id="club-dl">
+          <option value="Atlantic Beach Golf Club">
+          <option value="Bellville Golf Club">
+          <option value="Bloemfontein Golf Club">
+          <option value="Bryanston Country Club">
+          <option value="Centurion Country Club">
+          <option value="Clovelly Country Club">
+          <option value="Dainfern Country Club">
+          <option value="De Zalze Golf Club">
+          <option value="Durban Country Club">
+          <option value="Durbanville Golf Club">
+          <option value="Eagle Canyon Country Club">
+          <option value="Ebotse Golf and Country Estate">
+          <option value="Els Club - Copperleaf">
+          <option value="Erinvale Golf Club">
+          <option value="Eye of Africa Golf Estate">
+          <option value="Fancourt">
+          <option value="Gary Player Country Club">
+          <option value="George Golf Club">
+          <option value="Glendower Golf Club">
+          <option value="Glenvista Country Club">
+          <option value="Hermanus Golf Club">
+          <option value="Houghton Golf Club">
+          <option value="Humewood Golf Club">
+          <option value="Irene Country Club">
+          <option value="Jackal Creek Golf Estate">
+          <option value="Kimberley Golf Club">
+          <option value="Kingswood Golf Estate">
+          <option value="Kloof Country Club">
+          <option value="Knysna Golf Club">
+          <option value="Kyalami Country Club">
+          <option value="Leopard Creek Country Club">
+          <option value="Lost City Golf Club">
+          <option value="Metropolitan Golf Club">
+          <option value="Milnerton Golf Club">
+          <option value="Modderfontein Golf Club">
+          <option value="Mowbray Golf Club">
+          <option value="Mount Edgecombe Country Club">
+          <option value="Oubaai Golf Resort">
+          <option value="Paarl Golf Club">
+          <option value="Parkview Golf Club">
+          <option value="Pearl Valley Golf and Country Estate">
+          <option value="Pezula Championship Golf Course">
+          <option value="Pinnacle Point Golf Club">
+          <option value="Plettenberg Bay Country Club">
+          <option value="Pretoria Country Club">
+          <option value="Pretoria Golf Club">
+          <option value="Randpark Golf Club">
+          <option value="Rondebosch Golf Club">
+          <option value="Royal Cape Golf Club">
+          <option value="Royal Johannesburg and Kensington Golf Club">
+          <option value="San Lameer Country Club">
+          <option value="Selborne Country Club">
+          <option value="Silver Lakes Golf and Country Club">
+          <option value="Simola Golf and Country Estate">
+          <option value="Somerset West Golf Club">
+          <option value="Steenberg Golf Club">
+          <option value="Stellenbosch Golf Club">
+          <option value="St Francis Links">
+          <option value="The Club at Steyn City">
+          <option value="The Country Club Johannesburg">
+          <option value="The Links at Fancourt">
+          <option value="Waterkloof Golf Club">
+          <option value="Wanderers Golf Club">
+          <option value="Westlake Golf Club">
+          <option value="Woodhill Country Club">
+          <option value="Zimbali Country Club">
+          <option value="Zwartkop Country Club">
+        </datalist>
+      </div>
+      <div class="fg">
+        <label>HNA Number <span class="r">*</span></label>
+        <input type="text" id="f10" placeholder="2700XXXXXX" maxlength="12" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        <div class="hint">Your Golf RSA Handicapping Network Africa number — starts with 2700</div>
+      </div>
+      <div class="fg">
+        <label>Handicap Index <span class="r">*</span></label>
+        <input type="number" id="f11" placeholder="e.g. 12.4" step="0.1" min="0" max="54">
+        <div class="hint">Men: max 36 | Women: max 54</div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-gold" onclick="step2()">Confirm Eligibility &#8594;</button>
+    <button type="button" class="btn btn-outline" onclick="goTo(1)" style="margin-top:8px;">&#8592; Back</button>
+    </div><!-- /eligible-only -->
+  </div>
+</div>
+
+<!-- STEP 3 — PARTNER OPTIONS -->
+<div class="sec" id="s3">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#129309;</div>
+      <div><h2>Partner Options</h2><p>Every team needs two players from the same school</p></div>
+    </div>
+    <div class="err" id="e3"></div>
+    <div style="display:grid;gap:14px;margin:20px 0;">
+
+      <div onclick="partnerChoice('has_partner')" id="popt1"
+        style="border:2px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:34px;flex-shrink:0;">&#129309;</div>
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--navy);font-weight:700;">I have a partner</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:3px;">I will enter my partner's details right now</div>
+        </div>
+      </div>
+
+      <div onclick="partnerChoice('invite_later')" id="popt2"
+        style="border:2px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:34px;flex-shrink:0;">&#9993;&#65039;</div>
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--navy);font-weight:700;">Invite partner later</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:3px;">I have a partner but will send their details later</div>
+        </div>
+      </div>
+
+      <div onclick="partnerChoice('needs_matching')" id="popt3"
+        style="border:2px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:34px;flex-shrink:0;">&#128270;</div>
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--navy);font-weight:700;">Find me a partner</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:3px;">I don't have a partner — please match me with someone</div>
+        </div>
+      </div>
+
+    </div>
+    <button type="button" class="btn btn-outline" onclick="goTo(2)" style="margin-top:4px;">&#8592; Back</button>
+  </div>
+</div>
+
+<!-- STEP 4 — PARTNER DETAILS -->
+<div class="sec" id="s4">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#129309;</div>
+      <div><h2>Invite Your Partner</h2><p>Both players must be alumni of the same school</p></div>
+    </div>
+    <div class="err" id="e3"></div>
+    <div class="fg"><label>School (auto-filled)</label><input type="text" id="f12" readonly style="opacity:0.7;cursor:default;"></div>
+    <div class="frow">
+      <div class="fg"><label>Partner First Name <span class="r">*</span></label><input type="text" id="f13" placeholder="First name"></div>
+      <div class="fg"><label>Partner Surname <span class="r">*</span></label><input type="text" id="f14" placeholder="Surname"></div>
+    </div>
+    <div class="fg"><label>Partner Email <span style="color:#aaa;font-size:10px;">(optional)</span></label><input type="email" id="f15" placeholder="partner@email.com (optional)"></div>
+    <div class="fg">
+      <label>Partner Mobile <span class="r">*</span></label>
+      <div class="pfix"><div class="pfix-lbl">+27</div><input type="tel" id="f16" placeholder="821234567" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></div>
+    </div>
+    <button type="button" class="btn btn-gold" onclick="step3()">Continue to Payment &#8594;</button>
+    <button type="button" class="btn btn-outline" onclick="goTo(3)" style="margin-top:8px;">&#8592; Back</button>
+  </div>
+</div>
+
+<!-- STEP 5 — PAYMENT -->
+<div class="sec" id="s5">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#128179;</div>
+      <div><h2>Payment</h2><p>Secure your team entry</p></div>
+    </div>
+    <div class="err" id="e5_pay"></div>
+    <div id="pay-choice">
+      <div class="pay-grid">
+        <div class="pay-opt" onclick="payNow('single')">
+          <div class="oi">&#128179;</div>
+          <h3>Pay Now</h3>
+          <div class="price">R1,500</div>
+          <p>Pay for yourself now</p>
+        </div>
+        <div class="pay-opt" onclick="payNow('team')">
+          <div class="oi">&#127955;</div>
+          <h3>Pay for Team</h3>
+          <div class="price">R2,800</div>
+          <p>Pay for both — <strong style="color:#27ae60;">Save R200!</strong></p>
+        </div>
+      </div>
+      <button type="button" class="btn btn-outline" onclick="payLater()">Pay Later — Reserve my spot (7 days)</button>
+    </div>
+    <div id="pay-eft" style="display:none;">
+      <div class="bank">
+        <h3>Banking Details — EFT</h3>
+        <div class="bank-row"><span class="lbl">Bank</span><span class="val">FNB</span></div>
+        <div class="bank-row"><span class="lbl">Account Name</span><span class="val">Legacy Event Ventures</span></div>
+        <div class="bank-row"><span class="lbl">Account No.</span><span class="val">62951078553 <button class="copy-btn" onclick="cp('62951078553')">Copy</button></span></div>
+        <div class="bank-row"><span class="lbl">Branch Code</span><span class="val">250655</span></div>
+        <div class="bank-row"><span class="lbl">Reference</span><span class="val" id="payref">—</span> <button class="copy-btn" onclick="cpRef()">Copy</button></div>
+        <div class="bank-row"><span class="lbl">Amount</span><span class="val" id="payamt" style="color:var(--gold);font-size:18px;">—</span></div>
+      </div>
+      <div class="fg">
+        <label>Upload Proof of Payment</label>
+        <div class="upload" onclick="document.getElementById('popf').click()">
+          <div style="font-size:28px;">&#128206;</div>
+          <p id="popname">Click to select file (PDF, JPG or PNG)</p>
+          <input type="file" id="popf" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="gotPOP(this)">
+        </div>
+      </div>
+      <button type="button" class="btn btn-gold" id="btnsubmit" onclick="submitPay()" style="display:none;">&#10003; Submit Registration and Proof of Payment</button>
+    </div>
+    <div id="pay-later-msg" style="display:none;">
+      <div class="info">Your spot is held for <strong>7 days</strong>. Payment instructions will be emailed to you.</div>
+      <button type="button" class="btn btn-gold" onclick="submitLater()">&#10003; Complete Registration — Pay Later</button>
+      <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;">
+        <a href="portal.html" class="btn btn-outline" style="flex:1;text-align:center;text-decoration:none;padding:12px;">View My Portal</a>
+        <a href="index.html" class="btn btn-outline" style="flex:1;text-align:center;text-decoration:none;padding:12px;">&#8592; Return to Website</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="sec" id="s6">
+  <div class="card">
+    <div class="success-wrap">
+      <div class="ico">&#127942;</div>
+      <h2 id="suc-title">Registration Received!</h2>
+      <p id="suc-msg">Thank you for registering for the Alumni Schools Golf Challenge.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
+        <a href="portal.html" class="btn btn-gold" style="display:inline-block;width:auto;padding:14px 32px;text-decoration:none;border-radius:10px;font-weight:700;">View My Portal &#8594;</a>
+        <a href="index.html" class="btn btn-outline" style="display:inline-block;width:auto;padding:14px 32px;text-decoration:none;border-radius:10px;font-weight:700;">&#8592; Return to Website</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p>&#169; 2026 Alumni Schools Golf Challenge &#8212; Legacy Event Ventures (Pty) Ltd | admin&#64;alumnigolf&#46;net</p>
+  <p style="margin-top:5px;">Honouring tradition. Celebrating excellence.</p>
+</footer>
+
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────────────────
-const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let currentStep = 1;
-let selectedPayment = 'eft';
 
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function showError(msg) {
-  const el = document.getElementById('error-msg');
-  el.textContent = msg;
+var sb = supabase.createClient(window.SB_URL, window.SB_KEY);
+var R = {};
+var popFile = null;
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function v(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function showErr(id, msg) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '&#9888; ' + msg;
+  el.style.cssText = 'display:block;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:12px;background:rgba(192,57,43,0.1);border:1.5px solid rgba(192,57,43,0.3);color:#c0392b;';
+}
+function hideErr(id) {
+  var el = document.getElementById(id);
+  if (el) { el.style.display = 'none'; el.innerHTML = ''; }
+}
+
+// ── STEP NAVIGATION ───────────────────────────────────────────────────────────
+function goTo(n) {
+  for (var i = 1; i <= 6; i++) {
+    var sec = document.getElementById('s' + i);
+    if (sec) sec.classList.remove('active');
+    if (i <= 5) {
+      var stp = document.getElementById('stp' + i);
+      if (stp) {
+        stp.classList.remove('active', 'done');
+        if (i === n) stp.classList.add('active');
+        if (i < n)  stp.classList.add('done');
+      }
+    }
+  }
+  var cur = document.getElementById('s' + n);
+  if (cur) cur.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── PASSWORD CHECKER ──────────────────────────────────────────────────────────
+function checkPW(input) {
+  var pw = input.value;
+  var el = document.getElementById('pw-strength');
+  if (!el) return;
+  if (!pw) { el.style.display = 'none'; return; }
+  var checks = [
+    { ok: pw.length >= 8,          label: '8+ characters' },
+    { ok: /[A-Z]/.test(pw),        label: 'Uppercase letter' },
+    { ok: /[0-9]/.test(pw),        label: 'Number' },
+    { ok: /[^A-Za-z0-9]/.test(pw), label: 'Special character e.g. ! @ # $' }
+  ];
+  var html = '';
+  for (var i = 0; i < checks.length; i++) {
+    var icon = checks[i].ok
+      ? '<span style="color:#27ae60;font-weight:900;">&#10003;</span>'
+      : '<span style="color:#c0392b;font-weight:900;">&#10007;</span>';
+    html += '<div style="margin:3px 0;">' + icon + ' ' + checks[i].label + '</div>';
+  }
+  el.innerHTML = html;
   el.style.display = 'block';
-  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
-}
-function clearError() {
-  document.getElementById('error-msg').style.display = 'none';
 }
 
-function checkPasswordStrength(val) {
-  const bar = document.getElementById('pw-strength-bar');
-  const hint = document.getElementById('pw-hint');
-  const len = val.length;
-  const hasUpper = /[A-Z]/.test(val);
-  const hasNum = /[0-9]/.test(val);
-  const hasSpecial = /[^A-Za-z0-9]/.test(val);
-  let score = 0;
-  if (len >= 8) score++;
-  if (len >= 12) score++;
-  if (hasUpper) score++;
-  if (hasNum) score++;
-  if (hasSpecial) score++;
+// ── STEP 1 ────────────────────────────────────────────────────────────────────
+function step1() {
+  hideErr('e1');
+  if (!document.getElementById('popia-consent').checked)
+    return showErr('e1', 'You must read and accept the POPIA consent above to continue.');
+  if (!v('f1')) return showErr('e1', 'Missing: First name');
+  if (!v('f2')) return showErr('e1', 'Missing: Surname');
+  if (!v('f3')) return showErr('e1', 'Missing: Email address');
+  if (v('f3').indexOf('@') < 0) return showErr('e1', 'Invalid email — must contain @');
+  var pw = v('f_pw');
+  if (!pw || pw.length < 8)        return showErr('e1', 'Password must be at least 8 characters.');
+  if (!/[A-Z]/.test(pw))           return showErr('e1', 'Password needs at least one uppercase letter.');
+  if (!/[0-9]/.test(pw))           return showErr('e1', 'Password needs at least one number.');
+  if (!/[^A-Za-z0-9]/.test(pw))    return showErr('e1', 'Password needs at least one special character e.g. ! @ # $');
+  if (!v('f4'))  return showErr('e1', 'Missing: Mobile number');
+  if (!v('f5'))  return showErr('e1', 'Missing: School name');
+  if (!v('f6'))  return showErr('e1', 'Missing: City or town');
+  if (!v('f7'))  return showErr('e1', 'Missing: Postal code');
+  if (v('f7').length < 4) return showErr('e1', 'Postal code must be 4 digits');
 
-  const widths = ['0%','20%','40%','60%','80%','100%'];
-  const colors = ['','#E53935','#FF9800','#FFC107','#8BC34A','#4CAF50'];
-  const hints = ['','Weak','Fair','Good','Strong','Very Strong'];
-  bar.style.width = widths[score];
-  bar.style.background = colors[score] || colors[1];
-  hint.textContent = score > 0 ? hints[score] : 'At least 8 characters';
-  hint.style.color = colors[score] || 'var(--text3)';
+  R.first = v('f1'); R.last = v('f2');
+  R.email = v('f3').toLowerCase(); R.pw = pw;
+  R.mobile = '+27' + v('f4'); R.school = v('f5');
+  R.city = v('f6'); R.postal = v('f7');
+  R.full = R.first + ' ' + R.last;
+
+  var f12 = document.getElementById('f12');
+  if (f12) f12.value = R.school;
+
+  goTo(2);
 }
 
-function setStepState(stepNum, state) {
-  const el = document.getElementById('step-'+stepNum);
-  el.className = 'step ' + state;
-  el.style.opacity = '1';
+// ── STEP 2 — ELIGIBILITY ──────────────────────────────────────────────────────
+var eligAnswers = {};
+
+function answerElig(qid, val) {
+  eligAnswers[qid] = val;
+  var yBtn = document.getElementById(qid + '-yes');
+  var nBtn = document.getElementById(qid + '-no');
+  var yOn  = 'flex:1;padding:10px;border-radius:8px;border:2px solid #27ae60;background:rgba(39,174,96,0.12);font-size:13px;font-weight:700;cursor:pointer;color:#27ae60;';
+  var nOn  = 'flex:1;padding:10px;border-radius:8px;border:2px solid #c0392b;background:rgba(192,57,43,0.12);font-size:13px;font-weight:700;cursor:pointer;color:#c0392b;';
+  var off  = 'flex:1;padding:10px;border-radius:8px;border:2px solid var(--border);background:transparent;font-size:13px;font-weight:700;cursor:pointer;color:var(--text2);';
+  if (val === 'yes') { yBtn.style.cssText = yOn; nBtn.style.cssText = off; }
+  else               { nBtn.style.cssText = nOn; yBtn.style.cssText = off; saveAsSupporter(); }
 }
 
-// ── NAVIGATION ────────────────────────────────────────────────────────────────
-function goToStep2() {
-  clearError();
-  const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const pass = document.getElementById('reg-password').value;
-  const pass2 = document.getElementById('reg-password2').value;
-
-  if (!name) { showError('Please enter your full name.'); return; }
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); return; }
-  if (pass.length < 8) { showError('Password must be at least 8 characters.'); return; }
-  if (pass !== pass2) { showError('Passwords do not match.'); return; }
-
-  document.getElementById('form-1').classList.remove('active');
-  document.getElementById('form-2').classList.add('active');
-  setStepState(1, 'done');
-  document.getElementById('line-1').classList.add('done');
-  setStepState(2, 'active');
-  document.getElementById('step-2').style.opacity = '1';
-  currentStep = 2;
-}
-
-function goToStep3() {
-  clearError();
-  const school = document.getElementById('reg-school').value.trim();
-  const matric = document.getElementById('reg-matric').value.trim();
-  const phone = document.getElementById('reg-phone').value.trim();
-
-  if (!school) { showError('Please enter your school name.'); return; }
-  if (!matric || matric < 1970 || matric > 2025) { showError('Please enter a valid year of matriculation.'); return; }
-  if (!phone) { showError('Please enter your cell number.'); return; }
-
-  document.getElementById('form-2').classList.remove('active');
-  document.getElementById('form-3').classList.add('active');
-  setStepState(2, 'done');
-  document.getElementById('line-2').classList.add('done');
-  setStepState(3, 'active');
-  document.getElementById('step-3').style.opacity = '1';
-
-  // Update EFT reference with name
-  const name = document.getElementById('reg-name').value.trim();
-  document.getElementById('eft-ref').textContent = name + ' - ' + school;
-  currentStep = 3;
-}
-
-function goBack(toStep) {
-  clearError();
-  document.getElementById('form-'+(toStep+1)).classList.remove('active');
-  document.getElementById('form-'+toStep).classList.add('active');
-  setStepState(toStep, 'active');
-  if (toStep === 1) {
-    setStepState(2, 'active');
-    document.getElementById('step-2').style.opacity = '0.4';
-    document.getElementById('line-1').classList.remove('done');
-  }
-  if (toStep === 2) {
-    setStepState(3, 'active');
-    document.getElementById('step-3').style.opacity = '0.4';
-    document.getElementById('line-2').classList.remove('done');
-  }
-  currentStep = toStep;
-}
-
-function selectPayment(type) {
-  selectedPayment = type;
-  document.getElementById('pay-eft').classList.toggle('selected', type === 'eft');
-  document.getElementById('pay-cash').classList.toggle('selected', type === 'cash');
-  document.getElementById('bank-details').classList.toggle('show', type === 'eft');
-}
-
-// ── REGISTRATION ──────────────────────────────────────────────────────────────
-async function submitRegistration() {
-  clearError();
-  const btn = document.getElementById('submit-btn');
-  const btnText = document.getElementById('submit-text');
-
-  const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim().toLowerCase();
-  const password = document.getElementById('reg-password').value;
-  const school = document.getElementById('reg-school').value.trim();
-  const matric = document.getElementById('reg-matric').value.trim();
-  const idNum = document.getElementById('reg-id').value.trim() || null;
-  const phone = document.getElementById('reg-phone').value.trim();
-  const handicap = document.getElementById('reg-handicap').value || null;
-  const payref = document.getElementById('reg-payref').value.trim() || null;
-
-  btn.disabled = true;
-  btnText.innerHTML = '<span class="spinner"></span> Registering...';
-
+async function saveAsSupporter() {
+  try { await sb.auth.signUp({ email: R.email, password: R.pw }); } catch(e) {}
   try {
-    // STEP 1: Create auth account
-    const { data: authData, error: authError } = await sb.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: name }
-      }
-    });
+    await sb.from('players').upsert({
+      full_name: R.full, email: R.email, mobile: R.mobile,
+      school_name: R.school, city: R.city, postal_code: R.postal,
+      eligibility_status: 'ineligible', player_type: 'supporter',
+      payment_status: 'unpaid', registration_source: 'web'
+    }, { onConflict: 'email' });
+  } catch(e) {}
+  document.getElementById('elig-questions').style.display = 'none';
+  document.getElementById('eligible-only').style.display = 'none';
+  document.getElementById('ineligible-block').style.display = 'block';
+  hideErr('e2');
+}
 
-    if (authError) {
-      // Handle already registered
-      if (authError.message.includes('already registered') || authError.message.includes('User already registered')) {
-        showError('This email is already registered. Please sign in to the portal instead.');
-      } else {
-        showError('Account error: ' + authError.message);
-      }
-      btn.disabled = false;
-      btnText.textContent = 'Complete Registration ✓';
-      return;
+function step2() {
+  hideErr('e2');
+  var required = ['eq1','eq2','eq3','eq4','eq5','eq6'];
+  for (var i = 0; i < required.length; i++) {
+    if (!eligAnswers[required[i]])
+      return showErr('e2', 'Please answer all questions above before continuing.');
+    if (eligAnswers[required[i]] === 'no') { saveAsSupporter(); return; }
+  }
+  if (!v('f8'))  return showErr('e2', 'Please select your gender.');
+  if (!v('f9'))  return showErr('e2', 'Please enter your golf club name.');
+  if (!v('f10')) return showErr('e2', 'Please enter your HNA number.');
+  if (v('f10').indexOf('2700') !== 0) return showErr('e2', 'HNA number must start with 2700.');
+  if (!v('f11')) return showErr('e2', 'Please enter your handicap index.');
+  R.gender = v('f8'); R.club = v('f9'); R.hna = v('f10'); R.handicap = v('f11');
+  goTo(3);
+}
+
+// ── PARTNER OPTIONS ───────────────────────────────────────────────────────────
+function partnerChoice(type) {
+  R.partnerChoice = type;
+  var opts = ['popt1','popt2','popt3'];
+  var vals = ['has_partner','invite_later','needs_matching'];
+  for (var i = 0; i < opts.length; i++) {
+    var el = document.getElementById(opts[i]);
+    if (el) {
+      el.style.borderColor = vals[i] === type ? 'var(--navy)' : 'var(--border)';
+      el.style.background  = vals[i] === type ? 'rgba(27,58,107,0.06)' : '';
     }
-
-    // STEP 2: Insert player record into players table
-    // This is the critical step that was missing!
-    const playerData = {
-      email: email,
-      full_name: name,
-      school_name: school,
-      year_of_matriculation: parseInt(matric),
-      id_number: idNum,
-      phone_number: phone,
-      handicap: handicap ? parseFloat(handicap) : null,
-      payment_status: 'unpaid',
-      payment_method: selectedPayment,
-      payment_reference: payref,
-      eligibility_status: 'pending',
-      is_admin: false,
-    };
-
-    const { error: playerError } = await sb.from('players').insert(playerData);
-
-    if (playerError) {
-      // If player row already exists (duplicate email), try upsert
-      if (playerError.code === '23505') {
-        const { error: upsertError } = await sb.from('players').upsert(playerData, { onConflict: 'email' });
-        if (upsertError) {
-          showError('Could not save player record: ' + upsertError.message);
-          btn.disabled = false;
-          btnText.textContent = 'Complete Registration ✓';
-          return;
-        }
-      } else {
-        showError('Could not save player record: ' + playerError.message);
-        btn.disabled = false;
-        btnText.textContent = 'Complete Registration ✓';
-        return;
-      }
-    }
-
-    // SUCCESS
-    document.getElementById('form-3').classList.remove('active');
-    const successEl = document.getElementById('success-screen');
-    successEl.style.display = 'block';
-    document.getElementById('success-name').textContent = name;
-    document.getElementById('success-pay-status').textContent =
-      selectedPayment === 'eft' ? 'EFT — awaiting verification' : 'Cash — pay on the day';
-
-    setStepState(3, 'done');
-
-  } catch (err) {
-    showError('Unexpected error: ' + err.message);
-    btn.disabled = false;
-    btnText.textContent = 'Complete Registration ✓';
+  }
+  if (type === 'has_partner') {
+    setTimeout(function(){ goTo(4); }, 180);
+  } else {
+    R.p2first = ''; R.p2last = ''; R.p2email = ''; R.p2mobile = ''; R.p2full = '';
+    setTimeout(function(){ goTo(5); }, 180);
   }
 }
 
-// Auto-redirect if already logged in
-sb.auth.getSession().then(({ data: { session } }) => {
-  if (session) {
-    // Check if player record exists
-    sb.from('players').select('email').eq('email', session.user.email).maybeSingle().then(({ data }) => {
-      if (data) {
-        window.location.href = '/portal.html';
+// ── STEP 3 — PARTNER DETAILS ──────────────────────────────────────────────────
+function step3() {
+  hideErr('e3');
+  if (!v('f13')) return showErr('e3', 'Missing: Partner first name');
+  if (!v('f14')) return showErr('e3', 'Missing: Partner surname');
+  if (!v('f16')) return showErr('e3', 'Missing: Partner mobile number');
+  if (v('f15') && v('f15').indexOf('@') < 0) return showErr('e3', 'Invalid partner email — must contain @.');
+  R.p2first = v('f13'); R.p2last = v('f14');
+  R.p2email = v('f15') ? v('f15').toLowerCase() : '';
+  R.p2mobile = '+27' + v('f16');
+  R.p2full = R.p2first + ' ' + R.p2last;
+  goTo(5);
+}
+
+// ── PAYMENT ───────────────────────────────────────────────────────────────────
+function payNow(type) {
+  R.payType = type;
+  R.payAmt  = type === 'team' ? 'R2,800.00' : 'R1,500.00';
+  document.getElementById('pay-choice').style.display   = 'none';
+  document.getElementById('pay-details').style.display  = 'block';
+  document.getElementById('pay-amt-display').textContent = R.payAmt;
+}
+
+function payLater() {
+  R.payType = 'later';
+  document.getElementById('pay-choice').style.display    = 'none';
+  document.getElementById('pay-later-msg').style.display = 'block';
+}
+
+function handlePOP(input) {
+  popFile = input.files[0];
+  if (popFile) {
+    var el = document.getElementById('pop-filename');
+    if (el) el.textContent = popFile.name;
+  }
+}
+
+// ── TEAM NUMBER ───────────────────────────────────────────────────────────────
+function teamNum() {
+  var school = (R.school || '').replace(/[^a-zA-Z]/g, '').substring(0, 3).toUpperCase();
+  var rand = Math.floor(1000 + Math.random() * 9000);
+  return school + rand;
+}
+
+// ── SAVE REGISTRATION ─────────────────────────────────────────────────────────
+async function saveReg(payStatus, popUrl) {
+  // Step 1: Create auth account
+  var authResult = await sb.auth.signUp({ email: R.email, password: R.pw });
+  if (authResult.error && !authResult.error.message.toLowerCase().includes('already registered')) {
+    throw new Error('Auth error: ' + authResult.error.message);
+  }
+  var tn = teamNum();
+  R.teamNum = tn;
+  // Step 2: Save player record
+  var { error: playerError } = await sb.from('players').upsert({
+    full_name: R.full, email: R.email, mobile: R.mobile,
+    gender: R.gender, school_name: R.school, golf_club: R.club,
+    hna_number: R.hna, handicap_index: parseFloat(R.handicap),
+    city: R.city, postal_code: R.postal, team_number: tn,
+    payment_status: payStatus, payment_proof_url: popUrl,
+    payment_reference: R.payRef || null,
+    partner_status: R.partnerChoice || 'has_partner',
+    eligibility_status: 'pending', registration_source: 'web'
+  }, { onConflict: 'email' });
+  if (playerError) throw new Error('Player save error: ' + playerError.message);
+
+  if (R.p2email && R.p2email.indexOf('@') > 0) {
+    await sb.from('players').upsert({
+      full_name: R.p2full, email: R.p2email, mobile: R.p2mobile,
+      school_name: R.school, team_number: tn,
+      payment_status: R.payType === 'team' ? payStatus : 'unpaid',
+      partner_status: 'has_partner',
+      eligibility_status: 'pending', invited_by: R.email,
+      registration_source: 'web_invite'
+    }, { onConflict: 'email' });
+  }
+}
+
+async function submitPay() {
+  if (!popFile) return showErr('e5_pay', 'Please upload your proof of payment.');
+  var btn = document.getElementById('btnsubmit');
+  btn.innerHTML = '<span class="spin"></span>Submitting...';
+  btn.disabled = true;
+  try {
+    var ext  = popFile.name.split('.').pop();
+    var fname = 'pop/' + R.email + '-' + Date.now() + '.' + ext;
+    var up   = await sb.storage.from('proofs').upload(fname, popFile, { upsert: true });
+    var url  = up.data ? window.SB_URL + '/storage/v1/object/public/proofs/' + fname : null;
+    await saveReg('pending_verification', url);
+    showSuccess('You are Officially Entered!',
+      'Your registration and proof of payment have been received. We will verify and confirm your entry within 24 hours.');
+  } catch(e) {
+    showErr('e5_pay', 'Something went wrong. Please try again or email admin&#64;alumnigolf.net');
+    btn.innerHTML = 'Submit Registration and Proof of Payment';
+    btn.disabled = false;
+  }
+}
+
+async function submitLater() {
+  var btn = event.target;
+  btn.innerHTML = '<span class="spin"></span>Submitting...';
+  btn.disabled = true;
+  try {
+    await saveReg('unpaid', null);
+    showSuccess('Registration Received!',
+      'Your registration has been received. Your place is held for 7 days. Payment instructions have been emailed to you.');
+  } catch(e) {
+    showErr('e5_pay', 'Something went wrong. Please try again or email admin&#64;alumnigolf.net');
+    btn.innerHTML = 'Complete Registration — Pay Later';
+    btn.disabled = false;
+  }
+}
+
+function showSuccess(title, msg) {
+  document.getElementById('suc-title').textContent = title;
+  document.getElementById('suc-msg').textContent   = msg;
+  goTo(6);
+}
+
+// ── AUTO LOGIN IF SESSION ─────────────────────────────────────────────────────
+sb.auth.getSession().then(function(r) {
+  if (r.data && r.data.session) {
+    var em = r.data.session.user.email;
+    sb.from('players').select('payment_status').eq('email', em).maybeSingle().then(function(res) {
+      if (res.data && res.data.payment_status === 'paid') {
+        window.location.href = 'portal.html';
       }
     });
   }
