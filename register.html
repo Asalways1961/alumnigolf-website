@@ -320,11 +320,126 @@ footer {
 }
 footer a { color: var(--gold); text-decoration: none; }
 
+/* SCHOOL AUTOCOMPLETE */
+.school-wrap { position: relative; }
+.school-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: white;
+  border: 2px solid var(--navy);
+  border-radius: 10px;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 200;
+  box-shadow: 0 8px 24px rgba(27,58,107,0.15);
+  display: none;
+}
+.school-dropdown.open { display: block; }
+.school-option {
+  padding: 11px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #eef2f9;
+  color: var(--text);
+  transition: background 0.15s;
+}
+.school-option:last-child { border-bottom: none; }
+.school-option:hover { background: #eef2f9; }
+.school-option.add-new {
+  color: var(--navy);
+  font-weight: 700;
+  background: #f0f5ff;
+}
+.school-option.add-new:hover { background: #dce8ff; }
+.school-confirmed {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #f0faf4;
+  border: 2px solid var(--green);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--green);
+  margin-top: 2px;
+}
+.school-confirmed .school-name-text { color: var(--text); font-weight: 700; }
+.school-change-btn {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text2);
+  cursor: pointer;
+  font-weight: 600;
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  text-decoration: underline;
+}
+
+/* PASSWORD FIELD */
+.pw-wrap {
+  position: relative;
+}
+.pw-wrap input {
+  padding-right: 48px;
+}
+.pw-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 17px;
+  user-select: none;
+  color: var(--text2);
+}
+.pw-rules {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.pw-rule {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.pw-rule.met { color: var(--green); }
+.pw-rule .rule-icon {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  color: transparent;
+}
+.pw-rule.met .rule-icon {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}
+
+/* DIVIDER */
+.section-divider {
+  height: 1px;
+  background: #eef2f9;
+  margin: 28px 0;
+}
+
 @media (max-width: 600px) {
   nav { padding: 0 16px; }
   .nav-links { display: none; }
   .form-card { padding: 24px 18px; }
   .page-wrap { margin-top: 28px; }
+  .pw-rules { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -414,7 +529,57 @@ footer a { color: var(--gold); text-decoration: none; }
         <div class="field-err" id="err-email">Please enter a valid email address</div>
       </div>
 
-      <button class="btn-next" onclick="saveStep1()">Save &amp; Continue →</button>
+      <div class="section-divider"></div>
+
+      <!-- SCHOOL SEARCH -->
+      <div class="field-block">
+        <label>School You Represent *</label>
+        <div class="school-wrap">
+          <input
+            type="text"
+            id="f-school"
+            placeholder="Type first 3 letters of your school name..."
+            autocomplete="off"
+            oninput="searchSchools(this.value)"
+          />
+          <div class="school-dropdown" id="school-dropdown"></div>
+        </div>
+        <div class="school-confirmed" id="school-confirmed" style="display:none;">
+          <span>&#10003;</span>
+          <span class="school-name-text" id="school-confirmed-name"></span>
+          <button class="school-change-btn" onclick="changeSchool()">Change</button>
+        </div>
+        <div class="field-err" id="err-school">Please select or enter your school name</div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- PASSWORD -->
+      <div class="field-block">
+        <label>Create Password *</label>
+        <div class="pw-wrap">
+          <input type="password" id="f-pw" placeholder="Minimum 8 characters..." oninput="checkPw()" />
+          <span class="pw-toggle" onclick="togglePw('f-pw','eye1')" id="eye1">&#128065;</span>
+        </div>
+        <div class="pw-rules">
+          <div class="pw-rule" id="rule-len"><div class="rule-icon">&#10003;</div>At least 8 characters</div>
+          <div class="pw-rule" id="rule-cap"><div class="rule-icon">&#10003;</div>1 Capital letter</div>
+          <div class="pw-rule" id="rule-num"><div class="rule-icon">&#10003;</div>1 Number</div>
+          <div class="pw-rule" id="rule-sym"><div class="rule-icon">&#10003;</div>1 Special character</div>
+        </div>
+        <div class="field-err" id="err-pw">Password does not meet all requirements above</div>
+      </div>
+
+      <div class="field-block">
+        <label>Confirm Password *</label>
+        <div class="pw-wrap">
+          <input type="password" id="f-pw2" placeholder="Re-enter your password..." oninput="checkPw2()" />
+          <span class="pw-toggle" onclick="togglePw('f-pw2','eye2')" id="eye2">&#128065;</span>
+        </div>
+        <div class="field-err" id="err-pw2">Passwords do not match</div>
+      </div>
+
+      <button class="btn-next" id="btn-save1" onclick="saveStep1()">Save &amp; Continue &#8594;</button>
     </div>
 
     <!-- ══ STEP 2 placeholder ══ -->
@@ -493,46 +658,206 @@ function showBanner(msg) {
   b.style.display = 'block';
 }
 
-// ── STEP 1 VALIDATION ─────────────────────────────────────────────────────────
-function saveStep1() {
+// ── SCHOOL SEARCH ────────────────────────────────────────────────────────────
+let schoolsList = [];
+let selectedSchool = null;
+
+async function searchSchools(val) {
+  const dropdown = document.getElementById('school-dropdown');
+  const confirmed = document.getElementById('school-confirmed');
+
+  // Hide confirmed if user is typing again
+  confirmed.style.display = 'none';
+  document.getElementById('f-school').style.display = 'block';
+  selectedSchool = null;
+
+  if (val.length < 3) {
+    dropdown.classList.remove('open');
+    return;
+  }
+
+  // Query Supabase schools table
+  const { data } = await sb
+    .from('schools')
+    .select('id, name')
+    .ilike('name', val + '%')
+    .order('name')
+    .limit(10);
+
+  schoolsList = data || [];
+
+  let html = schoolsList.map(s =>
+    `<div class="school-option" onclick="selectSchool('${s.id}','${s.name.replace(/'/g,"\'")}')">&#127979; ${s.name}</div>`
+  ).join('');
+
+  // Always offer "add new" option
+  html += `<div class="school-option add-new" onclick="addNewSchool('${val.replace(/'/g,"\'")}')">&#43; Add "${val}" as a new school</div>`;
+
+  dropdown.innerHTML = html;
+  dropdown.classList.add('open');
+}
+
+function selectSchool(id, name) {
+  selectedSchool = { id, name };
+  document.getElementById('f-school').style.display = 'none';
+  document.getElementById('school-dropdown').classList.remove('open');
+  document.getElementById('school-confirmed-name').textContent = name;
+  document.getElementById('school-confirmed').style.display = 'flex';
+  document.getElementById('err-school').style.display = 'none';
+}
+
+async function addNewSchool(name) {
+  const cleanName = name.trim();
+  if (!cleanName) return;
+  // Insert into schools table
+  const { data, error } = await sb.from('schools').insert({ name: cleanName }).select().single();
+  if (error && error.code !== '23505') {
+    // Try to fetch if already exists
+    const { data: existing } = await sb.from('schools').select('id,name').ilike('name', cleanName).maybeSingle();
+    if (existing) { selectSchool(existing.id, existing.name); return; }
+    showBanner('Could not add school. Please try again.'); return;
+  }
+  const schoolId = data ? data.id : null;
+  selectSchool(schoolId, cleanName);
+}
+
+function changeSchool() {
+  selectedSchool = null;
+  const inp = document.getElementById('f-school');
+  inp.style.display = 'block';
+  inp.value = '';
+  inp.focus();
+  document.getElementById('school-confirmed').style.display = 'none';
+  document.getElementById('school-dropdown').classList.remove('open');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('.school-wrap') && !e.target.closest('#school-confirmed')) {
+    document.getElementById('school-dropdown').classList.remove('open');
+  }
+});
+
+// ── PASSWORD RULES ────────────────────────────────────────────────────────────
+let pwValid = false;
+let pw2Valid = false;
+
+function togglePw(inputId, eyeId) {
+  const inp = document.getElementById(inputId);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function checkPw() {
+  const val = document.getElementById('f-pw').value;
+  const rules = {
+    'rule-len': val.length >= 8,
+    'rule-cap': /[A-Z]/.test(val),
+    'rule-num': /[0-9]/.test(val),
+    'rule-sym': /[^A-Za-z0-9]/.test(val),
+  };
+  let allMet = true;
+  for (const [id, met] of Object.entries(rules)) {
+    document.getElementById(id).className = 'pw-rule' + (met ? ' met' : '');
+    if (!met) allMet = false;
+  }
+  pwValid = allMet;
+  // Re-check confirm if already typed
+  if (document.getElementById('f-pw2').value) checkPw2();
+}
+
+function checkPw2() {
+  const pw  = document.getElementById('f-pw').value;
+  const pw2 = document.getElementById('f-pw2').value;
+  pw2Valid = pw === pw2 && pw2.length > 0;
+  document.getElementById('err-pw2').style.display = (!pw2Valid && pw2.length > 0) ? 'block' : 'none';
+  if (pw2Valid) document.getElementById('f-pw2').classList.remove('has-error');
+}
+
+// ── STEP 1 VALIDATION & SAVE ──────────────────────────────────────────────────
+async function saveStep1() {
   clearErrors();
 
   const name    = document.getElementById('f-name').value.trim();
   const surname = document.getElementById('f-surname').value.trim();
   const mobile  = document.getElementById('f-mobile').value.trim();
   const email   = document.getElementById('f-email').value.trim().toLowerCase();
+  const pw      = document.getElementById('f-pw').value;
+  const pw2     = document.getElementById('f-pw2').value;
 
   let ok = true;
 
-  if (!name) {
-    showFieldError('f-name', 'err-name');
-    ok = false;
-  }
-  if (!surname) {
-    showFieldError('f-surname', 'err-surname');
-    ok = false;
-  }
+  if (!name)    { showFieldError('f-name', 'err-name'); ok = false; }
+  if (!surname) { showFieldError('f-surname', 'err-surname'); ok = false; }
 
-  // SA mobile: 9 digits after +27, must start with 6, 7 or 8
   if (!mobile || mobile.length !== 9 || !/^[678]/.test(mobile)) {
-    showFieldError('f-mobile', 'err-mobile');
-    ok = false;
+    showFieldError('f-mobile', 'err-mobile'); ok = false;
   }
-
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    showFieldError('f-email', 'err-email');
-    ok = false;
+    showFieldError('f-email', 'err-email'); ok = false;
+  }
+  if (!selectedSchool) {
+    showFieldError('f-school', 'err-school'); ok = false;
+  }
+  if (!pwValid) {
+    showFieldError('f-pw', 'err-pw'); ok = false;
+  }
+  if (pw !== pw2 || !pw2) {
+    showFieldError('f-pw2', 'err-pw2'); ok = false;
   }
 
   if (!ok) return;
 
-  // Store data
-  reg.first_name = name;
-  reg.surname    = surname;
-  reg.full_name  = name + ' ' + surname;
-  reg.mobile     = '+27' + mobile;
-  reg.email      = email;
+  // Disable button while saving
+  const btn = document.getElementById('btn-save1');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
 
+  // 1. Create Supabase auth account
+  const { data: authData, error: authErr } = await sb.auth.signUp({
+    email,
+    password: pw,
+  });
+
+  if (authErr) {
+    btn.disabled = false;
+    btn.textContent = 'Save & Continue →';
+    if (authErr.message.includes('already registered') || authErr.message.includes('already been registered')) {
+      showBanner('This email is already registered. Please sign in instead.');
+    } else {
+      showBanner('Error creating account: ' + authErr.message);
+    }
+    return;
+  }
+
+  // 2. Insert player row into players table
+  const { error: dbErr } = await sb.from('players').upsert({
+    email,
+    full_name:   name + ' ' + surname,
+    first_name:  name,
+    surname,
+    phone_number: '+27' + mobile,
+    school_name:  selectedSchool.name,
+    school_id:    selectedSchool.id,
+    payment_status: 'unpaid',
+    eligibility_status: 'pending',
+  }, { onConflict: 'email' });
+
+  if (dbErr) {
+    console.warn('Player row error:', dbErr.message);
+    // Non-fatal — auth account was created, continue
+  }
+
+  // Store for next steps
+  reg.first_name   = name;
+  reg.surname      = surname;
+  reg.full_name    = name + ' ' + surname;
+  reg.mobile       = '+27' + mobile;
+  reg.email        = email;
+  reg.school_name  = selectedSchool.name;
+  reg.school_id    = selectedSchool.id;
+
+  btn.disabled = false;
+  btn.textContent = 'Save & Continue →';
   goStep(2);
 }
 
