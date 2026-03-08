@@ -74,8 +74,43 @@ nav { background:var(--navy-dark); padding:0 40px; display:flex; align-items:cen
 
 /* SCHOOL AUTOCOMPLETE */
 .school-wrap { position:relative; }
-.school-dropdown { position:absolute; top:calc(100% + 4px); left:0; right:0; background:white; border:2px solid var(--navy); border-radius:10px; max-height:220px; overflow-y:auto; z-index:200; box-shadow:0 8px 24px rgba(27,58,107,0.15); display:none; }
+.school-dropdown {
+  position:fixed;
+  top:80px;
+  right:24px;
+  width:300px;
+  background:white;
+  border:2px solid var(--navy);
+  border-radius:14px;
+  max-height:70vh;
+  overflow-y:auto;
+  z-index:999;
+  box-shadow:0 12px 40px rgba(27,58,107,0.2);
+  display:none;
+}
 .school-dropdown.open { display:block; }
+.school-dropdown-header {
+  padding:12px 16px 10px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:var(--navy);
+  border-bottom:1px solid #eef2f9;
+  background:#f8faff;
+  border-radius:12px 12px 0 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.school-dropdown-close {
+  cursor:pointer;
+  font-size:16px;
+  color:var(--text2);
+  line-height:1;
+  padding:2px 4px;
+}
+.school-dropdown-close:hover { color:var(--red); }
 .school-option { padding:11px 16px; font-size:14px; cursor:pointer; border-bottom:1px solid #eef2f9; color:var(--text); transition:background 0.15s; }
 .school-option:last-child { border-bottom:none; }
 .school-option:hover { background:#eef2f9; }
@@ -535,7 +570,7 @@ function searchSchools(val) {
     html += `<div class="school-option add-new" onclick="addNewSchool(document.getElementById('f-school').value)">&#43; Add &ldquo;${val}&rdquo; — school not listed</div>`;
   }
 
-  dd.innerHTML = html;
+  dd.innerHTML = '<div class="school-dropdown-header"><span>&#127979; Select your school</span><span class="school-dropdown-close" onclick="document.getElementById('school-dd').classList.remove('open')">&#10005;</span></div>' + html;
   dd.classList.add('open');
 }
 
@@ -819,7 +854,8 @@ function searchClubs(val) {
     SA_CLUBS.forEach(c => { if (!matches.includes(c) && c.toLowerCase().includes(q)) matches.push(c); });
   }
   matches = matches.slice(0, 12);
-  dd.innerHTML = matches.map(c =>
+  const header = '<div class="school-dropdown-header"><span>&#9971; Select your club</span><span class="school-dropdown-close" onclick="document.getElementById('club-dd').classList.remove('open')">&#10005;</span></div>';
+  dd.innerHTML = header + matches.map(c =>
     `<div class="school-option" onclick="selectClub('${c.replace(/'/g, "&apos;")}')">${c}</div>`
   ).join('');
   dd.classList.add('open');
