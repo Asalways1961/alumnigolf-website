@@ -327,8 +327,11 @@ function showBanner(msg) {
   b.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
+// ── SA SCHOOLS LIST ───────────────────────────────────────────────────────────
+const SA_SCHOOLS = ["Adelaide HS","Afrikaans Hoër Meisieskool","Afrikaanse Hoër Seunskool (Affies)","Afrikaanse Hoërskool Kroonstad","Albertinia HS","Alberton HS","Alexander Road HS","Aliwal Noord HS","Amsterdam HS","Augsburg Landbougimnasium","Barkly East HS","Bastion HS","Beaconsfield HS","Bellville HS","Ben Viljoen HS","Ben Vorster HS","Benoni High School","Berg Rivier HS","Bergsig HS","Bloemfontein HTS","Bloemhof HS","Bothaville HS","Brackenfell HS","Brits HS","Calvinia HS","Cambridge HS","Capricorn HS","Carleton Jones HS","Carnarvon HS","CBC Kimberley","CBC Pretoria","CBC Boksburg","Centurion HS","Chaplin High School","Charlie Hofmeyr HS","Christiana HS","Churchill High School","Cillie HS","Clifton HS","Cloetesville HS","Cradock HS","Cullinan HS","Curro Durbanville","Curro Hazeldean","Curro Heuwelkruin","DF Akademie HS","DF Malherbe HS","DHS","Dale College","Dan Pienaar HS","De Aar HS","De La Salle College","De Villiers Graaff HS","De Vos Malan HS","Delmas HS","Despatch HS","Diamantveld HS","Dinamika HS","Diocesan College (Bishops)","Driehoek HS","Dundee HS","Durban Girls HS","Durban HS","Durbanville HS","EG Jansen HS","Eden HS","Eldoraigne HS","Elliot HS","Erasmus HS","Ermelo HS","Estcourt HS","FH Odendaal HS","Fairmont HS","Ferdinand Postma HS","Fichardtpark HS","Fish Hoek HS","Florida HS","Framesby HS","Franschhoek HS","Frikkie Meyer HS","Garsfontein HS","Gelvendale HS","General Smuts HS","George HS","Gerrit Maritz HS","Gill College","Glenwood HS","Good Hope HS","Graeme College","Green Point Grammar School","Greenside HS","Grey College Bloemfontein","Grey College PE","HTS Daniel Pienaar","HTS Drostdy","Hamilton HS","Hans Strijdom HS","Harrismith HS","Hartswater HS","Heidelberg Volkskool","Helpmekaar Kollege","Highlands North HS","Hilton College","Hoogenhout HS","Hopefield HS","Hottentots-Holland HS","Hudson Park High HS","Hugenote HS Springs","Hugenote HS Wellington","Hyde Park HS","Jan Viljoen HS","Jan van Riebeeck HS","Jeppe HS","Jim Fouche HS","John Vorster HTS","Kalahari HS","Kathu HS","Kearsney College","Kempton Park HS","Kimberley Boys High","Kimberley HTS","King Edward VII School (KES)","Kingswood College","Klerksdorp HS","Knysna HS","Kroonstad HS","Krugersdorp HS","Kylemore HS","La Rochelle HS","Ladybrand HS","Landbouskool Oakdale","Langenhoven HS","Lichtenburg HS","Linden HS","Louis Botha HTS","Marais Viljoen HS","Marist Brothers Linmeyer","Maritzburg College","Marlow HS","Marthinus Wessels HS","Mary Waters HS","Menlopark HS","Merensky HS","Michaelhouse","Middelburg HTS","Milnerton HS","Milton HS","Montagu HS","Montana HS","Monument HS","Muir College","Muizenberg HS","Nelspruit HS","Nico Malan HS","Noorder Paarl HS","Noordheuwel HS","Northcliff HS","Northwood HS","Nylstroom HS","Observatory Boys High","Oudtshoorn HS","Outeniqua HS","Overberg HS","Overkruin HS","Paarl Boys High","Paarl Gimnasium","Paarl Girls High","Parel Vallei HS","Parklands College","Parktown Boys High","Parow HS","Paul Roos Gimnasium","Pearson HS","Piet Potgieter HS","Pietersburg HS","Piketberg HS","Pinelands HS","Pinetown Boys High","Plumstead HS","Port Shepstone HS","Potchefstroom Boys High","Potchefstroom Gimnasium","Pretoria Boys High","Randburg HS","Randfontein HS","Rhenish Girls High","Rob Ferreira HS","Robertson HS","Rondebosch Boys High","Roodepoort HS","Rustenburg HS","SACS","Sandown HS","Sasolburg HS","Sea Point Boys High","Secunda HS","Selborne College","Sentraal HS","Settlers HS","Springs Boys High","St Andrews Bloemfontein","St Andrews Grahamstown","St Charles Pietermaritzburg","St Johns College","St Michaels College","St Stithians College","Standerton HS","Stellenberg HS","Stellenbosch HS","Stirling High School","Strand HS","Swartland HS","Swellendam HS","The Hill HS","Thornhill HS","Tom Naude HS","Transvalia HS","TuksSport HS","Tulbagh HS","Tygerberg HS","Upington HS","Vanderbijlpark HS","Victoria HS","Volksrust HS","Voortrekker Bethlehem","Voortrekker Boksburg","Voortrekker Pietermaritzburg","Voortrekkerhoogte HS","Vredenburg HS","Vryburg HS","Vryheid HS","Waterkloof HS","Welkom Gimnasium","Westerford HS","Westering HS","Westville Boys High","Wilgers HS","Windhoek HS","Windsor HS","Witbank HS","Wolmaransstad HS","Wonderboom HS","Woodridge College","Worcester Gimnasium","Wynberg Boys High","Wynberg Girls HS","Zastron HS","Zeerust HS","Zwartkop HS"];
+
 // ── SCHOOL SEARCH ─────────────────────────────────────────────────────────────
-async function searchSchools(val) {
+function searchSchools(val) {
   const dd = document.getElementById('school-dd');
   document.getElementById('school-confirmed').style.display = 'none';
   document.getElementById('f-school').style.display = 'block';
@@ -336,20 +339,32 @@ async function searchSchools(val) {
 
   if (val.length < 3) { dd.classList.remove('open'); return; }
 
-  const { data } = await sb.from('schools').select('id, name').ilike('name', val + '%').order('name').limit(12);
-  const list = data || [];
+  const q = val.toLowerCase();
+  // First: starts with
+  let matches = SA_SCHOOLS.filter(s => s.toLowerCase().startsWith(q));
+  // Then: contains (if fewer than 3 results)
+  if (matches.length < 3) {
+    SA_SCHOOLS.forEach(s => {
+      if (!matches.includes(s) && s.toLowerCase().includes(q)) matches.push(s);
+    });
+  }
+  matches = matches.slice(0, 12);
 
-  let html = list.map(s =>
-    `<div class="school-option" onclick="selectSchool('${s.id}','${s.name.replace(/'/g, "\\'")}')">${s.name}</div>`
+  let html = matches.map(s =>
+    `<div class="school-option" onclick="selectSchool('${s.replace(/'/g, "&apos;")}')">${s}</div>`
   ).join('');
-  html += `<div class="school-option add-new" onclick="addNewSchool('${val.replace(/'/g, "\\'")}')">&#43; Add &ldquo;${val}&rdquo; as a new school</div>`;
+
+  const exactMatch = SA_SCHOOLS.some(s => s.toLowerCase() === q);
+  if (!exactMatch) {
+    html += `<div class="school-option add-new" onclick="addNewSchool(document.getElementById('f-school').value)">&#43; Add &ldquo;${val}&rdquo; — school not listed</div>`;
+  }
 
   dd.innerHTML = html;
   dd.classList.add('open');
 }
 
-function selectSchool(id, name) {
-  selectedSchool = { id, name };
+function selectSchool(name) {
+  selectedSchool = { name };
   document.getElementById('f-school').style.display = 'none';
   document.getElementById('school-dd').classList.remove('open');
   document.getElementById('school-confirmed-name').textContent = name;
@@ -360,14 +375,11 @@ function selectSchool(id, name) {
 async function addNewSchool(name) {
   const clean = name.trim();
   if (!clean) return;
-  const { data, error } = await sb.from('schools').insert({ name: clean }).select().single();
-  if (error) {
-    // May already exist — try to find it
-    const { data: found } = await sb.from('schools').select('id,name').ilike('name', clean).maybeSingle();
-    if (found) { selectSchool(found.id, found.name); return; }
-    showBanner('Could not add school — please try again.'); return;
-  }
-  selectSchool(data.id, data.name);
+  // Try to save to schools table — non-fatal if fails
+  try {
+    await sb.from('schools').insert({ name: clean });
+  } catch(e) { /* ignore */ }
+  selectSchool(clean);
 }
 
 function changeSchool() {
