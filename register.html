@@ -517,9 +517,6 @@ footer a { color:var(--gold); text-decoration:none; }
 
     <!-- ══ STEP 4: PARTNER SELECTION ══ -->
     <div class="step-section" id="sec-4">
-      <div class="card-heading">Select Partner Option</div>
-      <div class="card-sub">Step 4 of 4 — Select your partner option &amp; complete payment</div>
-
       <!-- PARTNER OPTIONS -->
       <div id="sec-4-partner-options">
         <div class="partner-option" id="popt-has" onclick="selectPartnerOption('has_partner')">
@@ -652,12 +649,15 @@ footer a { color:var(--gold); text-decoration:none; }
           <button class="btn-next" id="btn-submit-payment" onclick="submitPayment()" style="margin-top:20px;">✅ Submit &amp; Complete Registration</button>
         </div>
 
-        <!-- PAY LATER confirm button -->
+        <!-- PAY LATER confirm -->
         <div id="pay-later-confirm" style="display:none;">
-          <div style="background:#fff8e8; border:1px solid var(--gold); border-radius:10px; padding:14px 16px; font-size:13px; color:#7a5c00; margin-bottom:20px; line-height:1.6;">
+          <div style="background:#fff8e8; border:1px solid var(--gold); border-radius:10px; padding:14px 16px; font-size:13px; color:#7a5c00; margin-bottom:24px; line-height:1.6;">
             ⚠️ Your registration will be saved but <strong>your place is not secured until payment is received.</strong> You can pay at any time from your Player Portal.
           </div>
-          <button class="btn-next" id="btn-pay-later-confirm" onclick="submitPayLater()">✅ Complete Registration</button>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <a href="index.html" onclick="submitPayLater(event)" style="flex:1; min-width:160px; display:inline-block; padding:14px 20px; background:white; border:2px solid var(--navy); border-radius:10px; font-size:14px; font-weight:700; color:var(--navy); text-decoration:none; text-align:center;">🏠 Go to Website</a>
+            <a href="portal.html" onclick="submitPayLater(event)" style="flex:1; min-width:160px; display:inline-block; padding:14px 20px; background:var(--navy-dark); border-radius:10px; font-size:14px; font-weight:700; color:white; text-decoration:none; text-align:center;">👤 Player Login &#8594;</a>
+          </div>
         </div>
 
         <button class="btn-back" id="btn-back-from-payment" onclick="backFromPayment()">&#8592; Back</button>
@@ -1353,11 +1353,10 @@ async function submitPayment() {
   showSuccess();
 }
 
-async function submitPayLater() {
-  if (!selectedPayAmount) { document.getElementById('err-pay-amount').style.display = 'block'; return; }
-  const btn = document.getElementById('btn-pay-later-confirm');
-  btn.disabled = true;
-  btn.textContent = 'Saving...';
+async function submitPayLater(e) {
+  if (!selectedPayAmount) { document.getElementById('err-pay-amount').style.display = 'block'; if(e) e.preventDefault(); return; }
+  if (e) e.preventDefault();
+  const dest = e ? e.currentTarget.getAttribute('href') : 'index.html';
 
   const amount = selectedPayAmount === 'team' ? 2800 : 1500;
   const teamNumber = await assignTeamNumber(reg.school);
@@ -1375,9 +1374,7 @@ async function submitPayLater() {
 
   await sb.auth.signUp({ email: reg.email, password: reg.password });
 
-  btn.disabled = false;
-  btn.textContent = 'Complete Registration →';
-  showSuccess();
+  window.location.href = dest;
 }
 
 async function assignTeamNumber(school) {
