@@ -95,6 +95,28 @@ nav { background:var(--navy-dark); padding:0 40px; display:flex; align-items:cen
 .rule-dot { width:18px; height:18px; border-radius:50%; border:2px solid #ddd; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; transition:all 0.2s; color:transparent; }
 .pw-rule.met .rule-dot { background:var(--green); border-color:var(--green); color:white; }
 
+/* ELIGIBILITY QUESTIONS */
+.elig-question { margin-bottom:24px; padding:18px; background:#f8faff; border:2px solid #dce8ff; border-radius:12px; }
+.elig-q-text { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:4px; line-height:1.4; }
+.elig-q-sub { font-size:12px; color:var(--text2); margin-bottom:14px; line-height:1.5; }
+.yn-row { display:flex; gap:10px; flex-wrap:wrap; }
+.yn-btn { flex:1; min-width:140px; padding:11px 14px; border-radius:8px; border:2px solid #dce8ff; background:white; font-size:13px; font-weight:600; color:var(--navy); font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.2s; text-align:center; }
+.yn-btn:hover { border-color:var(--navy); }
+.yn-btn.selected { background:var(--navy); color:white; border-color:var(--navy); }
+.yn-btn-warn { color:#c0392b; border-color:#fcd5d5; background:#fff8f8; }
+.yn-btn-warn:hover { border-color:#c0392b; }
+.yn-btn-warn.selected { background:#c0392b; color:white; border-color:#c0392b; }
+
+/* CHECKBOXES */
+.check-block { margin-bottom:18px; padding:16px; background:#f8faff; border:2px solid #dce8ff; border-radius:12px; }
+.check-label { display:flex; gap:12px; align-items:flex-start; cursor:pointer; }
+.check-label input[type=checkbox] { display:none; }
+.check-custom { width:22px; height:22px; min-width:22px; border:2px solid var(--navy); border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:13px; color:transparent; transition:all 0.2s; margin-top:1px; }
+.check-label input:checked + .check-custom { background:var(--navy); color:white; }
+.check-text { font-size:13px; color:var(--text); line-height:1.6; }
+.doc-link { color:var(--navy); font-weight:700; text-decoration:underline; }
+.doc-link:hover { color:var(--gold); }
+
 /* DIVIDER */
 .divider { height:1px; background:#eef2f9; margin:24px 0; }
 
@@ -158,7 +180,7 @@ footer a { color:var(--gold); text-decoration:none; }
   <div class="progress">
     <div class="prog-step active" id="prog-1"><div class="prog-dot">1</div><div class="prog-label">Personal</div></div>
     <div class="prog-line" id="line-1"></div>
-    <div class="prog-step" id="prog-2"><div class="prog-dot">2</div><div class="prog-label">Golf</div></div>
+    <div class="prog-step" id="prog-2"><div class="prog-dot">2</div><div class="prog-label">Eligibility</div></div>
     <div class="prog-line" id="line-2"></div>
     <div class="prog-step" id="prog-3"><div class="prog-dot">3</div><div class="prog-label">Partner</div></div>
     <div class="prog-line" id="line-3"></div>
@@ -252,12 +274,108 @@ footer a { color:var(--gold); text-decoration:none; }
       <button class="btn-next" id="btn-step1" onclick="saveStep1()">Save &amp; Continue &#8594;</button>
     </div>
 
-    <!-- ══ STEP 2 placeholder ══ -->
+    <!-- ══ STEP 2: ELIGIBILITY ══ -->
     <div class="step-section" id="sec-2">
-      <div class="card-heading">Golf Details</div>
-      <div class="card-sub">Step 2 of 4 — Your golf information</div>
-      <p style="color:var(--text2);font-size:14px;padding:20px 0;">Coming next...</p>
-      <button class="btn-back" onclick="goStep(1)">&#8592; Back</button>
+      <div class="card-heading">Eligibility &amp; Consent</div>
+      <div class="card-sub">Step 2 of 4 — Please confirm the following before proceeding</div>
+
+      <!-- HARD LOCK MESSAGE -->
+      <div id="hardlock-msg" style="display:none; background:#fef0ef; border:2px solid var(--red); border-radius:12px; padding:20px; margin-bottom:24px; text-align:center;">
+        <div style="font-size:36px; margin-bottom:10px;">⛔</div>
+        <div style="font-weight:700; color:var(--red); font-size:16px; margin-bottom:8px;" id="hardlock-title"></div>
+        <div style="font-size:13px; color:#666; line-height:1.6; margin-bottom:16px;" id="hardlock-body"></div>
+        <a href="supporter.html">
+          <button class="btn-next" style="background:#555; max-width:260px; margin:0 auto; display:block;">Register as a Supporter instead</button>
+        </a>
+        <button class="btn-back" style="max-width:260px; margin:8px auto 0; display:block;" onclick="resetEligibility()">&#8592; Go Back &amp; Review</button>
+      </div>
+
+      <!-- ELIGIBILITY FORM -->
+      <div id="elig-form">
+
+        <!-- SECTION: AGREEMENTS -->
+        <div style="font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:14px;">Privacy &amp; Tournament Agreements</div>
+
+        <div class="check-block" id="cb-popia">
+          <label class="check-label">
+            <input type="checkbox" id="chk-popia" onchange="clearEligError('err-popia')" />
+            <span class="check-custom"></span>
+            <span class="check-text">I have read and agree to the <a href="#" onclick="showDoc('popia')" class="doc-link">POPIA Privacy Policy</a> of Legacy Events Ventures (Pty) Ltd. I consent to my personal information being processed for the purpose of administering the Alumni Schools Golf Challenge.</span>
+          </label>
+          <div class="field-err" id="err-popia">You must accept the Privacy Policy to proceed</div>
+        </div>
+
+        <div class="check-block" id="cb-rules">
+          <label class="check-label">
+            <input type="checkbox" id="chk-rules" onchange="clearEligError('err-rules')" />
+            <span class="check-custom"></span>
+            <span class="check-text">I have read and agree to the <a href="#" onclick="showDoc('rules')" class="doc-link">Tournament Rules &amp; Conditions</a> and the <a href="#" onclick="showDoc('conduct')" class="doc-link">Code of Conduct</a> of the Alumni Schools Golf Challenge Inaugural Season 2026/27.</span>
+          </label>
+          <div class="field-err" id="err-rules">You must accept the Tournament Rules &amp; Code of Conduct to proceed</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- SECTION: ELIGIBILITY QUESTIONS -->
+        <div style="font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:14px;">Eligibility Confirmation</div>
+
+        <!-- Q1: Still at school -->
+        <div class="elig-question" id="eq-school">
+          <div class="elig-q-text">Are you currently still enrolled as a learner at a school?</div>
+          <div class="elig-q-sub">The tournament is open exclusively to alumni who have completed their schooling.</div>
+          <div class="yn-row">
+            <button class="yn-btn" id="yn-school-no" onclick="setYN('school','no')">&#10003; No — I have completed my schooling</button>
+            <button class="yn-btn yn-btn-warn" id="yn-school-yes" onclick="setYN('school','yes')">Still at school</button>
+          </div>
+          <div class="field-err" id="err-school-q">Please answer this question</div>
+        </div>
+
+        <!-- Q2: Valid handicap -->
+        <div class="elig-question" id="eq-handicap">
+          <div class="elig-q-text">Do you hold a current, active HNA (Handicap Network Africa) registered golf handicap?</div>
+          <div class="elig-q-sub">A valid GolfRSA / HNA handicap is mandatory for all participants.</div>
+          <div class="yn-row">
+            <button class="yn-btn" id="yn-hcp-yes" onclick="setYN('handicap','yes')">&#10003; Yes — I have an active HNA handicap</button>
+            <button class="yn-btn yn-btn-warn" id="yn-hcp-no" onclick="setYN('handicap','no')">No registered handicap</button>
+          </div>
+          <div class="field-err" id="err-handicap-q">Please answer this question</div>
+        </div>
+
+        <!-- Q3: Over 18 -->
+        <div class="elig-question" id="eq-age">
+          <div class="elig-q-text">Do you confirm that you are 18 years of age or older?</div>
+          <div class="elig-q-sub">All participants must be at least 18 years old at the time of registration.</div>
+          <div class="yn-row">
+            <button class="yn-btn" id="yn-age-yes" onclick="setYN('age','yes')">&#10003; Yes — I am 18 or older</button>
+            <button class="yn-btn yn-btn-warn" id="yn-age-no" onclick="setYN('age','no')">Under 18</button>
+          </div>
+          <div class="field-err" id="err-age-q">Please answer this question</div>
+        </div>
+
+        <!-- Q4: Same school -->
+        <div class="elig-question" id="eq-sameschool">
+          <div class="elig-q-text">Do you understand and agree that both players in your team must be alumni of the same school?</div>
+          <div class="elig-q-sub">Mixed, all-male and all-female teams are welcome. There is no limit on the number of teams per school.</div>
+          <div class="yn-row">
+            <button class="yn-btn" id="yn-same-yes" onclick="setYN('sameschool','yes')">&#10003; Agreed — both from the same school</button>
+          </div>
+          <div class="field-err" id="err-sameschool-q">Please confirm this requirement</div>
+        </div>
+
+        <div class="field-err" id="err-elig-general" style="margin-bottom:12px;"></div>
+
+        <button class="btn-next" id="btn-step2" onclick="saveStep2()">Confirm &amp; Continue &#8594;</button>
+        <button class="btn-back" onclick="goStep(1)">&#8592; Back</button>
+      </div>
+
+      <!-- DOC MODAL -->
+      <div id="doc-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+        <div style="background:white; border-radius:16px; max-width:640px; width:100%; max-height:80vh; overflow-y:auto; padding:28px; position:relative;">
+          <button onclick="closeDoc()" style="position:absolute; top:16px; right:16px; background:none; border:none; font-size:22px; cursor:pointer; color:#999;">&#10005;</button>
+          <div id="doc-content"></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ══ STEP 3 placeholder ══ -->
@@ -490,7 +608,147 @@ async function saveStep1() {
   goStep(2);
 }
 
-// ── AUTO REDIRECT IF ALREADY LOGGED IN ───────────────────────────────────────
+// ── STEP 2: ELIGIBILITY ───────────────────────────────────────────────────────
+const ynState = { school: null, handicap: null, age: null, sameschool: null };
+
+function setYN(question, val) {
+  ynState[question] = val;
+  // Update button styles
+  const map = {
+    school:     ['yn-school-no','yn-school-yes'],
+    handicap:   ['yn-hcp-yes','yn-hcp-no'],
+    age:        ['yn-age-yes','yn-age-no'],
+    sameschool: ['yn-same-yes', null],
+  };
+  const [pos, neg] = map[question];
+  if (pos) document.getElementById(pos).className = 'yn-btn' + (val === 'yes' && question !== 'school' ? ' selected' : val === 'no' && question === 'school' ? ' selected' : '');
+  if (neg) document.getElementById(neg).className = 'yn-btn yn-btn-warn' + (val === 'yes' && question === 'school' ? ' selected' : val === 'no' && question !== 'school' ? ' selected' : '');
+
+  // Recolour properly
+  if (question === 'school') {
+    document.getElementById('yn-school-no').className  = 'yn-btn' + (val === 'no'  ? ' selected' : '');
+    document.getElementById('yn-school-yes').className = 'yn-btn yn-btn-warn' + (val === 'yes' ? ' selected' : '');
+  } else if (question === 'handicap') {
+    document.getElementById('yn-hcp-yes').className = 'yn-btn' + (val === 'yes' ? ' selected' : '');
+    document.getElementById('yn-hcp-no').className  = 'yn-btn yn-btn-warn' + (val === 'no'  ? ' selected' : '');
+  } else if (question === 'age') {
+    document.getElementById('yn-age-yes').className = 'yn-btn' + (val === 'yes' ? ' selected' : '');
+    document.getElementById('yn-age-no').className  = 'yn-btn yn-btn-warn' + (val === 'no'  ? ' selected' : '');
+  } else if (question === 'sameschool') {
+    document.getElementById('yn-same-yes').className = 'yn-btn selected';
+  }
+  // Clear error for this question
+  const errMap = { school:'err-school-q', handicap:'err-handicap-q', age:'err-age-q', sameschool:'err-sameschool-q' };
+  document.getElementById(errMap[question]).style.display = 'none';
+}
+
+function clearEligError(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function resetEligibility() {
+  document.getElementById('hardlock-msg').style.display = 'none';
+  document.getElementById('elig-form').style.display = 'block';
+}
+
+function showHardlock(title, body) {
+  document.getElementById('elig-form').style.display = 'none';
+  document.getElementById('hardlock-title').textContent = title;
+  document.getElementById('hardlock-body').textContent = body;
+  document.getElementById('hardlock-msg').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function saveStep2() {
+  let ok = true;
+
+  // Validate checkboxes
+  if (!document.getElementById('chk-popia').checked) {
+    document.getElementById('err-popia').style.display = 'block';
+    document.getElementById('cb-popia').style.borderColor = 'var(--red)';
+    ok = false;
+  }
+  if (!document.getElementById('chk-rules').checked) {
+    document.getElementById('err-rules').style.display = 'block';
+    document.getElementById('cb-rules').style.borderColor = 'var(--red)';
+    ok = false;
+  }
+
+  // Validate Y/N answers
+  if (ynState.school === null)      { document.getElementById('err-school-q').style.display = 'block'; ok = false; }
+  if (ynState.handicap === null)    { document.getElementById('err-handicap-q').style.display = 'block'; ok = false; }
+  if (ynState.age === null)         { document.getElementById('err-age-q').style.display = 'block'; ok = false; }
+  if (ynState.sameschool === null)  { document.getElementById('err-sameschool-q').style.display = 'block'; ok = false; }
+
+  if (!ok) return;
+
+  // Save partial data to Supabase regardless of eligibility outcome
+  await sb.from('players').update({
+    popia_accepted: true,
+    rules_accepted: true,
+    still_at_school: ynState.school === 'yes',
+    has_handicap: ynState.handicap === 'yes',
+    eligibility_status: 'pending',
+  }).eq('email', reg.email);
+
+  // Check hard locks
+  if (ynState.school === 'yes') {
+    await sb.from('players').update({ eligibility_status: 'ineligible' }).eq('email', reg.email);
+    showHardlock(
+      'Registration Not Permitted — Current Learner',
+      'Unfortunately, the Alumni Schools Golf Challenge is open exclusively to alumni who have already completed their schooling. As a current learner, you are not eligible to enter as a player. You are welcome to follow the tournament as a Supporter.'
+    ); return;
+  }
+  if (ynState.handicap === 'no') {
+    await sb.from('players').update({ eligibility_status: 'ineligible' }).eq('email', reg.email);
+    showHardlock(
+      'Registration Not Permitted — No Valid HNA Handicap',
+      'A current, active HNA (Handicap Network Africa) registered handicap is a mandatory requirement for all participants. Players without an official handicap are not permitted to enter. You are welcome to obtain an HNA handicap through your local GolfRSA-affiliated club and register in a future season. In the meantime, you may register as a Supporter.'
+    ); return;
+  }
+  if (ynState.age === 'no') {
+    await sb.from('players').update({ eligibility_status: 'ineligible' }).eq('email', reg.email);
+    showHardlock(
+      'Registration Not Permitted — Age Requirement Not Met',
+      'All participants must be at least 18 years of age at the time of registration. Unfortunately you do not meet this requirement and are not eligible to enter as a player. You are welcome to register as a Supporter.'
+    ); return;
+  }
+
+  // All clear — update eligibility status
+  await sb.from('players').update({ eligibility_status: 'eligible' }).eq('email', reg.email);
+  reg.popia_accepted = true;
+  reg.rules_accepted = true;
+  goStep(3);
+}
+
+// ── DOCUMENT VIEWER ───────────────────────────────────────────────────────────
+const DOCS = {
+  popia: {
+    title: 'Privacy Policy — POPIA',
+    body: `Legacy Events Ventures (Pty) Ltd is committed to protecting your personal information in accordance with the Protection of Personal Information Act 4 of 2013 (POPIA).\n\nWe collect your personal information solely for the purpose of administering the Alumni Schools Golf Challenge tournament. This includes your name, email address, mobile number, school, handicap details and payment information.\n\nYour data is stored securely on Supabase infrastructure, is never sold to third parties, and is only shared with authorised tournament administrators. You have the right to access, correct or request deletion of your data at any time by contacting asmgolf123@gmail.com.\n\nBy registering, you consent to your personal information being processed as described in our full Privacy Policy.`
+  },
+  rules: {
+    title: 'Tournament Rules & Conditions — Summary',
+    body: `The Alumni Schools Golf Challenge is a Betterball Matchplay tournament for alumni of South African schools, played in divisions of 8 teams.\n\nKey Rules:\n• Teams consist of two alumni from the same school.\n• A valid, active HNA handicap is required. 90% of Course Handicap applies; maximum 24 (men) / 28 (women).\n• Home team books a GolfRSA-affiliated course within the round window.\n• Scores are submitted hole-by-hole via the app. Manual scorecards are mandatory.\n• All-square matches proceed to sudden death from Hole 1.\n• Admin decisions on disputes are final.\n• Entry fee is approximately R1,500 per player (R3,000 per team). No refunds once included in the draw.\n• By registering you grant the organisers permission to photograph and film you for promotional purposes.\n\nFull rules are available in the app.`
+  },
+  conduct: {
+    title: 'Code of Conduct',
+    body: `Participants are expected to uphold golf's values of respect, honesty, integrity and sportsmanship at all times.\n\nThe following will not be tolerated:\n• Abuse of alcohol or drugs\n• Offensive language\n• Throwing or abusing golf equipment\n• Conduct that offends the etiquette or rules of golf\n• Damage to property\n\nThe Alumni Schools Golf Challenge Management accepts no liability for loss of personal items, injury, personal accounts, medical bills or travel costs incurred during the event.\n\nParticipants found in breach of this Code of Conduct will be asked to leave the tournament immediately and all costs incurred will be recovered from the transgressing participant.\n\nBy registering, you agree to abide by this Code of Conduct in full.`
+  }
+};
+
+function showDoc(key) {
+  const doc = DOCS[key];
+  document.getElementById('doc-content').innerHTML = `
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--navy-dark);margin-bottom:16px;">${doc.title}</h2>
+    <div style="font-size:13px;color:#444;line-height:1.8;white-space:pre-line;">${doc.body}</div>
+  `;
+  const modal = document.getElementById('doc-modal');
+  modal.style.display = 'flex';
+}
+function closeDoc() {
+  document.getElementById('doc-modal').style.display = 'none';
+}
 sb.auth.getSession().then(({ data: { session } }) => {
   if (session) {
     sb.from('players').select('email').eq('email', session.user.email).maybeSingle().then(({ data }) => {
