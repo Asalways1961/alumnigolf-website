@@ -177,6 +177,43 @@ nav { background:var(--navy-dark); padding:0 40px; display:flex; align-items:cen
 .bottom-link a { color:var(--navy); font-weight:700; text-decoration:none; }
 .bottom-link a:hover { color:var(--gold); }
 
+/* PARTNER OPTIONS */
+.partner-option {
+  display:flex; align-items:center; gap:16px; padding:16px 18px;
+  border:2px solid #dce8ff; border-radius:12px; cursor:pointer;
+  margin-bottom:12px; background:white; transition:all 0.2s;
+}
+.partner-option:hover { border-color:var(--navy); background:#f8faff; }
+.partner-option.selected { border-color:var(--navy); background:#f0f5ff; }
+.popt-icon { font-size:26px; flex-shrink:0; }
+.popt-body { flex:1; }
+.popt-title { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:3px; }
+.popt-sub { font-size:12px; color:var(--text2); line-height:1.4; }
+.popt-check { font-size:18px; color:var(--green); opacity:0; transition:opacity 0.2s; flex-shrink:0; }
+.partner-option.selected .popt-check { opacity:1; }
+
+/* PAYMENT TIMING BUTTONS */
+.pay-timing-btn {
+  flex:1; min-width:160px; padding:13px 16px; border-radius:10px;
+  border:2px solid #dce8ff; background:white; font-size:13px; font-weight:700;
+  color:var(--navy); font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.2s;
+}
+.pay-timing-btn:hover { border-color:var(--navy); background:#f0f5ff; }
+.pay-timing-btn.selected { border-color:var(--navy); background:var(--navy); color:white; }
+
+/* EFT ROWS */
+.eft-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #dce8ff; font-size:13px; }
+.eft-row:last-child { border-bottom:none; }
+.eft-label { color:var(--text2); font-weight:500; }
+.eft-val { font-weight:600; color:var(--text); }
+
+/* PROOF OF PAYMENT DROPZONE */
+.pop-dropzone {
+  border:2px dashed #ccd6e8; border-radius:12px; padding:28px 20px;
+  text-align:center; cursor:pointer; transition:border-color 0.2s; background:#fafcff;
+}
+.pop-dropzone:hover { border-color:var(--navy); background:#f0f5ff; }
+
 /* FOOTER */
 footer { background:var(--navy-dark); border-top:2px solid var(--gold); color:rgba(255,255,255,0.5); text-align:center; padding:20px; font-size:12px; }
 footer a { color:var(--gold); text-decoration:none; }
@@ -479,12 +516,169 @@ footer a { color:var(--gold); text-decoration:none; }
       <button class="btn-back" onclick="goStep(2)">&#8592; Back</button>
     </div>
 
-    <!-- ══ STEP 4 placeholder ══ -->
+    <!-- ══ STEP 4: PARTNER SELECTION ══ -->
     <div class="step-section" id="sec-4">
-      <div class="card-heading">Entry Fee &amp; Payment</div>
-      <div class="card-sub">Step 4 of 4 — Complete your registration</div>
-      <p style="color:var(--text2);font-size:14px;padding:20px 0;">Coming next...</p>
-      <button class="btn-back" onclick="goStep(3)">&#8592; Back</button>
+      <div class="card-heading">Select Partner Option</div>
+      <div class="card-sub">Step 4 of 4 — How would you like to proceed with your partner?</div>
+
+      <!-- PARTNER OPTIONS -->
+      <div id="sec-4-partner-options">
+        <div class="partner-option" id="popt-has" onclick="selectPartnerOption('has_partner')">
+          <div class="popt-icon">🤝</div>
+          <div class="popt-body">
+            <div class="popt-title">I have a partner</div>
+            <div class="popt-sub">I know who my partner is — I will invite them now</div>
+          </div>
+          <div class="popt-check" id="pcheck-has_partner">&#10003;</div>
+        </div>
+        <div class="partner-option" id="popt-later" onclick="selectPartnerOption('invite_later')">
+          <div class="popt-icon">⏳</div>
+          <div class="popt-body">
+            <div class="popt-title">I will invite my partner later</div>
+            <div class="popt-sub">I want to register now and invite my partner at a later stage</div>
+          </div>
+          <div class="popt-check" id="pcheck-invite_later">&#10003;</div>
+        </div>
+        <div class="partner-option" id="popt-need" onclick="selectPartnerOption('need_partner')">
+          <div class="popt-icon">🔍</div>
+          <div class="popt-body">
+            <div class="popt-title">I need a partner</div>
+            <div class="popt-sub">Place me in the player pool — find me a partner from my school within 50km</div>
+          </div>
+          <div class="popt-check" id="pcheck-need_partner">&#10003;</div>
+        </div>
+        <div class="field-err" id="err-partner-option" style="margin-top:8px;">Please select a partner option</div>
+        <button class="btn-next" id="btn-partner-option" onclick="confirmPartnerOption()" style="margin-top:20px;">Continue &#8594;</button>
+        <button class="btn-back" onclick="goStep(3)">&#8592; Back</button>
+      </div>
+
+      <!-- INVITE PARTNER FORM (Option 1) -->
+      <div id="sec-4-invite" style="display:none;">
+        <div class="card-heading" style="font-size:22px;">Invite Your Partner</div>
+        <div class="card-sub" style="margin-bottom:24px;">Your partner will receive an invitation to complete their registration</div>
+
+        <div class="field-block">
+          <label>Partner's First Name *</label>
+          <input type="text" id="inv-name" placeholder="e.g. John" />
+          <div class="field-err" id="err-inv-name">Please enter your partner's first name</div>
+        </div>
+        <div class="field-block">
+          <label>Partner's Surname *</label>
+          <input type="text" id="inv-surname" placeholder="e.g. Smith" />
+          <div class="field-err" id="err-inv-surname">Please enter your partner's surname</div>
+        </div>
+        <div class="field-block">
+          <label>Partner's Mobile Number *</label>
+          <div class="phone-row">
+            <div class="phone-prefix">+27</div>
+            <input type="tel" id="inv-mobile" placeholder="821234567" maxlength="9" oninput="this.value=this.value.replace(/\D/g,'')" />
+          </div>
+          <div class="field-err" id="err-inv-mobile">Enter 9 digits without the leading 0</div>
+        </div>
+        <div class="field-block">
+          <label>Partner's Email Address <span style="font-weight:400;color:var(--text2);">(optional)</span></label>
+          <input type="email" id="inv-email" placeholder="e.g. partner@gmail.com" />
+        </div>
+        <div class="field-block">
+          <label>School</label>
+          <input type="text" id="inv-school" readonly style="background:#f8faff; color:var(--text2); cursor:not-allowed;" />
+          <div style="font-size:11px; color:var(--text2); margin-top:5px;">Your partner must be an alumni of the same school as you</div>
+        </div>
+
+        <button class="btn-next" id="btn-send-invite" onclick="sendPartnerInvite()">📨 Send Invite &amp; Continue &#8594;</button>
+        <button class="btn-back" onclick="backToPartnerOptions()">&#8592; Back</button>
+      </div>
+
+      <!-- PAYMENT SCREEN -->
+      <div id="sec-4-payment" style="display:none;">
+        <div class="card-heading" style="font-size:22px;">Entry Fee Payment</div>
+        <div class="card-sub" id="payment-sub-msg" style="margin-bottom:24px;"></div>
+
+        <!-- PAYMENT AMOUNT CHOICE -->
+        <div style="margin-bottom:24px;" id="payment-amount-section">
+          <div style="font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--navy); margin-bottom:12px;">Select Payment Amount</div>
+          <div class="partner-option" id="pay-opt-individual" onclick="selectPayAmount('individual')" style="margin-bottom:10px;">
+            <div class="popt-icon">👤</div>
+            <div class="popt-body">
+              <div class="popt-title">Pay for myself — R1,500</div>
+              <div class="popt-sub">My partner will pay their own entry fee separately</div>
+            </div>
+            <div class="popt-check" id="pcheck-individual">&#10003;</div>
+          </div>
+          <div class="partner-option" id="pay-opt-team" onclick="selectPayAmount('team')">
+            <div class="popt-icon">🤝</div>
+            <div class="popt-body">
+              <div class="popt-title">Pay for the full team — R2,800 <span style="background:#e8f5e9;color:var(--green);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;">SAVE R200</span></div>
+              <div class="popt-sub">Pay for both players now at a discounted team rate</div>
+            </div>
+            <div class="popt-check" id="pcheck-team">&#10003;</div>
+          </div>
+          <div class="field-err" id="err-pay-amount" style="margin-top:8px;">Please select a payment amount</div>
+        </div>
+
+        <!-- PAY NOW or LATER -->
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--navy); margin-bottom:12px;">When would you like to pay?</div>
+        <div style="display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
+          <button class="pay-timing-btn" id="ptb-now" onclick="selectPayTiming('now')">💳 Pay Now via EFT</button>
+          <button class="pay-timing-btn" id="ptb-later" onclick="selectPayTiming('later')">⏰ I will pay later</button>
+        </div>
+        <div class="field-err" id="err-pay-timing" style="margin-bottom:12px;">Please select when you will pay</div>
+
+        <!-- EFT DETAILS (shown when Pay Now selected) -->
+        <div id="eft-details" style="display:none;">
+          <div style="background:#f0f5ff; border:2px solid var(--navy); border-radius:12px; padding:20px; margin-bottom:20px;">
+            <div style="font-size:13px; font-weight:700; color:var(--navy); margin-bottom:14px; letter-spacing:0.5px;">🏦 EFT Banking Details</div>
+            <div class="eft-row"><span class="eft-label">Account Name</span><span class="eft-val">Legacy Events Ventures (Pty) Ltd</span></div>
+            <div class="eft-row"><span class="eft-label">Bank</span><span class="eft-val"><!-- PLACEHOLDER --> TBC</span></div>
+            <div class="eft-row"><span class="eft-label">Account Number</span><span class="eft-val"><!-- PLACEHOLDER --> TBC</span></div>
+            <div class="eft-row"><span class="eft-label">Branch Code</span><span class="eft-val"><!-- PLACEHOLDER --> TBC</span></div>
+            <div class="eft-row"><span class="eft-label">Amount</span><span class="eft-val" id="eft-amount-display" style="font-weight:700; color:var(--navy);">—</span></div>
+            <div class="eft-row"><span class="eft-label">Reference</span><span class="eft-val" id="eft-reference" style="font-weight:700; color:var(--navy);">—</span></div>
+          </div>
+
+          <!-- PROOF OF PAYMENT -->
+          <div style="font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--navy); margin-bottom:10px;">Upload Proof of Payment</div>
+          <div class="pop-dropzone" id="pop-dropzone" onclick="document.getElementById('pop-file').click()">
+            <div style="font-size:28px; margin-bottom:8px;">📎</div>
+            <div style="font-size:13px; font-weight:600; color:var(--navy);">Click to attach your proof of payment</div>
+            <div style="font-size:12px; color:var(--text2); margin-top:4px;">PDF, JPG or PNG — max 5MB</div>
+            <input type="file" id="pop-file" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handlePOP(this)" />
+          </div>
+          <div id="pop-selected" style="display:none; margin-top:10px; padding:10px 14px; background:#f0faf4; border:2px solid var(--green); border-radius:8px; font-size:13px; color:var(--green); font-weight:600;"></div>
+          <div style="font-size:12px; color:var(--text2); margin-top:10px; line-height:1.6;">
+            Alternatively, email your proof of payment to <strong><a href="mailto:admin@alumnigolf.com" style="color:var(--navy);">admin@alumnigolf.com</a></strong> with your name and reference number.
+          </div>
+          <div class="field-err" id="err-pop" style="margin-top:8px;"></div>
+
+          <button class="btn-next" id="btn-submit-payment" onclick="submitPayment()" style="margin-top:20px;">✅ Complete Registration &#8594;</button>
+        </div>
+
+        <!-- PAY LATER confirm button -->
+        <div id="pay-later-confirm" style="display:none;">
+          <div style="background:#fff8e8; border:1px solid var(--gold); border-radius:10px; padding:14px 16px; font-size:13px; color:#7a5c00; margin-bottom:20px; line-height:1.6;">
+            ⚠️ Your registration will be saved but <strong>your place is not secured until payment is received.</strong> You can pay at any time from your Player Portal.
+          </div>
+          <button class="btn-next" id="btn-pay-later-confirm" onclick="submitPayLater()">Complete Registration &#8594;</button>
+        </div>
+
+        <button class="btn-back" id="btn-back-from-payment" onclick="backFromPayment()">&#8592; Back</button>
+      </div>
+
+      <!-- SUCCESS SCREEN -->
+      <div id="sec-4-success" style="display:none; text-align:center; padding:20px 0;">
+        <div style="font-size:56px; margin-bottom:16px;">🎉</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:700; color:var(--navy-dark); margin-bottom:8px;">Congratulations!</div>
+        <div style="width:60px; height:3px; background:var(--gold); margin:0 auto 20px; border-radius:2px;"></div>
+        <div style="font-size:15px; color:var(--text); margin-bottom:8px;">You have successfully registered.</div>
+        <div style="font-size:13px; color:var(--text2); margin-bottom:20px;">Your team name is:</div>
+        <div style="font-size:22px; font-weight:700; color:var(--navy); background:#f0f5ff; border:2px solid var(--navy); border-radius:12px; padding:14px 20px; margin-bottom:24px;" id="success-team-name">—</div>
+        <div id="success-message" style="font-size:13px; color:var(--text2); line-height:1.8; margin-bottom:28px; padding:16px; background:#f8faff; border-radius:10px; border:1px solid #dce8ff;"></div>
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+          <a href="index.html" style="display:inline-block; padding:14px 28px; background:white; border:2px solid var(--navy); border-radius:10px; font-size:14px; font-weight:700; color:var(--navy); text-decoration:none;">🏠 Go to Website</a>
+          <a href="portal.html" style="display:inline-block; padding:14px 28px; background:var(--navy-dark); border-radius:10px; font-size:14px; font-weight:700; color:white; text-decoration:none;">👤 Player Login &#8594;</a>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -940,6 +1134,276 @@ async function saveStep3() {
   btn.disabled = false;
   btn.textContent = 'Save & Continue →';
   goStep(4);
+}
+
+// ── STEP 4: PARTNER & PAYMENT ────────────────────────────────────────────────
+let selectedPartnerOption = null;
+let selectedPayAmount = null;
+let selectedPayTiming = null;
+let popFile = null;
+
+function selectPartnerOption(val) {
+  selectedPartnerOption = val;
+  ['has_partner','invite_later','need_partner'].forEach(o => {
+    document.getElementById('popt-' + (o === 'has_partner' ? 'has' : o === 'invite_later' ? 'later' : 'need')).classList.toggle('selected', o === val);
+  });
+  document.getElementById('err-partner-option').style.display = 'none';
+}
+
+function confirmPartnerOption() {
+  if (!selectedPartnerOption) {
+    document.getElementById('err-partner-option').style.display = 'block';
+    return;
+  }
+  if (selectedPartnerOption === 'has_partner') {
+    // Show invite form — pre-fill school
+    document.getElementById('inv-school').value = reg.school || '';
+    document.getElementById('sec-4-partner-options').style.display = 'none';
+    document.getElementById('sec-4-invite').style.display = 'block';
+  } else {
+    // invite_later or need_partner — go straight to payment
+    document.getElementById('sec-4-partner-options').style.display = 'none';
+    showPaymentScreen();
+  }
+}
+
+function backToPartnerOptions() {
+  document.getElementById('sec-4-invite').style.display = 'none';
+  document.getElementById('sec-4-partner-options').style.display = 'block';
+}
+
+function backFromPayment() {
+  document.getElementById('sec-4-payment').style.display = 'none';
+  if (selectedPartnerOption === 'has_partner') {
+    document.getElementById('sec-4-invite').style.display = 'block';
+  } else {
+    document.getElementById('sec-4-partner-options').style.display = 'block';
+  }
+}
+
+async function sendPartnerInvite() {
+  // Validate invite form
+  const name    = document.getElementById('inv-name').value.trim();
+  const surname = document.getElementById('inv-surname').value.trim();
+  const mobile  = document.getElementById('inv-mobile').value.trim();
+  let ok = true;
+
+  ['err-inv-name','err-inv-surname','err-inv-mobile'].forEach(id => document.getElementById(id).style.display = 'none');
+  ['inv-name','inv-surname','inv-mobile'].forEach(id => document.getElementById(id).classList.remove('has-error'));
+
+  if (!name)    { document.getElementById('inv-name').classList.add('has-error'); document.getElementById('err-inv-name').style.display = 'block'; ok = false; }
+  if (!surname) { document.getElementById('inv-surname').classList.add('has-error'); document.getElementById('err-inv-surname').style.display = 'block'; ok = false; }
+  if (!mobile || mobile.length !== 9 || !/^[678]/.test(mobile)) {
+    document.getElementById('inv-mobile').classList.add('has-error');
+    document.getElementById('err-inv-mobile').style.display = 'block'; ok = false;
+  }
+  if (!ok) return;
+
+  const btn = document.getElementById('btn-send-invite');
+  btn.disabled = true;
+  btn.textContent = 'Sending invite...';
+
+  const partnerMobile = '+27' + mobile;
+  const partnerEmail  = document.getElementById('inv-email').value.trim();
+  const partnerName   = name + ' ' + surname;
+
+  // Save partner details to captain's record
+  await sb.from('players').upsert({
+    email:          reg.email,
+    partner_status: 'has_partner',
+    partner_name:   partnerName,
+    partner_mobile: partnerMobile,
+  }, { onConflict: 'email' });
+
+  // Save invite record so partner knows who invited them
+  await sb.from('players').upsert({
+    email:              partnerEmail || (partnerMobile + '@invite.alumnigolf.co.za'),
+    full_name:          partnerName,
+    mobile:             partnerMobile,
+    school:             reg.school,
+    invited_by_mobile:  reg.mobile,
+    invited_by_team:    reg.team_number || '',
+    eligibility_status: 'pending',
+    payment_status:     'unpaid',
+    registration_complete: false,
+  }, { onConflict: 'email' });
+
+  btn.disabled = false;
+  btn.textContent = '📨 Send Invite & Continue →';
+
+  // Proceed to payment
+  document.getElementById('sec-4-invite').style.display = 'none';
+  showPaymentScreen();
+}
+
+function showPaymentScreen() {
+  // Set subtitle message based on partner option
+  const msgs = {
+    has_partner:  'Your partner has been invited. Pay your entry fee to secure your registration.',
+    invite_later: 'You can invite your partner later from your Player Portal.',
+    need_partner: 'You have been placed in the player pool. Pay your entry fee to secure your spot.',
+  };
+  document.getElementById('payment-sub-msg').textContent = msgs[selectedPartnerOption] || '';
+  document.getElementById('sec-4-payment').style.display = 'block';
+  // Reset payment state
+  selectedPayAmount = null;
+  selectedPayTiming = null;
+  popFile = null;
+  ['pay-opt-individual','pay-opt-team','ptb-now','ptb-later'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('selected');
+  });
+  document.getElementById('eft-details').style.display = 'none';
+  document.getElementById('pay-later-confirm').style.display = 'none';
+  document.getElementById('pop-selected').style.display = 'none';
+}
+
+function selectPayAmount(type) {
+  selectedPayAmount = type;
+  document.getElementById('pay-opt-individual').classList.toggle('selected', type === 'individual');
+  document.getElementById('pay-opt-team').classList.toggle('selected', type === 'team');
+  document.getElementById('err-pay-amount').style.display = 'none';
+  // Update EFT amount display
+  const amount = type === 'team' ? 'R2,800' : 'R1,500';
+  document.getElementById('eft-amount-display').textContent = amount;
+  // If timing already selected, refresh view
+  if (selectedPayTiming === 'now') {
+    document.getElementById('eft-details').style.display = 'block';
+  }
+}
+
+function selectPayTiming(timing) {
+  selectedPayTiming = timing;
+  document.getElementById('ptb-now').classList.toggle('selected', timing === 'now');
+  document.getElementById('ptb-later').classList.toggle('selected', timing === 'later');
+  document.getElementById('err-pay-timing').style.display = 'none';
+  if (timing === 'now') {
+    if (!selectedPayAmount) {
+      document.getElementById('err-pay-amount').style.display = 'block';
+      selectedPayTiming = null;
+      document.getElementById('ptb-now').classList.remove('selected');
+      return;
+    }
+    // Generate reference: team initials + mobile last 4
+    const ref = (reg.school || 'AG').replace(/\s+/g,'').substring(0,4).toUpperCase() + (reg.mobile || '').slice(-4);
+    document.getElementById('eft-reference').textContent = ref;
+    reg.payment_reference = ref;
+    document.getElementById('eft-details').style.display = 'block';
+    document.getElementById('pay-later-confirm').style.display = 'none';
+  } else {
+    document.getElementById('eft-details').style.display = 'none';
+    document.getElementById('pay-later-confirm').style.display = 'block';
+  }
+}
+
+function handlePOP(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    document.getElementById('err-pop').textContent = 'File is too large. Maximum size is 5MB.';
+    document.getElementById('err-pop').style.display = 'block';
+    return;
+  }
+  popFile = file;
+  document.getElementById('pop-selected').style.display = 'block';
+  document.getElementById('pop-selected').textContent = '✅ ' + file.name + ' — ready to upload';
+  document.getElementById('err-pop').style.display = 'none';
+}
+
+async function submitPayment() {
+  if (!selectedPayAmount) { document.getElementById('err-pay-amount').style.display = 'block'; return; }
+  const btn = document.getElementById('btn-submit-payment');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  const amount = selectedPayAmount === 'team' ? 2800 : 1500;
+  let popUrl = null;
+
+  // Upload proof of payment to Supabase storage if provided
+  if (popFile) {
+    const path = reg.email.replace('@','_').replace('.','_') + '_' + Date.now() + '_' + popFile.name;
+    const { data: upData, error: upErr } = await sb.storage.from('payment_proofs').upload(path, popFile, { upsert: true });
+    if (!upErr && upData) {
+      const { data: urlData } = sb.storage.from('payment_proofs').getPublicUrl(path);
+      popUrl = urlData?.publicUrl || null;
+    }
+  }
+
+  // Assign team number
+  const teamNumber = await assignTeamNumber(reg.school);
+  reg.team_number = teamNumber;
+
+  // Save to players table
+  await sb.from('players').upsert({
+    email:                 reg.email,
+    partner_status:        selectedPartnerOption,
+    payment_status:        popFile ? 'pending_verification' : 'unpaid',
+    payment_type:          selectedPayAmount,
+    payment_method:        'eft',
+    payment_amount:        amount,
+    payment_reference:     reg.payment_reference || null,
+    team_number:           teamNumber,
+    registration_complete: true,
+  }, { onConflict: 'email' });
+
+  // Create auth account now that registration is complete
+  await sb.auth.signUp({ email: reg.email, password: reg.password });
+
+  btn.disabled = false;
+  btn.textContent = '✅ Complete Registration →';
+  showSuccess();
+}
+
+async function submitPayLater() {
+  if (!selectedPayAmount) { document.getElementById('err-pay-amount').style.display = 'block'; return; }
+  const btn = document.getElementById('btn-pay-later-confirm');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  const amount = selectedPayAmount === 'team' ? 2800 : 1500;
+  const teamNumber = await assignTeamNumber(reg.school);
+  reg.team_number = teamNumber;
+
+  await sb.from('players').upsert({
+    email:                 reg.email,
+    partner_status:        selectedPartnerOption,
+    payment_status:        'unpaid',
+    payment_type:          selectedPayAmount,
+    payment_amount:        amount,
+    team_number:           teamNumber,
+    registration_complete: true,
+  }, { onConflict: 'email' });
+
+  await sb.auth.signUp({ email: reg.email, password: reg.password });
+
+  btn.disabled = false;
+  btn.textContent = 'Complete Registration →';
+  showSuccess();
+}
+
+async function assignTeamNumber(school) {
+  // Count how many teams already exist from this school
+  const { count } = await sb.from('players')
+    .select('*', { count: 'exact', head: true })
+    .eq('school', school)
+    .not('team_number', 'is', null)
+    .neq('email', reg.email);
+  const num = (count || 0) + 1;
+  return school + ' ' + num;
+}
+
+function showSuccess() {
+  document.getElementById('sec-4-payment').style.display = 'none';
+  document.getElementById('sec-4-success').style.display = 'block';
+  document.getElementById('success-team-name').textContent = reg.team_number || '—';
+
+  const msgs = {
+    has_partner:  'Your place will be secured as soon as your partner has completed the registration process and all fees are paid.',
+    invite_later: 'You will need to invite your partner prior to your place being fully secured.',
+    need_partner: 'You have been placed in the player pool and will be notified as soon as we find someone who went to the same school living within a 50km radius from you.',
+  };
+  document.getElementById('success-message').innerHTML = msgs[selectedPartnerOption] || '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 sb.auth.getSession().then(({ data: { session } }) => {
