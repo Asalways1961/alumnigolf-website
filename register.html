@@ -35,10 +35,10 @@ nav{background:var(--navy-dark);padding:0 32px;height:64px;display:flex;align-it
 .prog-line{flex:1;height:2px;background:rgba(255,255,255,.15);margin:0 6px 18px;transition:background .3s;}
 .prog-line.done{background:var(--gold);}
 
-.page{max-width:620px;margin:0 auto;padding:40px 20px 80px;}
+.page{max-width:620px;margin:0 auto;padding:40px 20px 80px;overflow:visible;}
 .step{display:none;}.step.active{display:block;}
 
-.card{background:#fff;border-radius:16px;padding:36px;box-shadow:0 2px 20px rgba(0,0,0,.06);margin-bottom:20px;}
+.card{background:#fff;border-radius:16px;padding:36px;box-shadow:0 2px 20px rgba(0,0,0,.06);margin-bottom:20px;overflow:visible;}
 .card-h{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--navy);margin-bottom:4px;}
 .card-sub{font-size:13px;color:var(--grey);margin-bottom:28px;}
 
@@ -69,7 +69,7 @@ nav{background:var(--navy-dark);padding:0 32px;height:64px;display:flex;align-it
 .pw-r.ok::before{content:'●';}
 
 .dd-wrap{position:relative;}
-.dd{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid var(--navy);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:9999;max-height:220px;overflow-y:auto;display:none;}
+.dd{position:absolute;top:100%;margin-top:4px;left:0;right:0;background:#fff;border:1.5px solid var(--navy);border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:9999;max-height:220px;overflow-y:auto;display:none;}
 .dd-opt{padding:11px 14px;font-size:13px;cursor:pointer;transition:background .15s;}
 .dd-opt:hover{background:rgba(27,58,107,.07);}
 .confirmed{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(39,174,96,.08);border:1.5px solid rgba(39,174,96,.3);border-radius:10px;font-size:13px;font-weight:600;color:var(--ok);}
@@ -523,8 +523,11 @@ function searchSchools(val) {
   var matches = SCHOOLS.filter(function(s){ return s.name.toLowerCase().indexOf(q) !== -1; }).slice(0,10);
   if (!matches.length) { dd.style.display='none'; return; }
   dd.innerHTML = matches.map(function(s){
-    return '<div class="dd-opt" onmousedown="selSchool('+s.id+',\''+s.name.replace(/'/g,"\\'")+'\')">' + s.name + '</div>';
+    return '<div class="dd-opt" data-id="'+s.id+'" data-name="'+s.name.replace(/"/g,'&quot;')+'">' + s.name + '</div>';
   }).join('');
+  Array.from(dd.querySelectorAll('.dd-opt')).forEach(function(el){
+    el.addEventListener('mousedown', function(e){ e.preventDefault(); selSchool(this.getAttribute('data-id'), this.getAttribute('data-name')); });
+  });
   dd.style.display='block';
 }
 
@@ -558,8 +561,11 @@ function searchClubs(val) {
   var matches = CLUBS.filter(function(c){ return c.toLowerCase().indexOf(q) !== -1; }).slice(0,10);
   if (!matches.length) { dd.style.display='none'; return; }
   dd.innerHTML = matches.map(function(c){
-    return '<div class="dd-opt" onmousedown="selClub(\''+c.replace(/'/g,"\\'")+'\')">' + c + '</div>';
+    return '<div class="dd-opt" data-name="'+c.replace(/"/g,'&quot;')+'">' + c + '</div>';
   }).join('');
+  Array.from(dd.querySelectorAll('.dd-opt')).forEach(function(el){
+    el.addEventListener('mousedown', function(e){ e.preventDefault(); selClub(this.getAttribute('data-name')); });
+  });
   dd.style.display='block';
 }
 
