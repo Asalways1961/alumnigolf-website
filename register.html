@@ -473,8 +473,7 @@ footer a { color:var(--gold); text-decoration:none; }
       <!-- HANDICAP INDEX -->
       <div class="field-block">
         <label>Current Handicap Index *</label>
-        <input type="number" id="f-handicap" placeholder="e.g. 14.2" min="0" max="54" step="0.1"
-          oninput="this.value = this.value.replace(/[^0-9.]/g,'')" />
+        <input type="number" id="f-handicap" placeholder="e.g. 14.2" min="0" max="54" step="0.1" />
         <div style="font-size:11px; color:var(--text2); margin-top:5px;">Enter your current World Handicap System (WHS) Handicap Index</div>
         <div class="field-err" id="err-handicap">Please enter a valid Handicap Index between 0 and 54</div>
       </div>
@@ -519,7 +518,7 @@ footer a { color:var(--gold); text-decoration:none; }
     <!-- ══ STEP 4: PARTNER SELECTION ══ -->
     <div class="step-section" id="sec-4">
       <div class="card-heading">Select Partner Option</div>
-      <div class="card-sub">Step 4 of 4 — How would you like to proceed with your partner?</div>
+      <div class="card-sub">Step 4 of 4 — Select your partner option &amp; complete payment</div>
 
       <!-- PARTNER OPTIONS -->
       <div id="sec-4-partner-options">
@@ -646,11 +645,11 @@ footer a { color:var(--gold); text-decoration:none; }
           </div>
           <div id="pop-selected" style="display:none; margin-top:10px; padding:10px 14px; background:#f0faf4; border:2px solid var(--green); border-radius:8px; font-size:13px; color:var(--green); font-weight:600;"></div>
           <div style="font-size:12px; color:var(--text2); margin-top:10px; line-height:1.6;">
-            Alternatively, email your proof of payment to <strong><a href="mailto:admin@alumnigolf.com" style="color:var(--navy);">admin@alumnigolf.com</a></strong> with your name and reference number.
+            Alternatively, email your proof of payment to <strong><a href="/cdn-cgi/l/email-protection#2243464f4b4c62434e574f4c4b454d4e440c414d4f" style="color:var(--navy);"><span class="__cf_email__" data-cfemail="147570797d7a54757861797a7d737b78723a777b79">[email&#160;protected]</span></a></strong> with your name and reference number.
           </div>
           <div class="field-err" id="err-pop" style="margin-top:8px;"></div>
 
-          <button class="btn-next" id="btn-submit-payment" onclick="submitPayment()" style="margin-top:20px;">✅ Complete Registration &#8594;</button>
+          <button class="btn-next" id="btn-submit-payment" onclick="submitPayment()" style="margin-top:20px;">✅ Submit &amp; Complete Registration</button>
         </div>
 
         <!-- PAY LATER confirm button -->
@@ -658,7 +657,7 @@ footer a { color:var(--gold); text-decoration:none; }
           <div style="background:#fff8e8; border:1px solid var(--gold); border-radius:10px; padding:14px 16px; font-size:13px; color:#7a5c00; margin-bottom:20px; line-height:1.6;">
             ⚠️ Your registration will be saved but <strong>your place is not secured until payment is received.</strong> You can pay at any time from your Player Portal.
           </div>
-          <button class="btn-next" id="btn-pay-later-confirm" onclick="submitPayLater()">Complete Registration &#8594;</button>
+          <button class="btn-next" id="btn-pay-later-confirm" onclick="submitPayLater()">✅ Complete Registration</button>
         </div>
 
         <button class="btn-back" id="btn-back-from-payment" onclick="backFromPayment()">&#8592; Back</button>
@@ -692,7 +691,7 @@ footer a { color:var(--gold); text-decoration:none; }
   <p>&#169; 2026 Alumni Schools Golf Challenge | <a href="contact.html">Contact Us</a></p>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const SUPABASE_URL = 'https://wezTrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const { createClient } = supabase;
