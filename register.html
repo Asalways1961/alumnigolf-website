@@ -3,736 +3,544 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alumni Golf — Register</title>
+<title>Register — Alumni Schools Golf Challenge</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root {
-    --gold: #D4AF37;
-    --gold-dim: rgba(212,175,55,0.15);
-    --bg: #0a0a14;
-    --bg2: #11111e;
-    --card: #16162a;
-    --border: rgba(255,255,255,0.08);
-    --text: #f0f0f0;
-    --text2: #aaaaaa;
-    --text3: #444466;
-    --green: #4CAF50;
-    --red: #E53935;
-    --radius: 14px;
-    --shadow: 0 8px 40px rgba(0,0,0,0.5);
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    font-family:'DM Sans',sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-    background-image:
-      radial-gradient(ellipse at 15% 50%, rgba(212,175,55,0.06) 0%, transparent 55%),
-      radial-gradient(ellipse at 85% 20%, rgba(27,58,107,0.12) 0%, transparent 50%);
-  }
+:root {
+  --navy: #1B3A6B;
+  --navy-dark: #0f2347;
+  --gold: #C9A84C;
+  --white: #ffffff;
+  --off-white: #f8f6f0;
+  --text: #1a1a2e;
+  --text2: #666;
+  --red: #c0392b;
+  --green: #27ae60;
+}
 
-  .container {
-    width:100%;
-    max-width:520px;
-  }
+* { margin:0; padding:0; box-sizing:border-box; }
 
-  .header {
-    text-align:center;
-    margin-bottom:32px;
-  }
-  .header .logo {
-    font-family:'Cormorant Garamond',serif;
-    font-size:38px;
-    color:var(--gold);
-    letter-spacing:2px;
-    line-height:1;
-  }
-  .header .sub {
-    font-size:11px;
-    letter-spacing:3px;
-    text-transform:uppercase;
-    color:var(--text2);
-    margin-top:6px;
-  }
-  .header .tagline {
-    font-size:13px;
-    color:var(--text2);
-    margin-top:16px;
-  }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off-white);
+  color: var(--text);
+  min-height: 100vh;
+}
 
-  .card {
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:20px;
-    padding:36px 32px;
-    box-shadow:var(--shadow);
-  }
+/* NAV */
+nav {
+  background: var(--navy-dark);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  border-bottom: 2px solid var(--gold);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.nav-links a {
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 28px;
+  transition: color 0.2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--gold); }
+.nav-cta {
+  background: var(--gold);
+  color: var(--navy-dark);
+  padding: 9px 22px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
 
-  .step-indicator {
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:0;
-    margin-bottom:28px;
-  }
-  .step {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:6px;
-  }
-  .step-dot {
-    width:32px; height:32px;
-    border-radius:50%;
-    border:2px solid var(--border);
-    display:flex; align-items:center; justify-content:center;
-    font-size:12px; font-weight:700;
-    color:var(--text2);
-    transition:all 0.3s;
-  }
-  .step.active .step-dot {
-    border-color:var(--gold);
-    background:var(--gold-dim);
-    color:var(--gold);
-  }
-  .step.done .step-dot {
-    border-color:var(--green);
-    background:rgba(76,175,80,0.15);
-    color:var(--green);
-  }
-  .step-label {
-    font-size:10px;
-    color:var(--text2);
-    text-transform:uppercase;
-    letter-spacing:1px;
-    white-space:nowrap;
-  }
-  .step.active .step-label { color:var(--gold); }
-  .step.done .step-label { color:var(--green); }
-  .step-line {
-    width:48px; height:2px;
-    background:var(--border);
-    margin:0 8px;
-    margin-bottom:20px;
-    transition:background 0.3s;
-  }
-  .step-line.done { background:var(--green); }
+/* PAGE */
+.page-wrap {
+  max-width: 580px;
+  margin: 48px auto 80px;
+  padding: 0 20px;
+}
 
-  .form-section { display:none; }
-  .form-section.active { display:block; }
+/* HEADER */
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.page-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px;
+  color: var(--navy-dark);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.gold-line {
+  width: 60px;
+  height: 3px;
+  background: var(--gold);
+  margin: 12px auto 10px;
+  border-radius: 2px;
+}
+.page-header p {
+  font-size: 14px;
+  color: var(--text2);
+}
 
-  .section-title {
-    font-size:16px;
-    font-weight:700;
-    margin-bottom:4px;
-  }
-  .section-sub {
-    font-size:12px;
-    color:var(--text2);
-    margin-bottom:20px;
-  }
+/* PROGRESS BAR */
+.progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+.prog-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.prog-dot {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #ccd6e8;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #aaa;
+  transition: all 0.3s;
+}
+.prog-step.active .prog-dot {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: white;
+}
+.prog-step.done .prog-dot {
+  border-color: var(--green);
+  background: var(--green);
+  color: white;
+}
+.prog-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #aaa;
+}
+.prog-step.active .prog-label { color: var(--navy); }
+.prog-step.done .prog-label { color: var(--green); }
+.prog-line {
+  width: 52px;
+  height: 2px;
+  background: #ccd6e8;
+  margin: 0 4px 22px;
+  transition: background 0.3s;
+}
+.prog-line.done { background: var(--green); }
 
-  .form-group {
-    margin-bottom:16px;
-  }
-  .form-row {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-  }
-  @media(max-width:480px) { .form-row { grid-template-columns:1fr; } }
+/* FORM CARD */
+.form-card {
+  background: white;
+  border: 1px solid #ccd6e8;
+  border-radius: 18px;
+  padding: 36px 32px;
+  box-shadow: 0 4px 24px rgba(27,58,107,0.07);
+}
+.card-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  color: var(--navy-dark);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.card-sub {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 28px;
+}
 
-  label {
-    display:block;
-    font-size:11px;
-    font-weight:600;
-    letter-spacing:1px;
-    text-transform:uppercase;
-    color:var(--text2);
-    margin-bottom:6px;
-  }
-  input, select {
-    width:100%;
-    padding:11px 14px;
-    background:var(--bg2);
-    border:1px solid var(--border);
-    border-radius:10px;
-    color:var(--text);
-    font-size:14px;
-    font-family:'DM Sans',sans-serif;
-    transition:border-color 0.2s;
-    -webkit-appearance:none;
-  }
-  input:focus, select:focus {
-    outline:none;
-    border-color:var(--gold);
-  }
-  input::placeholder { color:var(--text3); }
-  select option { background:var(--bg2); }
+/* FIELD BLOCKS */
+.field-block {
+  margin-bottom: 22px;
+}
+.field-block label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.field-block input {
+  width: 100%;
+  padding: 14px 16px;
+  background: white;
+  border: 2px solid var(--navy);
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.field-block input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.18);
+}
+.field-block input.has-error {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+}
+.field-block input::placeholder { color: #bbb; }
 
-  .hint {
-    font-size:11px;
-    color:var(--text3);
-    margin-top:4px;
-  }
+/* PHONE ROW */
+.phone-row {
+  display: flex;
+}
+.phone-prefix {
+  padding: 14px 14px;
+  background: #eef2f9;
+  border: 2px solid var(--navy);
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  flex-shrink: 0;
+}
+.phone-row input {
+  border-radius: 0 10px 10px 0 !important;
+  flex: 1;
+  min-width: 0;
+}
+.phone-row input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.18);
+}
 
-  .payment-options {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-bottom:16px;
-  }
-  .payment-option {
-    border:2px solid var(--border);
-    border-radius:12px;
-    padding:14px;
-    cursor:pointer;
-    transition:all 0.2s;
-    text-align:center;
-  }
-  .payment-option:hover { border-color:rgba(212,175,55,0.4); }
-  .payment-option.selected {
-    border-color:var(--gold);
-    background:var(--gold-dim);
-  }
-  .payment-option .pay-icon { font-size:24px; margin-bottom:6px; }
-  .payment-option .pay-label { font-size:12px; font-weight:600; }
-  .payment-option .pay-sub { font-size:10px; color:var(--text2); margin-top:2px; }
+/* FIELD ERROR */
+.field-err {
+  font-size: 12px;
+  color: var(--red);
+  margin-top: 5px;
+  display: none;
+  font-weight: 500;
+}
 
-  .bank-details {
-    background:var(--bg2);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:16px;
-    margin-bottom:16px;
-    display:none;
-  }
-  .bank-details.show { display:block; }
-  .bank-row {
-    display:flex;
-    justify-content:space-between;
-    padding:6px 0;
-    border-bottom:1px solid var(--border);
-    font-size:13px;
-  }
-  .bank-row:last-child { border-bottom:none; }
-  .bank-row .key { color:var(--text2); }
-  .bank-row .val { font-weight:600; color:var(--gold); }
+/* GENERAL ERROR BANNER */
+.err-banner {
+  background: #fef0ef;
+  border: 1.5px solid var(--red);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--red);
+  font-size: 13px;
+  margin-bottom: 20px;
+  display: none;
+  font-weight: 500;
+}
 
-  .entry-fee {
-    background:var(--gold-dim);
-    border:1px solid var(--gold);
-    border-radius:10px;
-    padding:14px 16px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-  }
-  .entry-fee .fee-label { font-size:12px; color:var(--text2); }
-  .entry-fee .fee-amount { font-family:'Cormorant Garamond',serif; font-size:28px; color:var(--gold); font-weight:700; }
+/* BUTTONS */
+.btn-next {
+  width: 100%;
+  padding: 16px;
+  background: var(--navy-dark);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.btn-next:hover { background: var(--navy); transform: translateY(-1px); }
+.btn-next:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  .btn {
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:10px;
-    font-size:14px;
-    font-weight:700;
-    font-family:'DM Sans',sans-serif;
-    letter-spacing:0.5px;
-    cursor:pointer;
-    transition:all 0.2s;
-  }
-  .btn-gold { background:var(--gold); color:#000; }
-  .btn-gold:hover { opacity:0.9; transform:translateY(-1px); }
-  .btn-gold:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-  .btn-outline {
-    background:transparent;
-    border:1px solid var(--border);
-    color:var(--text2);
-    margin-top:10px;
-  }
-  .btn-outline:hover { border-color:var(--gold); color:var(--gold); }
+.btn-back {
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  border: 2px solid #ccd6e8;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text2);
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
+.btn-back:hover { border-color: var(--navy); color: var(--navy); }
 
-  .btn-row {
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-top:20px;
-  }
+/* SECTIONS */
+.step-section { display: none; }
+.step-section.active { display: block; }
 
-  .error-msg {
-    background:rgba(229,57,53,0.12);
-    border:1px solid rgba(229,57,53,0.3);
-    border-radius:8px;
-    padding:10px 14px;
-    color:#ff6b6b;
-    font-size:13px;
-    margin-bottom:14px;
-    display:none;
-  }
+/* BOTTOM LINK */
+.bottom-link {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--text2);
+}
+.bottom-link a { color: var(--navy); font-weight: 700; text-decoration: none; }
+.bottom-link a:hover { color: var(--gold); }
 
-  .success-screen {
-    text-align:center;
-    padding:20px 0;
-    display:none;
-  }
-  .success-icon { font-size:56px; margin-bottom:16px; }
-  .success-title {
-    font-family:'Cormorant Garamond',serif;
-    font-size:28px;
-    color:var(--gold);
-    margin-bottom:8px;
-  }
-  .success-sub { font-size:14px; color:var(--text2); line-height:1.6; }
+/* FOOTER */
+footer {
+  background: var(--navy-dark);
+  border-top: 2px solid var(--gold);
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+}
+footer a { color: var(--gold); text-decoration: none; }
 
-  .divider {
-    height:1px;
-    background:var(--border);
-    margin:20px 0;
-  }
-
-  .login-link {
-    text-align:center;
-    margin-top:20px;
-    font-size:13px;
-    color:var(--text2);
-  }
-  .login-link a {
-    color:var(--gold);
-    text-decoration:none;
-    font-weight:600;
-  }
-  .login-link a:hover { text-decoration:underline; }
-
-  .loading-btn {
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-  }
-  .spinner {
-    width:16px; height:16px;
-    border:2px solid rgba(0,0,0,0.3);
-    border-top-color:#000;
-    border-radius:50%;
-    animation:spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform:rotate(360deg); } }
-
-  .required { color:var(--gold); }
-
-  .password-strength {
-    height:3px;
-    border-radius:2px;
-    background:var(--border);
-    margin-top:6px;
-    overflow:hidden;
-  }
-  .password-strength-bar {
-    height:100%;
-    border-radius:2px;
-    transition:width 0.3s, background 0.3s;
-    width:0%;
-  }
+@media (max-width: 600px) {
+  nav { padding: 0 16px; }
+  .nav-links { display: none; }
+  .form-card { padding: 24px 18px; }
+  .page-wrap { margin-top: 28px; }
+}
 </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="header">
-    <div class="logo">⛳ Alumni Golf</div>
-    <div class="sub">Schools Alma Mater Challenge</div>
-    <div class="tagline">Create your player account to join the tournament</div>
+<nav>
+  <a href="index.html" class="nav-logo">Alumni Schools Golf Challenge</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="schools.html">Schools</a>
+    <a href="register.html" class="active">Register</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <a href="register.html" class="nav-cta">Register Now</a>
+</nav>
+
+<div class="page-wrap">
+
+  <div class="page-header">
+    <h1>⛳ Register to Play</h1>
+    <div class="gold-line"></div>
+    <p>Alumni Schools Golf Challenge — Inaugural Season 2026/27</p>
   </div>
 
-  <div class="card">
-
-    <!-- Step Indicators -->
-    <div class="step-indicator">
-      <div class="step active" id="step-1">
-        <div class="step-dot">1</div>
-        <div class="step-label">Account</div>
-      </div>
-      <div class="step-line" id="line-1"></div>
-      <div class="step active" id="step-2" style="opacity:0.4">
-        <div class="step-dot">2</div>
-        <div class="step-label">Details</div>
-      </div>
-      <div class="step-line" id="line-2"></div>
-      <div class="step" id="step-3" style="opacity:0.4">
-        <div class="step-dot">3</div>
-        <div class="step-label">Payment</div>
-      </div>
+  <!-- PROGRESS -->
+  <div class="progress">
+    <div class="prog-step active" id="prog-1">
+      <div class="prog-dot">1</div>
+      <div class="prog-label">Personal</div>
     </div>
-
-    <div class="error-msg" id="error-msg"></div>
-
-    <!-- ── STEP 1: Account ── -->
-    <div class="form-section active" id="form-1">
-      <div class="section-title">Create Your Account</div>
-      <div class="section-sub">Use the email you want to log in with</div>
-
-      <div class="form-group">
-        <label>Full Name <span class="required">*</span></label>
-        <input type="text" id="reg-name" placeholder="e.g. John Smith" autocomplete="name" />
-      </div>
-      <div class="form-group">
-        <label>Email Address <span class="required">*</span></label>
-        <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email" />
-      </div>
-      <div class="form-group">
-        <label>Password <span class="required">*</span></label>
-        <input type="password" id="reg-password" placeholder="Min 8 characters" autocomplete="new-password" oninput="checkPasswordStrength(this.value)" />
-        <div class="password-strength"><div class="password-strength-bar" id="pw-strength-bar"></div></div>
-        <div class="hint" id="pw-hint">At least 8 characters</div>
-      </div>
-      <div class="form-group">
-        <label>Confirm Password <span class="required">*</span></label>
-        <input type="password" id="reg-password2" placeholder="Repeat your password" autocomplete="new-password" />
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-gold" onclick="goToStep2()">Continue →</button>
-      </div>
+    <div class="prog-line" id="line-1"></div>
+    <div class="prog-step" id="prog-2">
+      <div class="prog-dot">2</div>
+      <div class="prog-label">School</div>
     </div>
-
-    <!-- ── STEP 2: Player Details ── -->
-    <div class="form-section" id="form-2">
-      <div class="section-title">Your Player Details</div>
-      <div class="section-sub">We need these to verify your eligibility</div>
-
-      <div class="form-group">
-        <label>School Name <span class="required">*</span></label>
-        <input type="text" id="reg-school" placeholder="e.g. Bishops, SACS, Rondebosch..." />
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Year of Matriculation <span class="required">*</span></label>
-          <input type="number" id="reg-matric" placeholder="e.g. 2018" min="1970" max="2024" />
-        </div>
-        <div class="form-group">
-          <label>SA ID Number</label>
-          <input type="text" id="reg-id" placeholder="13-digit ID (optional)" maxlength="13" />
-          <div class="hint">Used for eligibility verification</div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Cell / WhatsApp Number <span class="required">*</span></label>
-        <input type="tel" id="reg-phone" placeholder="e.g. 0821234567" />
-      </div>
-      <div class="form-group">
-        <label>Handicap (if known)</label>
-        <input type="number" id="reg-handicap" placeholder="e.g. 12" min="0" max="54" step="0.1" />
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-gold" onclick="goToStep3()">Continue →</button>
-        <button class="btn btn-outline" onclick="goBack(1)">← Back</button>
-      </div>
+    <div class="prog-line" id="line-2"></div>
+    <div class="prog-step" id="prog-3">
+      <div class="prog-dot">3</div>
+      <div class="prog-label">Account</div>
     </div>
-
-    <!-- ── STEP 3: Payment ── -->
-    <div class="form-section" id="form-3">
-      <div class="section-title">Entry Fee & Payment</div>
-      <div class="section-sub">Select your preferred payment method</div>
-
-      <div class="entry-fee">
-        <div>
-          <div class="fee-label">Entry Fee</div>
-          <div style="font-size:11px;color:var(--text2);margin-top:2px;">Per player — includes all rounds</div>
-        </div>
-        <div class="fee-amount">R500</div>
-      </div>
-
-      <div class="payment-options">
-        <div class="payment-option selected" id="pay-eft" onclick="selectPayment('eft')">
-          <div class="pay-icon">🏦</div>
-          <div class="pay-label">EFT / Bank Transfer</div>
-          <div class="pay-sub">Pay via internet banking</div>
-        </div>
-        <div class="payment-option" id="pay-cash" onclick="selectPayment('cash')">
-          <div class="pay-icon">💵</div>
-          <div class="pay-label">Cash</div>
-          <div class="pay-sub">Pay on the day</div>
-        </div>
-      </div>
-
-      <div class="bank-details show" id="bank-details">
-        <div class="bank-row"><span class="key">Bank</span><span class="val">Standard Bank</span></div>
-        <div class="bank-row"><span class="key">Account Name</span><span class="val">Alumni Golf SA</span></div>
-        <div class="bank-row"><span class="key">Account No.</span><span class="val">123 456 789</span></div>
-        <div class="bank-row"><span class="key">Branch Code</span><span class="val">051 001</span></div>
-        <div class="bank-row"><span class="key">Reference</span><span class="val" id="eft-ref">Your Name + School</span></div>
-      </div>
-
-      <div class="form-group">
-        <label>Payment Reference / Note (optional)</label>
-        <input type="text" id="reg-payref" placeholder="e.g. John Smith EFT 15 March" />
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-gold" id="submit-btn" onclick="submitRegistration()">
-          <span class="loading-btn"><span id="submit-text">Complete Registration ✓</span></span>
-        </button>
-        <button class="btn btn-outline" onclick="goBack(2)">← Back</button>
-      </div>
+    <div class="prog-line" id="line-3"></div>
+    <div class="prog-step" id="prog-4">
+      <div class="prog-dot">4</div>
+      <div class="prog-label">Payment</div>
     </div>
-
-    <!-- ── SUCCESS ── -->
-    <div class="success-screen" id="success-screen">
-      <div class="success-icon">🎉</div>
-      <div class="success-title">You're Registered!</div>
-      <div class="success-sub">
-        Welcome to the Alumni Golf Schools Challenge.<br>
-        Your account is created and pending admin verification.<br><br>
-        <strong id="success-name"></strong>, check your email for confirmation.
-      </div>
-      <div class="divider"></div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">
-        Payment status: <span id="success-pay-status" style="font-weight:600;color:var(--gold)"></span>
-      </div>
-      <a href="/portal.html" style="display:block;">
-        <button class="btn btn-gold">Go to My Portal →</button>
-      </a>
-    </div>
-
   </div>
 
-  <div class="login-link">
-    Already registered? <a href="/portal.html">Sign In to Portal</a>
+  <div class="form-card">
+    <div class="err-banner" id="err-banner"></div>
+
+    <!-- ══ STEP 1: PERSONAL DETAILS ══ -->
+    <div class="step-section active" id="sec-1">
+      <div class="card-heading">Personal Details</div>
+      <div class="card-sub">Step 1 of 4 — Let's start with your basic information</div>
+
+      <div class="field-block">
+        <label>First Name *</label>
+        <input type="text" id="f-name" placeholder="e.g. John" autocomplete="given-name" />
+        <div class="field-err" id="err-name">Please enter your first name</div>
+      </div>
+
+      <div class="field-block">
+        <label>Surname *</label>
+        <input type="text" id="f-surname" placeholder="e.g. Smith" autocomplete="family-name" />
+        <div class="field-err" id="err-surname">Please enter your surname</div>
+      </div>
+
+      <div class="field-block">
+        <label>Mobile Number *</label>
+        <div class="phone-row">
+          <div class="phone-prefix">🇿🇦 &nbsp;+27</div>
+          <input
+            type="tel"
+            id="f-mobile"
+            placeholder="81 234 5678"
+            maxlength="9"
+            oninput="this.value = this.value.replace(/\D/g, '')"
+          />
+        </div>
+        <div class="field-err" id="err-mobile">Enter your 9-digit number without the leading 0 (e.g. 821234567)</div>
+      </div>
+
+      <div class="field-block">
+        <label>Email Address *</label>
+        <input type="email" id="f-email" placeholder="e.g. john.smith@gmail.com" autocomplete="email" />
+        <div class="field-err" id="err-email">Please enter a valid email address</div>
+      </div>
+
+      <button class="btn-next" onclick="saveStep1()">Save &amp; Continue →</button>
+    </div>
+
+    <!-- ══ STEP 2 placeholder ══ -->
+    <div class="step-section" id="sec-2">
+      <div class="card-heading">School Details</div>
+      <div class="card-sub">Step 2 of 4 — coming next...</div>
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+    </div>
+
+    <!-- ══ STEP 3 placeholder ══ -->
+    <div class="step-section" id="sec-3">
+      <div class="card-heading">Create Your Account</div>
+      <div class="card-sub">Step 3 of 4 — coming next...</div>
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
+    </div>
+
+    <!-- ══ STEP 4 placeholder ══ -->
+    <div class="step-section" id="sec-4">
+      <div class="card-heading">Entry Fee &amp; Payment</div>
+      <div class="card-sub">Step 4 of 4 — coming next...</div>
+      <button class="btn-back" onclick="goStep(3)">← Back</button>
+    </div>
+
+  </div><!-- /form-card -->
+
+  <div class="bottom-link">
+    Already registered? <a href="portal.html">Sign in to your Player Portal →</a>
   </div>
-</div>
+
+</div><!-- /page-wrap -->
+
+<footer>
+  <p>© 2026 Alumni Schools Golf Challenge | <a href="contact.html">Contact Us</a></p>
+</footer>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────────────────
+// ── SUPABASE ──────────────────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let currentStep = 1;
-let selectedPayment = 'eft';
+// ── DATA STORE ────────────────────────────────────────────────────────────────
+let reg = {};
 
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function showError(msg) {
-  const el = document.getElementById('error-msg');
-  el.textContent = msg;
-  el.style.display = 'block';
-  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
-}
-function clearError() {
-  document.getElementById('error-msg').style.display = 'none';
-}
+// ── STEP NAVIGATION ───────────────────────────────────────────────────────────
+function goStep(n) {
+  document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + n).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
-function checkPasswordStrength(val) {
-  const bar = document.getElementById('pw-strength-bar');
-  const hint = document.getElementById('pw-hint');
-  const len = val.length;
-  const hasUpper = /[A-Z]/.test(val);
-  const hasNum = /[0-9]/.test(val);
-  const hasSpecial = /[^A-Za-z0-9]/.test(val);
-  let score = 0;
-  if (len >= 8) score++;
-  if (len >= 12) score++;
-  if (hasUpper) score++;
-  if (hasNum) score++;
-  if (hasSpecial) score++;
-
-  const widths = ['0%','20%','40%','60%','80%','100%'];
-  const colors = ['','#E53935','#FF9800','#FFC107','#8BC34A','#4CAF50'];
-  const hints = ['','Weak','Fair','Good','Strong','Very Strong'];
-  bar.style.width = widths[score];
-  bar.style.background = colors[score] || colors[1];
-  hint.textContent = score > 0 ? hints[score] : 'At least 8 characters';
-  hint.style.color = colors[score] || 'var(--text3)';
-}
-
-function setStepState(stepNum, state) {
-  const el = document.getElementById('step-'+stepNum);
-  el.className = 'step ' + state;
-  el.style.opacity = '1';
-}
-
-// ── NAVIGATION ────────────────────────────────────────────────────────────────
-function goToStep2() {
-  clearError();
-  const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const pass = document.getElementById('reg-password').value;
-  const pass2 = document.getElementById('reg-password2').value;
-
-  if (!name) { showError('Please enter your full name.'); return; }
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); return; }
-  if (pass.length < 8) { showError('Password must be at least 8 characters.'); return; }
-  if (pass !== pass2) { showError('Passwords do not match.'); return; }
-
-  document.getElementById('form-1').classList.remove('active');
-  document.getElementById('form-2').classList.add('active');
-  setStepState(1, 'done');
-  document.getElementById('line-1').classList.add('done');
-  setStepState(2, 'active');
-  document.getElementById('step-2').style.opacity = '1';
-  currentStep = 2;
-}
-
-function goToStep3() {
-  clearError();
-  const school = document.getElementById('reg-school').value.trim();
-  const matric = document.getElementById('reg-matric').value.trim();
-  const phone = document.getElementById('reg-phone').value.trim();
-
-  if (!school) { showError('Please enter your school name.'); return; }
-  if (!matric || matric < 1970 || matric > 2025) { showError('Please enter a valid year of matriculation.'); return; }
-  if (!phone) { showError('Please enter your cell number.'); return; }
-
-  document.getElementById('form-2').classList.remove('active');
-  document.getElementById('form-3').classList.add('active');
-  setStepState(2, 'done');
-  document.getElementById('line-2').classList.add('done');
-  setStepState(3, 'active');
-  document.getElementById('step-3').style.opacity = '1';
-
-  // Update EFT reference with name
-  const name = document.getElementById('reg-name').value.trim();
-  document.getElementById('eft-ref').textContent = name + ' - ' + school;
-  currentStep = 3;
-}
-
-function goBack(toStep) {
-  clearError();
-  document.getElementById('form-'+(toStep+1)).classList.remove('active');
-  document.getElementById('form-'+toStep).classList.add('active');
-  setStepState(toStep, 'active');
-  if (toStep === 1) {
-    setStepState(2, 'active');
-    document.getElementById('step-2').style.opacity = '0.4';
-    document.getElementById('line-1').classList.remove('done');
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('prog-' + i);
+    const line = document.getElementById('line-' + i);
+    dot.className = 'prog-step' + (i < n ? ' done' : i === n ? ' active' : '');
+    if (line) line.className = 'prog-line' + (i < n ? ' done' : '');
   }
-  if (toStep === 2) {
-    setStepState(3, 'active');
-    document.getElementById('step-3').style.opacity = '0.4';
-    document.getElementById('line-2').classList.remove('done');
+  clearErrors();
+}
+
+// ── CLEAR ERRORS ──────────────────────────────────────────────────────────────
+function clearErrors() {
+  document.getElementById('err-banner').style.display = 'none';
+  document.querySelectorAll('.field-err').forEach(e => e.style.display = 'none');
+  document.querySelectorAll('input').forEach(i => i.classList.remove('has-error'));
+}
+
+function showFieldError(inputId, errId) {
+  document.getElementById(inputId).classList.add('has-error');
+  document.getElementById(errId).style.display = 'block';
+}
+
+function showBanner(msg) {
+  const b = document.getElementById('err-banner');
+  b.textContent = msg;
+  b.style.display = 'block';
+}
+
+// ── STEP 1 VALIDATION ─────────────────────────────────────────────────────────
+function saveStep1() {
+  clearErrors();
+
+  const name    = document.getElementById('f-name').value.trim();
+  const surname = document.getElementById('f-surname').value.trim();
+  const mobile  = document.getElementById('f-mobile').value.trim();
+  const email   = document.getElementById('f-email').value.trim().toLowerCase();
+
+  let ok = true;
+
+  if (!name) {
+    showFieldError('f-name', 'err-name');
+    ok = false;
   }
-  currentStep = toStep;
-}
-
-function selectPayment(type) {
-  selectedPayment = type;
-  document.getElementById('pay-eft').classList.toggle('selected', type === 'eft');
-  document.getElementById('pay-cash').classList.toggle('selected', type === 'cash');
-  document.getElementById('bank-details').classList.toggle('show', type === 'eft');
-}
-
-// ── REGISTRATION ──────────────────────────────────────────────────────────────
-async function submitRegistration() {
-  clearError();
-  const btn = document.getElementById('submit-btn');
-  const btnText = document.getElementById('submit-text');
-
-  const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim().toLowerCase();
-  const password = document.getElementById('reg-password').value;
-  const school = document.getElementById('reg-school').value.trim();
-  const matric = document.getElementById('reg-matric').value.trim();
-  const idNum = document.getElementById('reg-id').value.trim() || null;
-  const phone = document.getElementById('reg-phone').value.trim();
-  const handicap = document.getElementById('reg-handicap').value || null;
-  const payref = document.getElementById('reg-payref').value.trim() || null;
-
-  btn.disabled = true;
-  btnText.innerHTML = '<span class="spinner"></span> Registering...';
-
-  try {
-    // STEP 1: Create auth account
-    const { data: authData, error: authError } = await sb.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: name }
-      }
-    });
-
-    if (authError) {
-      // Handle already registered
-      if (authError.message.includes('already registered') || authError.message.includes('User already registered')) {
-        showError('This email is already registered. Please sign in to the portal instead.');
-      } else {
-        showError('Account error: ' + authError.message);
-      }
-      btn.disabled = false;
-      btnText.textContent = 'Complete Registration ✓';
-      return;
-    }
-
-    // STEP 2: Insert player record into players table
-    // This is the critical step that was missing!
-    const playerData = {
-      email: email,
-      full_name: name,
-      school_name: school,
-      year_of_matriculation: parseInt(matric),
-      id_number: idNum,
-      phone_number: phone,
-      handicap: handicap ? parseFloat(handicap) : null,
-      payment_status: 'unpaid',
-      payment_method: selectedPayment,
-      payment_reference: payref,
-      eligibility_status: 'pending',
-      is_admin: false,
-    };
-
-    const { error: playerError } = await sb.from('players').insert(playerData);
-
-    if (playerError) {
-      // If player row already exists (duplicate email), try upsert
-      if (playerError.code === '23505') {
-        const { error: upsertError } = await sb.from('players').upsert(playerData, { onConflict: 'email' });
-        if (upsertError) {
-          showError('Could not save player record: ' + upsertError.message);
-          btn.disabled = false;
-          btnText.textContent = 'Complete Registration ✓';
-          return;
-        }
-      } else {
-        showError('Could not save player record: ' + playerError.message);
-        btn.disabled = false;
-        btnText.textContent = 'Complete Registration ✓';
-        return;
-      }
-    }
-
-    // SUCCESS
-    document.getElementById('form-3').classList.remove('active');
-    const successEl = document.getElementById('success-screen');
-    successEl.style.display = 'block';
-    document.getElementById('success-name').textContent = name;
-    document.getElementById('success-pay-status').textContent =
-      selectedPayment === 'eft' ? 'EFT — awaiting verification' : 'Cash — pay on the day';
-
-    setStepState(3, 'done');
-
-  } catch (err) {
-    showError('Unexpected error: ' + err.message);
-    btn.disabled = false;
-    btnText.textContent = 'Complete Registration ✓';
+  if (!surname) {
+    showFieldError('f-surname', 'err-surname');
+    ok = false;
   }
+
+  // SA mobile: 9 digits after +27, must start with 6, 7 or 8
+  if (!mobile || mobile.length !== 9 || !/^[678]/.test(mobile)) {
+    showFieldError('f-mobile', 'err-mobile');
+    ok = false;
+  }
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showFieldError('f-email', 'err-email');
+    ok = false;
+  }
+
+  if (!ok) return;
+
+  // Store data
+  reg.first_name = name;
+  reg.surname    = surname;
+  reg.full_name  = name + ' ' + surname;
+  reg.mobile     = '+27' + mobile;
+  reg.email      = email;
+
+  goStep(2);
 }
 
-// Auto-redirect if already logged in
+// ── AUTO-LOGIN CHECK ──────────────────────────────────────────────────────────
 sb.auth.getSession().then(({ data: { session } }) => {
   if (session) {
-    // Check if player record exists
     sb.from('players').select('email').eq('email', session.user.email).maybeSingle().then(({ data }) => {
-      if (data) {
-        window.location.href = '/portal.html';
-      }
+      if (data) window.location.href = 'portal.html';
     });
   }
 });
