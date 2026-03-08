@@ -406,7 +406,7 @@ footer a { color:var(--gold); text-decoration:none; }
 </footer>
 
 <script>
-const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
+const SUPABASE_URL = 'https://wezTrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -568,40 +568,28 @@ async function saveStep1() {
   btn.disabled = true;
   btn.textContent = 'Saving...';
 
-  // 1. Create auth account
-  const { error: authErr } = await sb.auth.signUp({ email, password: pw });
-  if (authErr && !authErr.message.includes('already registered')) {
-    btn.disabled = false;
-    btn.textContent = 'Save & Continue →';
-    showBanner('Error creating account: ' + authErr.message);
-    return;
-  }
-
-  // 2. Save to players table using EXACT column names from Supabase
-  const { error: dbErr } = await sb.from('players').upsert({
-    email:          email,
-    full_name:      name + ' ' + surname,
-    mobile:         '+27' + mobile,
-    school:         selectedSchool.name,
-    password_set:   true,
-    eligibility_status: 'pending',
-    payment_status: 'unpaid',
-    registration_complete: false,
-  }, { onConflict: 'email' });
-
-  if (dbErr) {
-    console.warn('DB warning:', dbErr.message);
-    // Non-fatal — continue to step 2
-  }
-
-  // Store for later steps
+  // Store all data including password for final auth creation at end of registration
   reg = {
     full_name: name + ' ' + surname,
     email,
     mobile: '+27' + mobile,
     school: selectedSchool.name,
-    school_id: selectedSchool.id,
+    password: pw,
   };
+
+  // Save partial player record now — auth account created at final step
+  const { error: dbErr } = await sb.from('players').upsert({
+    email:                 email,
+    full_name:             name + ' ' + surname,
+    mobile:                '+27' + mobile,
+    school:                selectedSchool.name,
+    password_set:          false,
+    eligibility_status:    'pending',
+    payment_status:        'unpaid',
+    registration_complete: false,
+  }, { onConflict: 'email' });
+
+  if (dbErr) console.warn('DB note:', dbErr.message);
 
   btn.disabled = false;
   btn.textContent = 'Save & Continue →';
@@ -683,31 +671,37 @@ async function saveStep2() {
   if (!ok) return;
 
   // Save partial data to Supabase regardless of eligibility outcome
-  await sb.from('players').update({
-    popia_accepted: true,
-    rules_accepted: true,
-    still_at_school: ynState.school === 'yes',
-    has_handicap: ynState.handicap === 'yes',
+  await sb.from('players').upsert({
+    email:            reg.email,
+    full_name:        reg.full_name,
+    mobile:           reg.mobile,
+    school:           reg.school,
+    popia_accepted:   true,
+    rules_accepted:   true,
+    still_at_school:  ynState.school === 'yes',
+    has_handicap:     ynState.handicap === 'yes',
     eligibility_status: 'pending',
-  }).eq('email', reg.email);
+    payment_status:   'unpaid',
+    registration_complete: false,
+  }, { onConflict: 'email' });
 
   // Check hard locks
   if (ynState.school === 'yes') {
-    await sb.from('players').update({ eligibility_status: 'ineligible' }).eq('email', reg.email);
+    await sb.from('players').upsert({ email: reg.email, eligibility_status: 'ineligible' }, { onConflict: 'email' });
     showHardlock(
       'Registration Not Permitted — Current Learner',
       'Unfortunately, the Alumni Schools Golf Challenge is open exclusively to alumni who have already completed their schooling. As a current learner, you are not eligible to enter as a player. You are welcome to follow the tournament as a Supporter.'
     ); return;
   }
   if (ynState.handicap === 'no') {
-    await sb.from('players').update({ eligibility_status: 'ineligible' }).eq('email', reg.email);
+    await sb.from('players').upsert({ email: reg.email, eligibility_status: 'ineligible' }, { onConflict: 'email' });
     showHardlock(
       'Registration Not Permitted — No Valid HNA Handicap',
       'A current, active HNA (Handicap Network Africa) registered handicap is a mandatory requirement for all participants. Players without an official handicap are not permitted to enter. You are welcome to obtain an HNA handicap through your local GolfRSA-affiliated club and register in a future season. In the meantime, you may register as a Supporter.'
     ); return;
   }
   if (ynState.age === 'no') {
-    await sb.from('players').update({ eligibility_status: 'ineligible' }).eq('email', reg.email);
+    await sb.from('players').upsert({ email: reg.email, eligibility_status: 'ineligible' }, { onConflict: 'email' });
     showHardlock(
       'Registration Not Permitted — Age Requirement Not Met',
       'All participants must be at least 18 years of age at the time of registration. Unfortunately you do not meet this requirement and are not eligible to enter as a player. You are welcome to register as a Supporter.'
@@ -715,7 +709,7 @@ async function saveStep2() {
   }
 
   // All clear — update eligibility status
-  await sb.from('players').update({ eligibility_status: 'eligible' }).eq('email', reg.email);
+  await sb.from('players').upsert({ email: reg.email, eligibility_status: 'eligible', popia_accepted: true, rules_accepted: true }, { onConflict: 'email' });
   reg.popia_accepted = true;
   reg.rules_accepted = true;
   goStep(3);
