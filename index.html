@@ -6,6 +6,8 @@
 <title>Alumni Golf — Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/email-service.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="config.js"></script>
 <style>
@@ -1029,12 +1031,29 @@ function openEditMatch(id) {
 }
 
 async function saveMatch() {
+  const newStatus = document.getElementById('em-status').value;
+  const winner = document.getElementById('em-winner').value||null;
+  const score = document.getElementById('em-score').value||null;
   const { error } = await sb.from('matches').update({
-    match_status: document.getElementById('em-status').value,
-    winner: document.getElementById('em-winner').value||null,
-    score_display: document.getElementById('em-score').value||null,
+    match_status: newStatus, winner, score_display: score,
   }).eq('id', editingMatchId);
   if (error) { toast('Error: '+error.message,'error'); return; }
+  // Send result emails if match completed
+  if (newStatus === 'completed' && window.EmailService) {
+    const m = allMatches.find(x=>x.id===editingMatchId);
+    if (m) {
+      const { data: homePlayers } = await sb.from('players').select('email,full_name').eq('team_number', m.home_team);
+      const { data: awayPlayers } = await sb.from('players').select('email,full_name').eq('team_number', m.away_team);
+      const allPlayers = [...(homePlayers||[]), ...(awayPlayers||[])];
+      for (const p of allPlayers) {
+        EmailService.sendMatchResultEmail({
+          playerName: p.full_name, playerEmail: p.email,
+          homeTeam: m.home_team, awayTeam: m.away_team,
+          winner, score, round: m.round_number
+        });
+      }
+    }
+  }
   toast('Match updated ✅');
   closeModal('modal-match');
   allMatches = [];
@@ -1080,8 +1099,9 @@ function renderPayments() {
         <td><span class="badge badge-grey">${p.team_number||'—'}</span></td>
         <td>${p.payment_method||'—'}</td>
         <td><span class="badge ${p.payment_status==='paid'?'badge-green':p.payment_status==='pending_verification'?'badge-gold':'badge-red'}">${p.payment_status||'unpaid'}</span></td>
-        <td>
+        <td style="display:flex;gap:6px;">
           <button class="btn-sm btn-outline" onclick="markPaid('${p.email}')">✅ Mark Paid</button>
+          <button class="btn-sm btn-outline" onclick="sendReminder('${p.email}')">📧 Remind</button>
         </td>
       </tr>`).join('');
 }
@@ -1090,7 +1110,32 @@ async function markPaid(email) {
   const { error } = await sb.from('players').update({payment_status:'paid'}).eq('email',email);
   if (error) { toast('Error: '+error.message,'error'); return; }
   toast('Marked as paid ✅');
+  // Send payment confirmation email
+  const player = allPayments.find(p=>p.email===email);
+  if (player && window.EmailService) {
+    EmailService.sendPaymentConfirmationEmail({
+      name: player.full_name || email,
+      email: email,
+      school: player.school_name || '',
+      amount: player.payment_amount || '1,500',
+      teamNumber: player.team_number || ''
+    });
+  }
   await loadPayments();
+}
+
+async function sendReminder(email) {
+  if (!window.EmailService) { toast('Email service not loaded','error'); return; }
+  const { data: player } = await sb.from('players').select('full_name,school,team_number,payment_reference').eq('email',email).maybeSingle();
+  if (!player) { toast('Player not found','error'); return; }
+  await EmailService.sendPaymentReminderEmail({
+    name: player.full_name||email,
+    email: email,
+    school: player.school||'',
+    teamNumber: player.team_number||'',
+    referenceNumber: player.payment_reference||player.team_number||'',
+  });
+  toast('Payment reminder sent ✅');
 }
 
 // ── COMMUNITY ─────────────────────────────────────────────────────────────────
@@ -1157,7 +1202,17 @@ async function sendBroadcast() {
     sent_by: currentAdmin?.email,
   });
   if (error) { toast('Error: '+error.message,'error'); return; }
-  toast('Broadcast sent ✅');
+  // Send broadcast emails to all players
+  if (window.EmailService) {
+    const { data: players } = await sb.from('players').select('email').not('email','is',null);
+    const emails = (players||[]).map(p=>p.email).filter(Boolean);
+    if (emails.length > 0) {
+      EmailService.sendBroadcastEmail({ recipients: emails, subject: title, title, message });
+      toast('Broadcast sent to ' + emails.length + ' players ✅');
+    }
+  } else {
+    toast('Broadcast saved ✅');
+  }
   document.getElementById('bc-title').value='';
   document.getElementById('bc-message').value='';
   loadCommunity();

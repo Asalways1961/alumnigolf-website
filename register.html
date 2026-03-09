@@ -6,6 +6,8 @@
 <title>Register — Alumni Schools Golf Challenge</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/email-service.js"></script>
+
 <style>
 :root {
   --navy:#0A1F44; --navy-dark:#0A1F44; --navy-mid:#0A1F44;
@@ -822,6 +824,26 @@ async function submitPayment() {
   if (authRes.error && authRes.error.message.indexOf('already registered')===-1) console.warn('Auth:',authRes.error.message);
   await sb.auth.signOut();
 
+  // Send welcome email
+  if (window.EmailService) {
+    EmailService.sendWelcomeEmail({
+      name: reg.full_name,
+      email: reg.email,
+      school: reg.school,
+      referenceNumber: reg.payment_reference || teamNumber
+    });
+    // Send partner invitation if partner email was provided
+    var partnerEmail = document.getElementById('inv-email') ? document.getElementById('inv-email').value.trim() : '';
+    if (partnerEmail) {
+      EmailService.sendPartnerInvitationEmail({
+        inviterName: reg.full_name,
+        inviterSchool: reg.school,
+        partnerEmail: partnerEmail,
+        partnerName: ''
+      });
+    }
+  }
+
   btn.disabled=false;
   document.getElementById('success-team').textContent=teamNumber;
   document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});
@@ -843,6 +865,24 @@ async function submitPayLater(e) {
   },{onConflict:'email'});
   var authRes=await sb.auth.signUp({email:reg.email,password:reg.password});
   if (authRes.error && authRes.error.message.indexOf('already registered')===-1) console.warn('Auth:',authRes.error.message);
+  // Send welcome email
+  if (window.EmailService) {
+    EmailService.sendWelcomeEmail({
+      name: reg.full_name,
+      email: reg.email,
+      school: reg.school,
+      referenceNumber: teamNumber
+    });
+    var partnerEmail = document.getElementById('inv-email') ? document.getElementById('inv-email').value.trim() : '';
+    if (partnerEmail) {
+      EmailService.sendPartnerInvitationEmail({
+        inviterName: reg.full_name,
+        inviterSchool: reg.school,
+        partnerEmail: partnerEmail,
+        partnerName: ''
+      });
+    }
+  }
   await sb.auth.signOut();
   window.location.href='portal.html';
 }
