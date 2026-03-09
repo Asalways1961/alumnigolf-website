@@ -1030,6 +1030,113 @@ async function submitPayLater(e) {
   window.location.href='portal.html';
 }
 
+
+// ── PATH SELECTION ────────────────────────────────────────────────────────────
+var inviteData = null;
+
+function showChoice() {
+  document.getElementById('sec-choice').style.display = 'block';
+  document.getElementById('sec-invite-lookup').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'none';
+  document.getElementById('main-page').style.display = 'none';
+}
+
+function selectPath(path) {
+  if (path === 'new') {
+    document.getElementById('sec-choice').style.display = 'none';
+    document.getElementById('sec-invite-lookup').style.display = 'none';
+    document.getElementById('prog-wrap').style.display = 'block';
+    document.getElementById('main-page').style.display = 'block';
+  } else {
+    document.getElementById('sec-choice').style.display = 'none';
+    document.getElementById('sec-invite-lookup').style.display = 'block';
+    document.getElementById('prog-wrap').style.display = 'none';
+    document.getElementById('main-page').style.display = 'none';
+  }
+}
+
+// ── INVITE LOOKUP ─────────────────────────────────────────────────────────────
+async function findInvitation() {
+  var raw = document.getElementById('lookup-mobile').value.replace(/\s/g,'');
+  if (!/^[0-9]{9,10}$/.test(raw)) {
+    ferr('err-lookup', true);
+    document.getElementById('err-lookup').textContent = 'Please enter a valid mobile number.';
+    return;
+  }
+  var mobile = raw.length === 9 ? '+27' + raw : '+27' + raw.substring(1);
+  var btn = document.getElementById('btn-lookup');
+  btn.disabled = true; btn.textContent = 'Searching...';
+
+  var res = await sb.from('player_invitations').select('*').eq('invited_mobile', mobile).maybeSingle();
+  var data = res.data;
+
+  btn.disabled = false; btn.textContent = 'Find My Invitation →';
+
+  if (!data) {
+    ferr('err-lookup', true);
+    document.getElementById('err-lookup').textContent = 'No invitation found for this number. Please check with your captain.';
+    return;
+  }
+  ferr('err-lookup', false);
+  inviteData = data;
+
+  // Get captain details
+  var capRes = await sb.from('players').select('team_number,full_name').eq('mobile', data.invited_by_mobile).maybeSingle();
+  var captain = capRes.data;
+
+  document.getElementById('confirm-team').textContent = (captain && captain.team_number) ? captain.team_number : data.school;
+  document.getElementById('confirm-captain').textContent = 'Invited by: ' + ((captain && captain.full_name) ? captain.full_name : 'Your captain');
+  document.getElementById('confirm-school').textContent = data.school;
+  document.getElementById('invite-confirm').style.display = 'block';
+  document.getElementById('btn-lookup').style.display = 'none';
+}
+
+function resetLookup() {
+  inviteData = null;
+  document.getElementById('lookup-mobile').value = '';
+  document.getElementById('invite-confirm').style.display = 'none';
+  document.getElementById('btn-lookup').style.display = 'block';
+}
+
+function acceptInvite() {
+  if (!inviteData) return;
+  var nameParts = (inviteData.invited_name || '').split(' ');
+  var fn = document.getElementById('f-fname');
+  var sn = document.getElementById('f-sname');
+  var mob = document.getElementById('f-mobile');
+  var email = document.getElementById('f-email');
+  var schoolInput = document.getElementById('f-school');
+
+  if (fn) fn.value = nameParts[0] || '';
+  if (sn) sn.value = nameParts.slice(1).join(' ') || '';
+  if (mob) mob.value = (inviteData.invited_mobile || '').replace('+27','');
+  if (email && inviteData.invited_email) email.value = inviteData.invited_email;
+  if (schoolInput) schoolInput.value = inviteData.school || '';
+
+  selectedSchool = { name: inviteData.school, id: inviteData.school_id || null };
+  reg.invited_team_number = null;
+  reg.is_invited = true;
+
+  document.getElementById('sec-invite-lookup').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'block';
+  document.getElementById('main-page').style.display = 'block';
+  goStep(1);
+}
+
+// ── AUTO-SELECT FROM URL PARAMS ───────────────────────────────────────────────
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('invite') === '1') {
+    selectPath('invited');
+    var mobile = params.get('mobile');
+    if (mobile) {
+      var stripped = mobile.replace('+27','').replace(/\s/g,'');
+      var el = document.getElementById('lookup-mobile');
+      if (el) el.value = stripped;
+    }
+  }
+})();
+
 // Bind submit button via addEventListener so Cloudflare can't break it
 document.getElementById('btn-s4').addEventListener('click', function() { submitPayment(); });
 </script>
