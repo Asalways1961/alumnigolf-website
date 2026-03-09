@@ -1,0 +1,21 @@
+{
+  "routes": [
+    { "src": "/",             "dest": "/home.html" },
+    { "src": "/home",         "dest": "/home.html" },
+    { "src": "/register",     "dest": "/register.html" },
+    { "src": "/portal",       "dest": "/portal.html" },
+    { "src": "/admin",        "dest": "/index.html" },
+    { "src": "/contact",      "dest": "/contact.html" },
+    { "src": "/schools",      "dest": "/schools.html" },
+    { "src": "/payment",      "dest": "/payment.html" },
+    { "src": "/how-it-works", "dest": "/how-it-works.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    }
+  ]
+}
