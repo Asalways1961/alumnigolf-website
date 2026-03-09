@@ -352,22 +352,22 @@ footer {
       <div class="step-card">
         <div class="step-number">01</div>
         <div class="step-title">Register Online</div>
-        <div class="step-desc">Create your player account, enter your school and matric year. Takes less than 2 minutes.</div>
+        <div class="step-desc">Enter your team by entering your school and a few details, takes less than 2 minutes.</div>
       </div>
       <div class="step-card">
         <div class="step-number">02</div>
         <div class="step-title">Get Verified</div>
-        <div class="step-desc">Our admin team verifies your eligibility based on your school and year of matriculation.</div>
+        <div class="step-desc">Complete the verification for eligibility and you are registered.</div>
       </div>
       <div class="step-card">
         <div class="step-number">03</div>
-        <div class="step-title">Join Your Division</div>
-        <div class="step-desc">You're placed into a division with other alumni from your school. Teams of 2 represent each school.</div>
+        <div class="step-title">Team Criteria</div>
+        <div class="step-desc">The 2 players in each team must be bona-fide Alumni of the same school.</div>
       </div>
       <div class="step-card">
         <div class="step-number">04</div>
-        <div class="step-title">Compete & Win</div>
-        <div class="step-desc">Play match play rounds against other school alumni. Track results live on your player portal.</div>
+        <div class="step-title">Divisional Allocation</div>
+        <div class="step-desc">Teams are drawn into divisions based on geoplotting using their postal codes. It's very important to get this right. 8 teams per division.</div>
       </div>
     </div>
     <div style="text-align:center;margin-top:36px;">
@@ -385,9 +385,9 @@ footer {
         <h2 class="section-title">Who can play?</h2>
         <ul class="elig-list">
           <li><div class="tick">✓</div><div>Any former pupil of a South African high school</div></li>
-          <li><div class="tick">✓</div><div>Must have matriculated from your school (any year)</div></li>
-          <li><div class="tick">✓</div><div>Any handicap welcome — this is about school pride!</div></li>
-          <li><div class="tick">✓</div><div>Teams of 2 players per school per division</div></li>
+          <li><div class="tick">✓</div><div>Must have attended your chosen school</div></li>
+          <li><div class="tick">✓</div><div>All participants must have an official handicap - School pride is at stake.</div></li>
+          <li><div class="tick">✓</div><div>Unlimited teams per school</div></li>
           <li><div class="tick">✓</div><div>Entry fee of R500 per player includes all rounds</div></li>
         </ul>
         <div style="margin-top:24px;">
@@ -506,12 +506,10 @@ async function loadStats() {
     sb.from('divisions').select('*', { count:'exact', head:true }),
   ]);
 
-  // Count unique schools from players
-  const { data: schoolData } = await sb.from('players').select('school_name').not('school_name', 'is', null);
-  const uniqueSchools = new Set((schoolData||[]).map(p => p.school_name).filter(Boolean)).size;
+  const { count: schoolCount } = await sb.from('schools').select('*', { count:'exact', head:true });
 
   document.getElementById('stat-players').textContent = players || 0;
-  document.getElementById('stat-schools').textContent = uniqueSchools || 0;
+  document.getElementById('stat-schools').textContent = schoolCount || 0;
   document.getElementById('stat-divisions').textContent = divisions || 0;
 }
 

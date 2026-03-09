@@ -58,11 +58,11 @@ footer a{color:var(--gold);text-decoration:none;}
 </head>
 <body>
 <nav>
-  <a href="index.html" style="text-decoration:none;display:flex;align-items:center;gap:12px;">
+  <a href="home.html" style="text-decoration:none;display:flex;align-items:center;gap:12px;">
     <img src="/Full_Logo.jpg" alt="Alumni Schools Golf Challenge" style="height:44px;width:auto;object-fit:contain;"><span style="font-family:'Cormorant Garamond',serif;color:white;font-size:18px;font-weight:600;">Alumni Schools Golf Challenge</span>
   </a>
   <div class="nav-links">
-    <a href="index.html">Home</a>
+    <a href="home.html">Home</a>
     <a href="portal.html">My Portal</a>
     <a href="contact.html">Contact</a>
   </div>
@@ -143,8 +143,8 @@ footer a{color:var(--gold);text-decoration:none;}
     </div>
   </div>
 </div>
-<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="mailto:info@alumnigolf.co.za">info@alumnigolf.co.za</a></p></footer>
-<script>
+<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#98f1f6fef7d8f9f4edf5f6f1fff7f4feb6fbf7b6e2f9"><span class="__cf_email__" data-cfemail="1b72757d745b7a776e7675727c74777d35787435617a">[email&#160;protected]</span></a></p></footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const SUPABASE_URL='https://weztrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const {createClient}=supabase;const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -216,12 +216,4 @@ async function submitPayment(){
       payment_amount:selectedAmount==='team'?2800:1500,
     }).eq('email',email);
     document.querySelectorAll('.card:not(#success-card)').forEach(c=>c.style.display='none');
-    document.getElementById('success-card').style.display='block';
-  }catch(e){
-    btn.innerHTML='✅ Submit Proof of Payment';btn.disabled=false;
-    err.textContent='Upload failed: '+e.message;err.style.display='block';
-  }
-}
-</script>
-</body>
-</html>
+    doc

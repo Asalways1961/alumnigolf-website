@@ -43,9 +43,9 @@ footer a{color:var(--gold);text-decoration:none;}
 </head>
 <body>
 <nav>
-  <a href="index.html" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><img src="/Full_Logo.jpg" alt="Alumni Schools Golf Challenge" style="height:44px;width:auto;object-fit:contain;"><span style="font-family:'Cormorant Garamond',serif;color:white;font-size:18px;font-weight:600;">Alumni Schools Golf Challenge</span></a>
+  <a href="home.html" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><img src="/Full_Logo.jpg" alt="Alumni Schools Golf Challenge" style="height:44px;width:auto;object-fit:contain;"><span style="font-family:'Cormorant Garamond',serif;color:white;font-size:18px;font-weight:600;">Alumni Schools Golf Challenge</span></a>
   <div class="nav-links">
-    <a href="index.html">Home</a><a href="how-it-works.html">How It Works</a>
+    <a href="home.html">Home</a><a href="how-it-works.html">How It Works</a>
     <a href="schools.html">Schools</a><a href="register.html">Register</a><a href="contact.html" class="active">Contact</a>
   </div>
   <a href="register.html" class="nav-cta">Register Now</a>
@@ -61,7 +61,7 @@ footer a{color:var(--gold);text-decoration:none;}
   <div class="two-col">
     <div class="card">
       <h2>Get In Touch</h2>
-      <div class="info-item"><div class="icon">📧</div><div><h4>Email</h4><p><a href="mailto:info@alumnigolf.co.za">info@alumnigolf.co.za</a></p></div></div>
+      <div class="info-item"><div class="icon">📧</div><div><h4>Email</h4><p><a href="/cdn-cgi/l/email-protection#2841464e476849445d4546414f47444e064b47065249"><span class="__cf_email__" data-cfemail="eb82858d84ab8a879e8685828c84878dc58884c5918a">[email&#160;protected]</span></a></p></div></div>
       <div class="info-item"><div class="icon">🌐</div><div><h4>Website</h4><p><a href="https://alumnigolf.net">alumnigolf.net</a></p></div></div>
       <div class="info-item"><div class="icon">📱</div><div><h4>App</h4><p>Launching soon on iOS and Android</p></div></div>
       <div class="info-item"><div class="icon">🤝</div><div><h4>Sponsorship</h4><p>Division naming and sponsorship opportunities available. Contact us to get involved!</p></div></div>
@@ -89,8 +89,8 @@ footer a{color:var(--gold);text-decoration:none;}
     </div>
   </div>
 </div>
-<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="mailto:info@alumnigolf.co.za">info@alumnigolf.co.za</a></p></footer>
-<script>
+<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#0f666169604f6e637a62616668606369216c6021756e"><span class="__cf_email__" data-cfemail="bed7d0d8d1fedfd2cbd3d0d7d9d1d2d890ddd190c4df">[email&#160;protected]</span></a></p></footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const SUPABASE_URL='https://weztrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const {createClient}=supabase;const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -106,14 +106,4 @@ async function sendMessage() {
   const btn=document.getElementById('btn-contact');
   btn.disabled=true;btn.textContent='Sending...';
   const {error}=await sb.from('contact_messages').insert({name,email,subject,message});
-  btn.disabled=false;btn.textContent='Send Message';
-  if(error){alert('Error sending message. Please email us directly.');return;}
-  document.getElementById('contact-success').style.display='block';
-  document.getElementById('c-name').value='';
-  document.getElementById('c-email').value='';
-  document.getElementById('c-subject').value='';
-  document.getElementById('c-message').value='';
-}
-</script>
-</body>
-</html>
+  btn.disabled=false;btn.textCont

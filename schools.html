@@ -43,9 +43,9 @@ footer a{color:var(--gold);text-decoration:none;}
 </head>
 <body>
 <nav>
-  <a href="index.html" class="nav-logo"><img src="/Full_Logo.jpg" alt="Alumni Schools Golf Challenge" style="height:44px;width:auto;object-fit:contain;"><span>Alumni Schools Golf Challenge</span></a>
+  <a href="home.html" class="nav-logo"><img src="/Full_Logo.jpg" alt="Alumni Schools Golf Challenge" style="height:44px;width:auto;object-fit:contain;"><span>Alumni Schools Golf Challenge</span></a>
   <div class="nav-links">
-    <a href="index.html">Home</a><a href="how-it-works.html">How It Works</a>
+    <a href="home.html">Home</a><a href="how-it-works.html">How It Works</a>
     <a href="schools.html" class="active">Schools</a><a href="register.html">Register</a><a href="contact.html">Contact</a>
   </div>
   <a href="register.html" class="nav-cta">Register Now</a>
@@ -70,8 +70,8 @@ footer a{color:var(--gold);text-decoration:none;}
   <div class="alpha-nav" id="alpha-nav"></div>
   <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;"><div class="schools-grid" id="schools-grid"></div></div>
 </div>
-<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="mailto:info@alumnigolf.co.za">info@alumnigolf.co.za</a></p></footer>
-<script>
+<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#3e575058517e5f524b53505759515258105d5110445f"><span class="__cf_email__" data-cfemail="d8b1b6beb798b9b4adb5b6b1bfb7b4bef6bbb7f6a2b9">[email&#160;protected]</span></a></p></footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const SUPABASE_URL='https://weztrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const {createClient}=supabase;const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -130,13 +130,4 @@ function renderSchools(list) {
   var html = '';
   for (var i = 0; i < list.length; i++) {
     var s = list[i];
-    var isReg = registeredSchools.indexOf(s) !== -1;
-    html += '<div class="school-card"><h3>' + s + '</h3><p>' + (isReg ? '✅ Registered teams' : 'Listed school') + '</p></div>';
-  }
-  grid.innerHTML = html;
-}
-
-loadData();
-</script>
-</body>
-</html>
+    va
