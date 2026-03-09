@@ -1,6 +1,6 @@
 {
   "routes": [
-    { "src": "/",             "dest": "/home.html" },
+    { "src": "/",             "dest": "/coming-soon.html" },
     { "src": "/home",         "dest": "/home.html" },
     { "src": "/register",     "dest": "/register.html" },
     { "src": "/portal",       "dest": "/portal.html" },

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alumni Schools Golf Challenge — Coming Soon</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0A1F44;
+    --navy2: #0A2050;
+    --gold: #C89B3C;
+    --gold-dim: rgba(200,155,60,0.15);
+    --gold-glow: rgba(200,155,60,0.08);
+    --cream: #F4E7C6;
+    --green: #1B4D2E;
+    --white: #ffffff;
+    --text2: rgba(244,231,198,0.65);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Background layers */
+  .bg-gradient {
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse at 15% 50%, rgba(200,155,60,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 20%, rgba(27,77,46,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 100%, rgba(10,32,80,0.8) 0%, transparent 60%),
+      linear-gradient(160deg, #0A1F44 0%, #0A2050 50%, #0d2a1a 100%);
+  }
+
+  /* Animated golf ball dots */
+  .dots {
+    position: fixed; inset: 0; z-index: 0; overflow: hidden;
+  }
+  .dot {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(200,155,60,0.06);
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Gold horizontal rule */
+  .gold-rule {
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto;
+    border-radius: 2px;
+  }
+
+  /* Main content */
+  .container {
+    position: relative; z-index: 10;
+    text-align: center;
+    padding: 40px 24px;
+    max-width: 680px;
+    animation: fadeUp 1s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo-wrap {
+    margin-bottom: 28px;
+    animation: fadeUp 1s ease 0.1s both;
+  }
+  .logo-wrap img {
+    height: 110px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 24px rgba(200,155,60,0.3));
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    animation: fadeUp 1s ease 0.2s both;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(38px, 7vw, 72px);
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 6px;
+    animation: fadeUp 1s ease 0.3s both;
+  }
+
+  h1 span { color: var(--gold); }
+
+  .tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(16px, 2.5vw, 22px);
+    font-style: italic;
+    color: var(--text2);
+    margin-top: 8px;
+    animation: fadeUp 1s ease 0.4s both;
+  }
+
+  .gold-rule { animation: fadeUp 1s ease 0.45s both; }
+
+  .description {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto 36px;
+    animation: fadeUp 1s ease 0.5s both;
+  }
+
+  /* Countdown */
+  .countdown {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    animation: fadeUp 1s ease 0.6s both;
+  }
+  .count-block {
+    background: rgba(200,155,60,0.08);
+    border: 1px solid rgba(200,155,60,0.25);
+    border-radius: 12px;
+    padding: 16px 22px;
+    min-width: 80px;
+  }
+  .count-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    display: block;
+  }
+  .count-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-top: 6px;
+    display: block;
+  }
+
+  /* Launch date */
+  .launch-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold-dim);
+    border: 1px solid rgba(200,155,60,0.3);
+    border-radius: 30px;
+    padding: 10px 22px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+    margin-bottom: 40px;
+    animation: fadeUp 1s ease 0.7s both;
+  }
+
+  /* Notify form */
+  .notify-wrap {
+    animation: fadeUp 1s ease 0.8s both;
+    margin-bottom: 40px;
+  }
+  .notify-label {
+    font-size: 12px;
+    color: var(--text2);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .notify-form {
+    display: flex;
+    gap: 8px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .notify-form input {
+    flex: 1;
+    padding: 12px 18px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(200,155,60,0.3);
+    border-radius: 8px;
+    color: var(--cream);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s;
+  }
+  .notify-form input::placeholder { color: rgba(244,231,198,0.35); }
+  .notify-form input:focus { outline: none; border-color: var(--gold); }
+  .notify-form button {
+    padding: 12px 22px;
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .notify-form button:hover { opacity: 0.88; }
+  .notify-success {
+    font-size: 13px;
+    color: #4caf7d;
+    margin-top: 10px;
+    display: none;
+  }
+
+  /* Features preview */
+  .features {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    animation: fadeUp 1s ease 0.9s both;
+  }
+  .feature-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .feature-pill .dot-icon { font-size: 14px; }
+
+  /* Footer */
+  footer {
+    position: relative; z-index: 10;
+    padding: 20px;
+    font-size: 12px;
+    color: rgba(244,231,198,0.3);
+    text-align: center;
+    animation: fadeUp 1s ease 1s both;
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+
+  /* Shimmer line at top */
+  .shimmer-top {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--green), var(--gold), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
+    z-index: 100;
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shimmer-top"></div>
+<div class="bg-gradient"></div>
+<div class="dots" id="dots"></div>
+
+<div class="container">
+
+  <div class="logo-wrap">
+    <img src="/Full_Logo.jpg" alt="Alumni Schools Golf Challenge" />
+  </div>
+
+  <div class="eyebrow">⛳ Inaugural Season 2026/27</div>
+
+  <h1>Coming <span>Soon</span></h1>
+
+  <div class="tagline">Honouring tradition. Celebrating excellence.</div>
+
+  <div class="gold-rule"></div>
+
+  <p class="description">
+    South Africa's premier inter-school alumni golf tournament is launching soon.
+    Former pupils, same school, one goal — glory.
+  </p>
+
+  <div class="countdown" id="countdown">
+    <div class="count-block"><span class="count-num" id="cd-days">—</span><span class="count-label">Days</span></div>
+    <div class="count-block"><span class="count-num" id="cd-hours">—</span><span class="count-label">Hours</span></div>
+    <div class="count-block"><span class="count-num" id="cd-mins">—</span><span class="count-label">Minutes</span></div>
+    <div class="count-block"><span class="count-num" id="cd-secs">—</span><span class="count-label">Seconds</span></div>
+  </div>
+
+  <div class="launch-date">🗓 Registration opens 1 April 2026</div>
+
+  <div class="notify-wrap">
+    <div class="notify-label">Get notified when we launch</div>
+    <div class="notify-form">
+      <input type="email" id="notify-email" placeholder="your@email.com" />
+      <button onclick="submitNotify()">Notify Me</button>
+    </div>
+    <div class="notify-success" id="notify-success">✅ You're on the list — we'll be in touch!</div>
+  </div>
+
+  <div class="features">
+    <div class="feature-pill"><span class="dot-icon">🏫</span> All SA Schools</div>
+    <div class="feature-pill"><span class="dot-icon">🏆</span> Double Elimination Bracket</div>
+    <div class="feature-pill"><span class="dot-icon">⛳</span> Betterball Matchplay</div>
+    <div class="feature-pill"><span class="dot-icon">📍</span> Local Divisions</div>
+    <div class="feature-pill"><span class="dot-icon">🤝</span> Alumni Teams</div>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Alumni Schools Golf Challenge · Legacy Event Ventures (Pty) Ltd ·
+  <a href="mailto:info@alumnigolf.co.za">info@alumnigolf.co.za</a>
+</footer>
+
+<script>
+// Countdown to 1 April 2026
+function updateCountdown() {
+  var target = new Date('2026-04-01T00:00:00+02:00');
+  var now = new Date();
+  var diff = target - now;
+  if (diff <= 0) {
+    document.getElementById('countdown').style.display = 'none';
+    return;
+  }
+  var days  = Math.floor(diff / (1000*60*60*24));
+  var hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  var mins  = Math.floor((diff % (1000*60*60)) / (1000*60));
+  var secs  = Math.floor((diff % (1000*60)) / 1000);
+  document.getElementById('cd-days').textContent  = String(days).padStart(2,'0');
+  document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+  document.getElementById('cd-mins').textContent  = String(mins).padStart(2,'0');
+  document.getElementById('cd-secs').textContent  = String(secs).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+// Floating dots
+var dotsEl = document.getElementById('dots');
+for (var i = 0; i < 18; i++) {
+  var d = document.createElement('div');
+  d.className = 'dot';
+  var size = Math.random() * 60 + 20;
+  d.style.cssText = [
+    'width:' + size + 'px',
+    'height:' + size + 'px',
+    'left:' + (Math.random() * 100) + '%',
+    'animation-duration:' + (Math.random() * 20 + 15) + 's',
+    'animation-delay:' + (Math.random() * -20) + 's',
+    'opacity:' + (Math.random() * 0.5)
+  ].join(';');
+  dotsEl.appendChild(d);
+}
+
+// Notify form
+async function submitNotify() {
+  var email = document.getElementById('notify-email').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('notify-email').style.borderColor = '#e53935';
+    return;
+  }
+  // Store in Supabase notify_list table if it exists, otherwise just show success
+  try {
+    var res = await fetch('https://weztrzuxwycypheyiixr.supabase.co/rest/v1/notify_list', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ email: email })
+    });
+  } catch(e) {}
+  document.getElementById('notify-email').style.display = 'none';
+  document.querySelector('.notify-form button').style.display = 'none';
+  document.getElementById('notify-success').style.display = 'block';
+}
+</script>
+</body>
+</html>
