@@ -130,4 +130,18 @@ function renderSchools(list) {
   var html = '';
   for (var i = 0; i < list.length; i++) {
     var s = list[i];
-    va
+    va    var isReg = registeredSchools.includes(s);
+    html += '<div class="school-card">' +
+      '<div><h3>' + s + '</h3>' +
+      (isReg ? '<p>✅ Registered — teams entered</p>' : '<p>Available to enter</p>') +
+      '</div>' +
+      (isReg ? '<span style="background:rgba(200,155,60,0.15);color:#C89B3C;border:1px solid rgba(200,155,60,0.3);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:600;">ENTERED</span>' : '') +
+      '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+loadData();
+</script>
+</body>
+</html>
