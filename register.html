@@ -16,6 +16,36 @@
   --err:#c0392b; --ok:#1B4D2E; --r:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
+/* ── CHOICE SCREEN ── */
+#sec-choice { display:block; }
+.choice-wrap { max-width:620px; margin:0 auto; padding:60px 20px 80px; }
+.choice-heading { text-align:center; margin-bottom:40px; }
+.choice-heading h2 { font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:700; color:var(--navy); margin-bottom:8px; }
+.choice-heading p { font-size:14px; color:var(--grey); }
+.choice-cards { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media(max-width:560px){ .choice-cards { grid-template-columns:1fr; } }
+.choice-card {
+  background:#fff; border:2px solid rgba(10,31,68,0.1); border-radius:16px;
+  padding:36px 28px; text-align:center; cursor:pointer;
+  transition:all 0.2s; box-shadow:0 2px 16px rgba(0,0,0,0.06);
+}
+.choice-card:hover { border-color:var(--gold); transform:translateY(-3px); box-shadow:0 8px 32px rgba(200,155,60,0.2); }
+.choice-card .choice-icon { font-size:48px; margin-bottom:16px; }
+.choice-card h3 { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:700; color:var(--navy); margin-bottom:8px; }
+.choice-card p { font-size:13px; color:var(--grey); line-height:1.6; margin-bottom:20px; }
+.choice-btn { display:inline-block; padding:12px 28px; border-radius:8px; font-size:13px; font-weight:700; letter-spacing:0.5px; }
+.choice-btn-gold { background:var(--gold); color:var(--navy); }
+.choice-btn-navy { background:var(--navy); color:#fff; }
+
+/* ── INVITE LOOKUP ── */
+.invite-lookup { background:#fff; border-radius:16px; padding:36px; box-shadow:0 2px 20px rgba(0,0,0,.06); max-width:480px; margin:0 auto; }
+.invite-lookup h3 { font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--navy); margin-bottom:6px; }
+.invite-lookup p { font-size:13px; color:var(--grey); margin-bottom:24px; }
+.invite-confirm-box { background:rgba(200,155,60,0.08); border:2px solid var(--gold); border-radius:12px; padding:20px; margin:20px 0; text-align:center; }
+.invite-confirm-box .team-name { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--navy); }
+.invite-confirm-box .invited-by { font-size:13px; color:var(--grey); margin-top:4px; }
+.invite-confirm-box .school-badge { display:inline-block; background:var(--navy); color:#fff; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; margin-top:8px; }
+
 body{font-family:'DM Sans',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh;}
 
 nav{background:var(--navy-dark);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
@@ -164,7 +194,69 @@ footer a{color:rgba(255,255,255,.5);}
   </div>
 </nav>
 
-<div class="prog-wrap">
+
+<!-- ── CHOICE SCREEN ── -->
+<section id="sec-choice">
+  <div class="choice-wrap">
+    <div class="choice-heading">
+      <h2>How would you like to enter?</h2>
+      <p>Choose your registration path below</p>
+    </div>
+    <div class="choice-cards">
+      <div class="choice-card" onclick="selectPath('new')">
+        <div class="choice-icon">🏌️</div>
+        <h3>New Team</h3>
+        <p>Start fresh — register yourself and your school. You can invite your partner during registration.</p>
+        <span class="choice-btn choice-btn-gold">Register New Team</span>
+      </div>
+      <div class="choice-card" onclick="selectPath('invited')">
+        <div class="choice-icon">🤝</div>
+        <h3>I Received an Invite</h3>
+        <p>Your captain has already registered your team. Complete your details to join them.</p>
+        <span class="choice-btn choice-btn-navy">Join My Team</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── INVITE LOOKUP SCREEN ── -->
+<section id="sec-invite-lookup" style="display:none;">
+  <div class="choice-wrap">
+    <div style="text-align:center;margin-bottom:32px;">
+      <a href="#" onclick="showChoice()" style="color:var(--grey);font-size:13px;text-decoration:none;">← Back</a>
+    </div>
+    <div class="invite-lookup">
+      <h3>🤝 Join Your Team</h3>
+      <p>Enter your mobile number to find your invitation. Use the number your captain registered for you.</p>
+      <div class="field">
+        <label>Your Mobile Number</label>
+        <div class="mob-wrap">
+          <span class="mob-pre">+27</span>
+          <input type="tel" id="lookup-mobile" placeholder="81 234 5678" maxlength="10" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
+        </div>
+        <div class="ferr" id="err-lookup">No invitation found for this number. Please check with your captain.</div>
+      </div>
+      <button class="btn-primary" onclick="findInvitation()" id="btn-lookup">Find My Invitation →</button>
+
+      <!-- Confirmation box (hidden until found) -->
+      <div id="invite-confirm" style="display:none;margin-top:20px;">
+        <div class="invite-confirm-box">
+          <div style="font-size:13px;color:var(--grey);margin-bottom:4px;">Invitation found! You're joining:</div>
+          <div class="team-name" id="confirm-team">—</div>
+          <div class="invited-by" id="confirm-captain">—</div>
+          <div><span class="school-badge" id="confirm-school">—</span></div>
+        </div>
+        <p style="font-size:13px;color:var(--grey);text-align:center;margin:12px 0;">Is this correct?</p>
+        <div style="display:flex;gap:12px;justify-content:center;">
+          <button class="btn-sm btn-outline" onclick="resetLookup()">No, try again</button>
+          <button class="btn-sm btn-gold" onclick="acceptInvite()">Yes, continue →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="prog-wrap" id="prog-wrap" style="display:none;">
   <div class="prog-steps">
     <div class="prog-step active" id="prog-1"><div class="circle">1</div><span>Personal</span></div>
     <div class="prog-line" id="line-1"></div>
@@ -176,7 +268,7 @@ footer a{color:rgba(255,255,255,.5);}
   </div>
 </div>
 
-<div class="page">
+<div class="page" id="main-page" style="display:none;">
 
   <!-- STEP 1 -->
   <section class="step active" id="sec-1">
@@ -407,6 +499,28 @@ footer a{color:rgba(255,255,255,.5);}
         </div>
         <div class="field"><label>Partner's Email (optional)</label><input type="email" id="inv-email" placeholder="partner at domain.com" /></div>
         <div class="field"><label>School</label><input type="text" id="inv-school" readonly style="opacity:.6;background:var(--offwhite)" /></div>
+
+        <!-- Invite Method -->
+        <div class="field" style="margin-top:8px;">
+          <label>Send Invite Via</label>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+            <div style="display:flex;align-items:center;gap:8px;background:rgba(200,155,60,0.1);border:2px solid var(--gold);border-radius:8px;padding:10px 16px;cursor:default;">
+              <span style="font-size:18px;">📧</span>
+              <span style="font-size:13px;font-weight:700;color:var(--navy);">Email</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.03);border:2px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 16px;cursor:not-allowed;opacity:0.5;position:relative;" title="Coming Soon">
+              <span style="font-size:18px;">💬</span>
+              <span style="font-size:13px;font-weight:600;color:#aaa;">WhatsApp</span>
+              <span style="font-size:10px;background:#aaa;color:#fff;padding:2px 7px;border-radius:10px;margin-left:4px;">SOON</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.03);border:2px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 16px;cursor:not-allowed;opacity:0.5;position:relative;" title="Coming Soon">
+              <span style="font-size:18px;">📱</span>
+              <span style="font-size:13px;font-weight:600;color:#aaa;">SMS</span>
+              <span style="font-size:10px;background:#aaa;color:#fff;padding:2px 7px;border-radius:10px;margin-left:4px;">SOON</span>
+            </div>
+          </div>
+          <p style="font-size:11px;color:var(--grey);margin-top:8px;">📧 An invitation email will be sent to your partner and a copy to you.</p>
+        </div>
       </div>
 
       <div class="sect-hd" style="margin-top:20px">Select Payment Amount</div>
@@ -830,16 +944,41 @@ async function submitPayment() {
       name: reg.full_name,
       email: reg.email,
       school: reg.school,
+      teamNumber: teamNumber,
       referenceNumber: reg.payment_reference || teamNumber
     });
+
     // Send partner invitation if partner email was provided
     var partnerEmail = document.getElementById('inv-email') ? document.getElementById('inv-email').value.trim() : '';
-    if (partnerEmail) {
+    var partnerMobile2 = document.getElementById('inv-mob') ? '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'') : '';
+    var partnerFN2 = document.getElementById('inv-fn') ? document.getElementById('inv-fn').value.trim() : '';
+    var partnerSN2 = document.getElementById('inv-sn') ? document.getElementById('inv-sn').value.trim() : '';
+    var partnerFullName2 = (partnerFN2 + ' ' + partnerSN2).trim();
+    var partnerMobile = document.getElementById('inv-mob') ? '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'') : '';
+    var partnerFirstName = document.getElementById('inv-fn') ? document.getElementById('inv-fn').value.trim() : '';
+    var partnerSurname = document.getElementById('inv-sn') ? document.getElementById('inv-sn').value.trim() : '';
+    var partnerFullName = (partnerFirstName + ' ' + partnerSurname).trim();
+
+    if (partnerEmail && selPartnerOpt === 'have') {
+      var inviteLink = window.location.origin + '/register.html?invite=1&mobile=' + encodeURIComponent(partnerMobile);
+      // Send to partner
       EmailService.sendPartnerInvitationEmail({
         inviterName: reg.full_name,
         inviterSchool: reg.school,
+        teamNumber: teamNumber,
         partnerEmail: partnerEmail,
-        partnerName: ''
+        partnerName: partnerFullName,
+        inviteLink: inviteLink
+      });
+      // Send copy to captain
+      EmailService.sendPartnerInvitationEmail({
+        inviterName: reg.full_name,
+        inviterSchool: reg.school,
+        teamNumber: teamNumber,
+        partnerEmail: reg.email,
+        partnerName: partnerFullName,
+        inviteLink: inviteLink,
+        isCaptainCopy: true
       });
     }
   }
@@ -874,6 +1013,10 @@ async function submitPayLater(e) {
       referenceNumber: teamNumber
     });
     var partnerEmail = document.getElementById('inv-email') ? document.getElementById('inv-email').value.trim() : '';
+    var partnerMobile2 = document.getElementById('inv-mob') ? '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'') : '';
+    var partnerFN2 = document.getElementById('inv-fn') ? document.getElementById('inv-fn').value.trim() : '';
+    var partnerSN2 = document.getElementById('inv-sn') ? document.getElementById('inv-sn').value.trim() : '';
+    var partnerFullName2 = (partnerFN2 + ' ' + partnerSN2).trim();
     if (partnerEmail) {
       EmailService.sendPartnerInvitationEmail({
         inviterName: reg.full_name,
