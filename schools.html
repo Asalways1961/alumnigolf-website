@@ -70,7 +70,7 @@ footer a{color:var(--gold);text-decoration:none;}
   <div class="alpha-nav" id="alpha-nav"></div>
   <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;"><div class="schools-grid" id="schools-grid"></div></div>
 </div>
-<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#3e575058517e5f524b53505759515258105d5110445f"><span class="__cf_email__" data-cfemail="d8b1b6beb798b9b4adb5b6b1bfb7b4bef6bbb7f6a2b9">[email&#160;protected]</span></a></p></footer>
+<footer><p>© 2026 Alumni Schools Golf Challenge | info@alumnigolf.co.za</p></footer>
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const SUPABASE_URL='https://weztrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
@@ -130,7 +130,7 @@ function renderSchools(list) {
   var html = '';
   for (var i = 0; i < list.length; i++) {
     var s = list[i];
-    va    var isReg = registeredSchools.includes(s);
+    var isReg = registeredSchools.includes(s);
     html += '<div class="school-card">' +
       '<div><h3>' + s + '</h3>' +
       (isReg ? '<p>✅ Registered — teams entered</p>' : '<p>Available to enter</p>') +
