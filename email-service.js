@@ -138,28 +138,50 @@ async function sendPaymentReminderEmail({ name, email, school, teamNumber, refer
 }
 
 // ── 4. PARTNER INVITATION ─────────────────────────────────────────────────────
-async function sendPartnerInvitationEmail({ inviterName, inviterSchool, partnerEmail, partnerName }) {
+async function sendPartnerInvitationEmail({ inviterName, inviterSchool, teamNumber, partnerEmail, partnerName, inviteLink, isCaptainCopy }) {
   const firstName = partnerName ? partnerName.split(' ')[0] : 'there';
+  const link = inviteLink || `${SITE_URL}/register.html?invite=1`;
+  const captainNote = isCaptainCopy ? `
+    <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#856404;">
+      📋 <strong>This is a copy of the invitation sent to ${partnerName || 'your partner'}.</strong> You can forward this email to them if they haven't received it.
+    </div>` : '';
+
   const html = baseTemplate(`
+    ${captainNote}
     <div class="gold-line"></div>
-    <h2>You've Been Invited! 🏌️</h2>
-    <p>Hi ${firstName},</p>
-    <p><strong>${inviterName}</strong> has invited you to join them as their partner in the <strong>Alumni Schools Golf Challenge</strong>, representing <strong>${inviterSchool}</strong>.</p>
-    <p>This is South Africa's premier inter-school alumni golf tournament — former pupils competing in betterball matchplay to bring glory back to their school.</p>
+    <h2>${isCaptainCopy ? `Invitation Sent to ${partnerName || 'Your Partner'} ✅` : `Congratulations! You're In! 🎉`}</h2>
+    <p>Hi ${isCaptainCopy ? inviterName.split(' ')[0] : firstName},</p>
+    ${isCaptainCopy
+      ? `<p>You have successfully invited <strong>${partnerName}</strong> to join your team. The invitation below has been sent to them.</p>`
+      : `<p><strong>${inviterName}</strong> has invited you to join their team in the <strong>Alumni Schools Golf Challenge</strong>, representing <strong>${inviterSchool}</strong>.</p>`
+    }
     <div class="info-box">
+      <p><strong>Team:</strong> ${teamNumber || inviterSchool}</p>
+      <p><strong>School:</strong> ${inviterSchool}</p>
+      <p><strong>Captain:</strong> ${inviterName}</p>
       <p><strong>Tournament:</strong> Alumni Schools Golf Challenge — Inaugural Season 2026/27</p>
-      <p><strong>Your School:</strong> ${inviterSchool}</p>
       <p><strong>Format:</strong> Betterball Matchplay</p>
-      <p><strong>Entry Fee:</strong> R2,800 per team (R1,400 per player when paying as a team)</p>
     </div>
-    <p>To accept this invitation, register your details and complete your entry below. <strong>${inviterName}</strong> is waiting for you!</p>
+    ${!isCaptainCopy ? `
+    <p>To complete your registration and join the team, click the button below:</p>
     <p style="text-align:center;margin:28px 0">
-      <a href="${SITE_URL}/register.html?school=${encodeURIComponent(inviterSchool)}&invitedby=${encodeURIComponent(inviterName)}" class="btn">Accept Invitation & Register</a>
+      <a href="${link}" class="btn">Complete My Registration →</a>
     </p>
+    <p style="text-align:center;font-size:12px;color:#aaa">Or visit: <a href="${SITE_URL}/register.html?invite=1" style="color:#C89B3C">${SITE_URL}/register.html</a> and click "I Received an Invite"</p>
+    ` : `
+    <div style="margin-top:16px;padding:12px;background:#f8f6f0;border-radius:8px;font-size:12px;color:#888;text-align:center;">
+      Partner's registration link: <a href="${link}" style="color:#C89B3C">${link}</a>
+    </div>
+    `}
     <div class="divider"></div>
     <p style="font-size:13px;color:#888">Questions? Contact us at <a href="mailto:info@alumnigolf.net" style="color:#C89B3C">info@alumnigolf.net</a></p>
   `);
-  return sendEmail({ to: partnerEmail, subject: `${inviterName} has invited you to the Alumni Schools Golf Challenge! 🏌️`, html });
+
+  const subject = isCaptainCopy
+    ? `Copy: Invitation sent to ${partnerName || 'your partner'} — Alumni Golf`
+    : `Congratulations! ${inviterName} has invited you to the Alumni Schools Golf Challenge! 🎉`;
+
+  return sendEmail({ to: partnerEmail, subject, html });
 }
 
 // ── 5. PARTNER REGISTRATION REMINDER ─────────────────────────────────────────
