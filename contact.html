@@ -6,7 +6,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--navy:#1B3A6B;--navy-dark:#0f2347;--gold:#C9A84C;--white:#fff;--off-white:#f8f6f0;--text:#1a1a2e;--text2:#555;--border:rgba(27,58,107,0.12);--green:#27ae60;}
+:root{--navy:#0A1F44;--navy-dark:#0A1F44;--gold:#C89B3C;--white:#fff;--off-white:#F4E7C6;--text:#0A1F44;--text2:#555;--border:rgba(27,58,107,0.12);--green:#1B4D2E;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);}
 nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:70px;border-bottom:2px solid var(--gold);}
@@ -26,7 +26,7 @@ nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;j
 .card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 4px 20px rgba(27,58,107,0.08);}
 .card h2{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--navy);margin-bottom:16px;}
 .info-item{display:flex;gap:14px;align-items:flex-start;margin-bottom:20px;}
-.info-item .icon{width:40px;height:40px;background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.info-item .icon{width:40px;height:40px;background:rgba(200,155,60,0.15);border:1px solid var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .info-item h4{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:3px;}
 .info-item p{font-size:13px;color:var(--text2);}
 .info-item a{color:var(--navy);font-weight:600;text-decoration:none;}
@@ -36,7 +36,7 @@ nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;j
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--gold);}
 .form-group textarea{min-height:120px;resize:vertical;}
 .btn-primary{width:100%;padding:14px;background:var(--gold);color:var(--navy-dark);border:none;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;}
-.success-msg{background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);color:var(--green);padding:14px;border-radius:8px;font-size:14px;display:none;margin-top:12px;}
+.success-msg{background:rgba(27,77,46,0.1);border:1px solid rgba(27,77,46,0.3);color:var(--green);padding:14px;border-radius:8px;font-size:14px;display:none;margin-top:12px;}
 footer{background:var(--navy-dark);color:rgba(255,255,255,0.5);text-align:center;padding:24px;font-size:12px;border-top:2px solid var(--gold);}
 footer a{color:var(--gold);text-decoration:none;}
 </style>
@@ -61,7 +61,7 @@ footer a{color:var(--gold);text-decoration:none;}
   <div class="two-col">
     <div class="card">
       <h2>Get In Touch</h2>
-      <div class="info-item"><div class="icon">📧</div><div><h4>Email</h4><p><a href="/cdn-cgi/l/email-protection#056461686c6b45646970686b6c626a69632b6b6071"><span class="__cf_email__" data-cfemail="69080d0400072908051c0407000e06050f47070c1d">[email&#160;protected]</span></a></p></div></div>
+      <div class="info-item"><div class="icon">📧</div><div><h4>Email</h4><p><a href="mailto:info@alumnigolf.co.za">info@alumnigolf.co.za</a></p></div></div>
       <div class="info-item"><div class="icon">🌐</div><div><h4>Website</h4><p><a href="https://alumnigolf.net">alumnigolf.net</a></p></div></div>
       <div class="info-item"><div class="icon">📱</div><div><h4>App</h4><p>Launching soon on iOS and Android</p></div></div>
       <div class="info-item"><div class="icon">🤝</div><div><h4>Sponsorship</h4><p>Division naming and sponsorship opportunities available. Contact us to get involved!</p></div></div>
@@ -84,19 +84,36 @@ footer a{color:var(--gold);text-decoration:none;}
         </select>
       </div>
       <div class="form-group"><label>Message</label><textarea id="c-message" placeholder="How can we help you?"></textarea></div>
-      <button class="btn-primary" onclick="sendMessage()">Send Message</button>
+      <button class="btn-primary" id="btn-contact">Send Message</button>
       <div class="success-msg" id="contact-success">✅ Message sent! We'll get back to you within 1 business day.</div>
     </div>
   </div>
 </div>
-<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#ceafaaa3a7a08eafa2bba3a0a7a9a1a2a8e0a0abba"><span class="__cf_email__" data-cfemail="78191c1511163819140d1516111f17141e56161d0c">[email&#160;protected]</span></a></p></footer>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="mailto:info@alumnigolf.co.za">info@alumnigolf.co.za</a></p></footer>
+<script>
 const SUPABASE_URL='https://weztrzuxwycypheyiixr.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const {createClient}=supabase;const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+
+document.getElementById('btn-contact').addEventListener('click', sendMessage);
+
 async function sendMessage() {
   const name=document.getElementById('c-name').value.trim();
   const email=document.getElementById('c-email').value.trim();
   const subject=document.getElementById('c-subject').value;
   const message=document.getElementById('c-message').value.trim();
-  if(!name||!email||!subject||!message){alert('Please fill
+  if(!name||!email||!subject||!message){alert('Please fill in all fields.');return;}
+  const btn=document.getElementById('btn-contact');
+  btn.disabled=true;btn.textContent='Sending...';
+  const {error}=await sb.from('contact_messages').insert({name,email,subject,message});
+  btn.disabled=false;btn.textContent='Send Message';
+  if(error){alert('Error sending message. Please email us directly.');return;}
+  document.getElementById('contact-success').style.display='block';
+  document.getElementById('c-name').value='';
+  document.getElementById('c-email').value='';
+  document.getElementById('c-subject').value='';
+  document.getElementById('c-message').value='';
+}
+</script>
+</body>
+</html>

@@ -8,10 +8,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
-  --navy:#1B3A6B; --navy-dark:#0f2244; --navy-mid:#2a4f8a;
-  --gold:#C9A84C; --white:#fff; --offwhite:#f8f6f1;
-  --light:#e8e4dc; --grey:#9a9490; --text:#1a1a2e;
-  --err:#c0392b; --ok:#27ae60; --r:12px;
+  --navy:#0A1F44; --navy-dark:#0A1F44; --navy-mid:#0A1F44;
+  --gold:#C89B3C; --white:#fff; --offwhite:#F4E7C6;
+  --light:#F4E7C6; --grey:#9a9490; --text:#0A1F44;
+  --err:#c0392b; --ok:#1B4D2E; --r:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh;}
@@ -29,7 +29,7 @@ nav{background:var(--navy-dark);padding:0 32px;height:64px;display:flex;align-it
 .prog-step{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.35);letter-spacing:.5px;text-transform:uppercase;flex:1;}
 .prog-step .circle{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:rgba(255,255,255,0.35);transition:all .3s;}
 .prog-step.active{color:var(--gold);}
-.prog-step.active .circle{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.15);}
+.prog-step.active .circle{border-color:var(--gold);color:var(--gold);background:rgba(200,155,60,0.15);}
 .prog-step.done .circle{background:var(--gold);border-color:var(--gold);color:var(--navy-dark);}
 .prog-step.done{color:rgba(255,255,255,.55);}
 .prog-line{flex:1;height:2px;background:rgba(255,255,255,.15);margin:0 6px 18px;transition:background .3s;}
@@ -72,7 +72,7 @@ nav{background:var(--navy-dark);padding:0 32px;height:64px;display:flex;align-it
 .dd{position:absolute;top:100%;margin-top:4px;left:0;right:0;background:#fff;border:1.5px solid var(--navy);border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:9999;max-height:220px;overflow-y:auto;display:none;}
 .dd-opt{padding:11px 14px;font-size:13px;cursor:pointer;transition:background .15s;}
 .dd-opt:hover{background:rgba(27,58,107,.07);}
-.confirmed{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(39,174,96,.08);border:1.5px solid rgba(39,174,96,.3);border-radius:10px;font-size:13px;font-weight:600;color:var(--ok);}
+.confirmed{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(27,77,46,.08);border:1.5px solid rgba(27,77,46,.3);border-radius:10px;font-size:13px;font-weight:600;color:var(--ok);}
 .confirmed span{flex:1;}
 .change-btn{font-size:12px;color:var(--navy);cursor:pointer;text-decoration:underline;font-weight:400;}
 
@@ -86,7 +86,7 @@ nav{background:var(--navy-dark);padding:0 32px;height:64px;display:flex;align-it
 .yn-g>p{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.5;}
 .yn-opts{display:flex;gap:10px;}
 .yn-opt{flex:1;padding:12px;border:1.5px solid var(--light);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;text-align:center;transition:all .2s;background:#fff;user-select:none;}
-.yn-opt.sel-yes{border-color:var(--ok);background:rgba(39,174,96,.08);color:var(--ok);font-weight:700;}
+.yn-opt.sel-yes{border-color:var(--ok);background:rgba(27,77,46,.08);color:var(--ok);font-weight:700;}
 .yn-opt.sel-no{border-color:var(--err);background:rgba(192,57,43,.08);color:var(--err);font-weight:700;}
 .hardlock{background:rgba(192,57,43,.08);border:1.5px solid rgba(192,57,43,.3);border-radius:10px;padding:16px;margin-bottom:16px;display:none;}
 .hardlock.show{display:block;}
@@ -115,13 +115,13 @@ nav{background:var(--navy-dark);padding:0 32px;height:64px;display:flex;align-it
 .pay-opts{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
 .pay-opt{border:1.5px solid var(--light);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all .2s;background:#fff;display:flex;align-items:center;gap:14px;}
 .pay-opt:hover{border-color:var(--gold);}
-.pay-opt.sel{border-color:var(--gold);background:rgba(201,168,76,.06);}
+.pay-opt.sel{border-color:var(--gold);background:rgba(200,155,60,.06);}
 .pay-opt .chk{margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid var(--light);flex-shrink:0;}
 .pay-opt.sel .chk{background:var(--gold);border-color:var(--gold);}
 
 .when-opts{display:flex;gap:10px;margin-bottom:16px;}
 .when-opt{flex:1;padding:12px;border:1.5px solid var(--light);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;text-align:center;transition:all .2s;background:#fff;}
-.when-opt.sel{border-color:var(--gold);background:rgba(201,168,76,.08);color:var(--navy);font-weight:700;}
+.when-opt.sel{border-color:var(--gold);background:rgba(200,155,60,.08);color:var(--navy);font-weight:700;}
 
 .bank-box{background:var(--navy-dark);border-radius:12px;padding:20px;margin:16px 0;}
 .bank-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px;}
@@ -132,7 +132,7 @@ nav{background:var(--navy-dark);padding:0 32px;height:64px;display:flex;align-it
 .pop-zone{border:2px dashed var(--light);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s;margin-top:12px;}
 .pop-zone:hover{border-color:var(--navy);}
 .pop-zone p{font-size:13px;color:var(--grey);margin-top:6px;}
-.pop-zone.ok{border-color:var(--ok);background:rgba(39,174,96,.05);}
+.pop-zone.ok{border-color:var(--ok);background:rgba(27,77,46,.05);}
 
 .success-wrap{text-align:center;padding:40px 20px;}
 .success-ico{font-size:64px;margin-bottom:16px;}
@@ -432,9 +432,9 @@ footer a{color:rgba(255,255,255,.5);}
       <div id="eft-sec" style="display:none">
         <div class="bank-box">
           <div class="bank-row"><span>Account Name</span><span>Legacy Events Ventures (Pty) Ltd</span></div>
-          <div class="bank-row"><span>Bank</span><span>TBC</span></div>
-          <div class="bank-row"><span>Account Number</span><span>TBC</span></div>
-          <div class="bank-row"><span>Branch Code</span><span>TBC</span></div>
+          <div class="bank-row"><span>Bank</span><span>FNB — Cape Gate</span></div>
+          <div class="bank-row"><span>Account Number</span><span>63192217123</span></div>
+          <div class="bank-row"><span>Branch Code</span><span>251945</span></div>
           <div class="bank-row"><span>Amount</span><span id="eft-amt">&mdash;</span></div>
           <div class="bank-row"><span>Reference</span><span id="eft-ref">&mdash;</span></div>
         </div>
