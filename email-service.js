@@ -17,8 +17,7 @@ async function sendEmail({ to, from, subject, html }) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + ANON_KEY,
-        'apikey': ANON_KEY
+        'Authorization': 'Bearer ' + ANON_KEY
       },
       body: JSON.stringify({ from: from || FROM_NOREPLY, to, subject, html })
     });
