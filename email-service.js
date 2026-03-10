@@ -6,7 +6,7 @@
 const FROM_NOREPLY = 'Alumni Golf <noreply@alumnigolf.net>';
 const FROM_INFO    = 'Alumni Golf <info@alumnigolf.net>';
 const SITE_URL     = 'https://alumnigolf.net';
-const EMAIL_FN_URL = 'https://weztrzuxwycypheyiixr.supabase.co/functions/v1/send-email';
+const EMAIL_FN_URL = 'https://weztrzuxwycypheyiixr.supabase.co/functions/v1/super-function';
 const ANON_KEY     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 
 // ── SEND HELPER — routes via Supabase Edge Function to avoid CORS ─────────────
