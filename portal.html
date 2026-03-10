@@ -300,7 +300,7 @@ async function loadApp(email) {
   const initials = (player.full_name || '?').split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
   document.getElementById('player-avatar').textContent = initials;
   document.getElementById('player-name-sidebar').textContent = player.full_name || '—';
-  document.getElementById('player-school-sidebar').textContent = player.school || '—';
+  document.getElementById('player-school-sidebar').textContent = player.school_name || '—';
   document.getElementById('player-team-sidebar').textContent = player.team_number ? 'Team ' + player.team_number : 'Unassigned';
   const payBadge = document.getElementById('topbar-payment-badge');
   if (player.payment_status === 'paid') { payBadge.innerHTML = '<span class="badge badge-green">✓ Paid</span>'; }
@@ -344,7 +344,7 @@ async function loadOverview() {
   const payColor = currentPlayer.payment_status==='paid'?'var(--green)':currentPlayer.payment_status==='pending_verification'?'var(--gold)':'var(--red)';
   const eligColor = currentPlayer.eligibility_status==='eligible'?'var(--green)':'var(--gold)';
   document.getElementById('overview-stats').innerHTML = `
-    <div class="stat-card"><div class="stat-label">My Team</div><div class="stat-value">${currentPlayer.team_number||'—'}</div><div class="stat-sub">${currentPlayer.school||'—'}</div></div>
+    <div class="stat-card"><div class="stat-label">My Team</div><div class="stat-value">${currentPlayer.team_number||'—'}</div><div class="stat-sub">${currentPlayer.school_name||'—'}</div></div>
     <div class="stat-card"><div class="stat-label">Matches</div><div class="stat-value">${played}/${total}</div><div class="stat-sub">Played / Scheduled</div></div>
     <div class="stat-card"><div class="stat-label">Wins</div><div class="stat-value" style="color:var(--green)">${wins}</div><div class="stat-sub">${played>0?Math.round((wins/played)*100)+'% win rate':'No matches yet'}</div></div>
     <div class="stat-card"><div class="stat-label">Payment</div><div class="stat-value" style="color:${payColor};font-size:16px;margin-top:10px;">${currentPlayer.payment_status||'unpaid'}</div><div class="stat-sub" style="margin-top:6px;">Entry fee status</div></div>
@@ -436,7 +436,7 @@ function loadProfileForm() {
   if (!currentPlayer) return;
   const p = currentPlayer;
   document.getElementById('pf-name').value=p.full_name||'';
-  document.getElementById('pf-school').value=p.school||'';
+  document.getElementById('pf-school').value=p.school_name||'';
   document.getElementById('pf-matric').value=p.year_of_matriculation||'';
   document.getElementById('pf-phone').value=p.mobile||'';
   document.getElementById('pf-handicap').value=p.handicap_index||'';
@@ -464,7 +464,7 @@ function loadPartnerPanel(forceMode) {
 }
 
 function renderInviteForm(mode) {
-  return '<div class="form-group"><label>Partner\'s First Name *</label><input type="text" id="inv2-name" placeholder="e.g. John" /></div><div class="form-group"><label>Partner\'s Surname *</label><input type="text" id="inv2-surname" placeholder="e.g. Smith" /></div><div class="form-group"><label>Partner\'s Mobile *</label><div style="display:flex;"><div style="padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-size:13px;font-weight:700;color:var(--text2);">+27</div><input type="tel" id="inv2-mobile" placeholder="821234567" maxlength="9" style="border-radius:0 10px 10px 0;border-left:none;" /></div></div><div class="form-group"><label>Partner\'s Email (optional)</label><input type="email" id="inv2-email" placeholder="partner@gmail.com" /></div><div class="form-group"><label>School</label><input type="text" id="inv2-school" value="'+(currentPlayer.school||'')+'" readonly style="opacity:0.6;cursor:not-allowed;" /></div><div id="inv2-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div><button class="btn-sm btn-gold" id="inv2-submit" data-mode="'+mode+'">'+(mode==='change'?'📨 Submit Change Request to Admin':'📨 Send Partner Invite')+'</button>';
+  return '<div class="form-group"><label>Partner\'s First Name *</label><input type="text" id="inv2-name" placeholder="e.g. John" /></div><div class="form-group"><label>Partner\'s Surname *</label><input type="text" id="inv2-surname" placeholder="e.g. Smith" /></div><div class="form-group"><label>Partner\'s Mobile *</label><div style="display:flex;"><div style="padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-size:13px;font-weight:700;color:var(--text2);">+27</div><input type="tel" id="inv2-mobile" placeholder="821234567" maxlength="9" style="border-radius:0 10px 10px 0;border-left:none;" /></div></div><div class="form-group"><label>Partner\'s Email (optional)</label><input type="email" id="inv2-email" placeholder="partner@gmail.com" /></div><div class="form-group"><label>School</label><input type="text" id="inv2-school" value="'+(currentPlayer.school_name||'')+'" readonly style="opacity:0.6;cursor:not-allowed;" /></div><div id="inv2-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div><button class="btn-sm btn-gold" id="inv2-submit" data-mode="'+mode+'">'+(mode==='change'?'📨 Submit Change Request to Admin':'📨 Send Partner Invite')+'</button>';
 }
 
 async function submitPartnerInvite(mode) {
@@ -483,7 +483,7 @@ async function submitPartnerInvite(mode) {
     toast('Partner change request submitted — awaiting admin approval ✅');
   } else {
     await sb.from('players').upsert({email:currentPlayer.email,partner_name:fullName,partner_mobile:fullMobile,partner_status:'has_partner'},{onConflict:'email'});
-    await sb.from('players').upsert({email:email||(fullMobile+'@invite.alumnigolf.co.za'),full_name:fullName,mobile:fullMobile,school:currentPlayer.school,invited_by_mobile:currentPlayer.mobile,invited_by_team:currentPlayer.team_number||'',eligibility_status:'pending',payment_status:'unpaid',registration_complete:false},{onConflict:'email'});
+    await sb.from('player_invitations').insert({email:currentPlayer.email,invited_name:fullName,invited_mobile:fullMobile,invited_email:email||null,school:currentPlayer.school_name,invited_by_mobile:currentPlayer.mobile});
     currentPlayer.partner_name=fullName;currentPlayer.partner_mobile=fullMobile;currentPlayer.partner_status='has_partner';
     toast('Partner invited successfully ✅');
   }
