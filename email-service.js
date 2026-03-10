@@ -7,7 +7,7 @@ const FROM_NOREPLY = 'Alumni Golf <noreply@alumnigolf.net>';
 const FROM_INFO    = 'Alumni Golf <info@alumnigolf.net>';
 const SITE_URL     = 'https://alumnigolf.net';
 const EMAIL_FN_URL = 'https://weztrzuxwycypheyiixr.supabase.co/functions/v1/super-function';
-const ANON_KEY     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+const ANON_KEY     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 
 // ── SEND HELPER — routes via Supabase Edge Function to avoid CORS ─────────────
 async function sendEmail({ to, from, subject, html }) {
@@ -227,7 +227,6 @@ async function sendMatchReminderEmail({ playerName, playerEmail, homeTeam, awayT
 
 // ── 7. MATCH RESULT NOTIFICATION ─────────────────────────────────────────────
 async function sendMatchResultEmail({ playerName, playerEmail, homeTeam, awayTeam, winner, score, round }) {
-  const won = winner && (playerEmail || '').toLowerCase().includes((winner || '').toLowerCase().split(' ')[0].toLowerCase());
   const html = baseTemplate(`
     <div class="gold-line"></div>
     <h2>Match Result — Round ${round} 🏆</h2>
@@ -258,7 +257,6 @@ async function sendBroadcastEmail({ recipients, subject, title, message }) {
       <a href="${SITE_URL}/portal.html" class="btn">Go to Player Portal</a>
     </p>
   `);
-  // Send to each recipient individually
   const results = [];
   for (const email of recipients) {
     results.push(await sendEmail({ to: email, from: FROM_INFO, subject, html }));
