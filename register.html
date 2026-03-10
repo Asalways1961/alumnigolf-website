@@ -955,29 +955,16 @@ async function submitPayment() {
       referenceNumber: reg.payment_reference || teamNumber
     });
 
-    // Send partner invitation if partner email was provided
+    // Send partner invitation
     var partnerEmail = document.getElementById('inv-email') ? document.getElementById('inv-email').value.trim() : '';
-    var partnerMobile2 = document.getElementById('inv-mob') ? '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'') : '';
-    var partnerFN2 = document.getElementById('inv-fn') ? document.getElementById('inv-fn').value.trim() : '';
-    var partnerSN2 = document.getElementById('inv-sn') ? document.getElementById('inv-sn').value.trim() : '';
-    var partnerFullName2 = (partnerFN2 + ' ' + partnerSN2).trim();
     var partnerMobile = document.getElementById('inv-mob') ? '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'') : '';
     var partnerFirstName = document.getElementById('inv-fn') ? document.getElementById('inv-fn').value.trim() : '';
     var partnerSurname = document.getElementById('inv-sn') ? document.getElementById('inv-sn').value.trim() : '';
     var partnerFullName = (partnerFirstName + ' ' + partnerSurname).trim();
 
-    if (partnerEmail && selPartnerOpt === 'have') {
+    if (selPartnerOpt === 'have' && partnerFirstName) {
       var inviteLink = window.location.origin + '/register.html?invite=1&mobile=' + encodeURIComponent(partnerMobile);
-      // Send to partner
-      EmailService.sendPartnerInvitationEmail({
-        inviterName: reg.full_name,
-        inviterSchool: reg.school,
-        teamNumber: teamNumber,
-        partnerEmail: partnerEmail,
-        partnerName: partnerFullName,
-        inviteLink: inviteLink
-      });
-      // Send copy to captain
+      // Send to captain first (always — they always have an email)
       EmailService.sendPartnerInvitationEmail({
         inviterName: reg.full_name,
         inviterSchool: reg.school,
@@ -987,6 +974,17 @@ async function submitPayment() {
         inviteLink: inviteLink,
         isCaptainCopy: true
       });
+      // Send to partner only if they provided an email
+      if (partnerEmail) {
+        EmailService.sendPartnerInvitationEmail({
+          inviterName: reg.full_name,
+          inviterSchool: reg.school,
+          teamNumber: teamNumber,
+          partnerEmail: partnerEmail,
+          partnerName: partnerFullName,
+          inviteLink: inviteLink
+        });
+      }
     }
   }
 
@@ -1020,17 +1018,33 @@ async function submitPayLater(e) {
       referenceNumber: teamNumber
     });
     var partnerEmail = document.getElementById('inv-email') ? document.getElementById('inv-email').value.trim() : '';
-    var partnerMobile2 = document.getElementById('inv-mob') ? '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'') : '';
-    var partnerFN2 = document.getElementById('inv-fn') ? document.getElementById('inv-fn').value.trim() : '';
-    var partnerSN2 = document.getElementById('inv-sn') ? document.getElementById('inv-sn').value.trim() : '';
-    var partnerFullName2 = (partnerFN2 + ' ' + partnerSN2).trim();
-    if (partnerEmail) {
+    var partnerMobile = document.getElementById('inv-mob') ? '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'') : '';
+    var partnerFN = document.getElementById('inv-fn') ? document.getElementById('inv-fn').value.trim() : '';
+    var partnerSN = document.getElementById('inv-sn') ? document.getElementById('inv-sn').value.trim() : '';
+    var partnerFullName = (partnerFN + ' ' + partnerSN).trim();
+    if (selPartnerOpt === 'have' && partnerFN) {
+      var inviteLink = window.location.origin + '/register.html?invite=1&mobile=' + encodeURIComponent(partnerMobile);
+      // Always send copy to captain
       EmailService.sendPartnerInvitationEmail({
         inviterName: reg.full_name,
         inviterSchool: reg.school,
-        partnerEmail: partnerEmail,
-        partnerName: ''
+        teamNumber: teamNumber,
+        partnerEmail: reg.email,
+        partnerName: partnerFullName,
+        inviteLink: inviteLink,
+        isCaptainCopy: true
       });
+      // Send to partner if email provided
+      if (partnerEmail) {
+        EmailService.sendPartnerInvitationEmail({
+          inviterName: reg.full_name,
+          inviterSchool: reg.school,
+          teamNumber: teamNumber,
+          partnerEmail: partnerEmail,
+          partnerName: partnerFullName,
+          inviteLink: inviteLink
+        });
+      }
     }
   }
   await sb.auth.signOut();
