@@ -6,38 +6,35 @@
 <title>Alumni Golf — Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/email-service.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="config.js"></script>
 <style>
   :root {
-    --gold: #C89B3C;
-    --gold-light: #C89B3C;
-    --gold-dim: rgba(200,155,60,0.15);
-    --bg: #0A1F44;
-    --bg2: #0A2050;
-    --bg3: #0A1F44;
-    --card: #122040;
+    --gold: #D4AF37;
+    --gold-light: #f0d060;
+    --gold-dim: rgba(212,175,55,0.15);
+    --bg: #0a0a14;
+    --bg2: #11111e;
+    --bg3: #1a1a2e;
+    --card: #16162a;
     --border: rgba(255,255,255,0.08);
     --text: #f0f0f0;
     --text2: #aaaaaa;
     --text3: #555555;
-    --green: #1B4D2E;
+    --green: #4CAF50;
     --red: #E53935;
-    --blue: #0A1F44;
+    --blue: #1B3A6B;
     --sidebar-w: 240px;
     --header-h: 64px;
     --radius: 12px;
     --shadow: 0 4px 24px rgba(0,0,0,0.4);
   }
   [data-theme="light"] {
-    --bg: #F4E7C6;
-    --bg2: #EAD9B0;
-    --bg3: #E0CFA0;
+    --bg: #f4f1eb;
+    --bg2: #ede9df;
+    --bg3: #e4dfd4;
     --card: #ffffff;
     --border: rgba(0,0,0,0.1);
-    --text: #0A1F44;
+    --text: #1a1a2e;
     --text2: #555555;
     --text3: #aaaaaa;
     --shadow: 0 4px 24px rgba(0,0,0,0.1);
@@ -49,7 +46,7 @@
   #login-screen {
     display:flex; align-items:center; justify-content:center;
     min-height:100vh; background:var(--bg);
-    background-image: radial-gradient(ellipse at 20% 50%, rgba(200,155,60,0.05) 0%, transparent 60%),
+    background-image: radial-gradient(ellipse at 20% 50%, rgba(212,175,55,0.05) 0%, transparent 60%),
                       radial-gradient(ellipse at 80% 20%, rgba(27,58,107,0.1) 0%, transparent 50%);
   }
   .login-box {
@@ -168,7 +165,7 @@
 
   /* ── BADGES ── */
   .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
-  .badge-green { background:rgba(27,77,46,0.15); color:var(--green); }
+  .badge-green { background:rgba(76,175,80,0.15); color:var(--green); }
   .badge-red { background:rgba(229,57,53,0.15); color:var(--red); }
   .badge-gold { background:var(--gold-dim); color:var(--gold); }
   .badge-grey { background:rgba(255,255,255,0.08); color:var(--text2); }
@@ -236,7 +233,7 @@
 
   /* ── ALERT ── */
   .alert { padding:12px 16px; border-radius:8px; font-size:13px; margin-bottom:16px; display:none; }
-  .alert-success { background:rgba(27,77,46,0.15); border:1px solid rgba(27,77,46,0.3); color:var(--green); }
+  .alert-success { background:rgba(76,175,80,0.15); border:1px solid rgba(76,175,80,0.3); color:var(--green); }
   .alert-error { background:rgba(229,57,53,0.15); border:1px solid rgba(229,57,53,0.3); color:var(--red); }
 
   /* ── RESPONSIVE ── */
@@ -710,8 +707,8 @@
 
 <script>
 // ── SUPABASE ──────────────────────────────────────────────────────────────────
-const SUPABASE_URL = window.SB_URL;
-const SUPABASE_KEY = window.SB_KEY;
+const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -879,7 +876,7 @@ function filterPlayers() {
   const pay = document.getElementById('player-filter-payment').value;
   const status = document.getElementById('player-filter-status').value;
   filteredPlayers = allPlayers.filter(p => {
-    const matchQ = !q || [p.full_name,p.email,p.school_name,p.team_number].join(' ').toLowerCase().includes(q);
+    const matchQ = !q || [p.full_name,p.email,p.school,p.team_number].join(' ').toLowerCase().includes(q);
     const matchPay = !pay || p.payment_status===pay || (!p.payment_status && pay==='unpaid');
     const matchStatus = !status || p.eligibility_status===status;
     return matchQ && matchPay && matchStatus;
@@ -896,7 +893,7 @@ function renderPlayers() {
     : page.map(p=>`<tr>
         <td>${p.full_name||'—'}</td>
         <td style="color:var(--text2)">${p.email||'—'}</td>
-        <td>${p.school_name||'—'}</td>
+        <td>${p.school||'—'}</td>
         <td><span class="badge badge-grey">${p.team_number||'—'}</span></td>
         <td><span class="badge ${p.payment_status==='paid'?'badge-green':p.payment_status==='pending_verification'?'badge-gold':'badge-red'}">${p.payment_status||'unpaid'}</span></td>
         <td><span class="badge ${p.eligibility_status==='eligible'?'badge-green':'badge-grey'}">${p.eligibility_status||'pending'}</span></td>
@@ -911,7 +908,7 @@ function openEditPlayer(email) {
   editingPlayerId = email;
   document.getElementById('ep-name').value = p.full_name||'';
   document.getElementById('ep-email').value = p.email||'';
-  document.getElementById('ep-school').value = p.school_name||'';
+  document.getElementById('ep-school').value = p.school||'';
   document.getElementById('ep-team').value = p.team_number||'';
   document.getElementById('ep-payment').value = p.payment_status||'unpaid';
   document.getElementById('ep-eligibility').value = p.eligibility_status||'pending';
@@ -921,7 +918,7 @@ function openEditPlayer(email) {
 async function savePlayer() {
   const { error } = await sb.from('players').update({
     full_name: document.getElementById('ep-name').value,
-    school_name: document.getElementById('ep-school').value,
+    school: document.getElementById('ep-school').value,
     team_number: document.getElementById('ep-team').value,
     payment_status: document.getElementById('ep-payment').value,
     eligibility_status: document.getElementById('ep-eligibility').value,
@@ -1031,29 +1028,12 @@ function openEditMatch(id) {
 }
 
 async function saveMatch() {
-  const newStatus = document.getElementById('em-status').value;
-  const winner = document.getElementById('em-winner').value||null;
-  const score = document.getElementById('em-score').value||null;
   const { error } = await sb.from('matches').update({
-    match_status: newStatus, winner, score_display: score,
+    match_status: document.getElementById('em-status').value,
+    winner: document.getElementById('em-winner').value||null,
+    score_display: document.getElementById('em-score').value||null,
   }).eq('id', editingMatchId);
   if (error) { toast('Error: '+error.message,'error'); return; }
-  // Send result emails if match completed
-  if (newStatus === 'completed' && window.EmailService) {
-    const m = allMatches.find(x=>x.id===editingMatchId);
-    if (m) {
-      const { data: homePlayers } = await sb.from('players').select('email,full_name').eq('team_number', m.home_team);
-      const { data: awayPlayers } = await sb.from('players').select('email,full_name').eq('team_number', m.away_team);
-      const allPlayers = [...(homePlayers||[]), ...(awayPlayers||[])];
-      for (const p of allPlayers) {
-        EmailService.sendMatchResultEmail({
-          playerName: p.full_name, playerEmail: p.email,
-          homeTeam: m.home_team, awayTeam: m.away_team,
-          winner, score, round: m.round_number
-        });
-      }
-    }
-  }
   toast('Match updated ✅');
   closeModal('modal-match');
   allMatches = [];
@@ -1099,9 +1079,8 @@ function renderPayments() {
         <td><span class="badge badge-grey">${p.team_number||'—'}</span></td>
         <td>${p.payment_method||'—'}</td>
         <td><span class="badge ${p.payment_status==='paid'?'badge-green':p.payment_status==='pending_verification'?'badge-gold':'badge-red'}">${p.payment_status||'unpaid'}</span></td>
-        <td style="display:flex;gap:6px;">
+        <td>
           <button class="btn-sm btn-outline" onclick="markPaid('${p.email}')">✅ Mark Paid</button>
-          <button class="btn-sm btn-outline" onclick="sendReminder('${p.email}')">📧 Remind</button>
         </td>
       </tr>`).join('');
 }
@@ -1110,32 +1089,7 @@ async function markPaid(email) {
   const { error } = await sb.from('players').update({payment_status:'paid'}).eq('email',email);
   if (error) { toast('Error: '+error.message,'error'); return; }
   toast('Marked as paid ✅');
-  // Send payment confirmation email
-  const player = allPayments.find(p=>p.email===email);
-  if (player && window.EmailService) {
-    EmailService.sendPaymentConfirmationEmail({
-      name: player.full_name || email,
-      email: email,
-      school: player.school_name || '',
-      amount: player.payment_amount || '1,500',
-      teamNumber: player.team_number || ''
-    });
-  }
   await loadPayments();
-}
-
-async function sendReminder(email) {
-  if (!window.EmailService) { toast('Email service not loaded','error'); return; }
-  const { data: player } = await sb.from('players').select('full_name,school,team_number,payment_reference').eq('email',email).maybeSingle();
-  if (!player) { toast('Player not found','error'); return; }
-  await EmailService.sendPaymentReminderEmail({
-    name: player.full_name||email,
-    email: email,
-    school: player.school||'',
-    teamNumber: player.team_number||'',
-    referenceNumber: player.payment_reference||player.team_number||'',
-  });
-  toast('Payment reminder sent ✅');
 }
 
 // ── COMMUNITY ─────────────────────────────────────────────────────────────────
@@ -1202,17 +1156,7 @@ async function sendBroadcast() {
     sent_by: currentAdmin?.email,
   });
   if (error) { toast('Error: '+error.message,'error'); return; }
-  // Send broadcast emails to all players
-  if (window.EmailService) {
-    const { data: players } = await sb.from('players').select('email').not('email','is',null);
-    const emails = (players||[]).map(p=>p.email).filter(Boolean);
-    if (emails.length > 0) {
-      EmailService.sendBroadcastEmail({ recipients: emails, subject: title, title, message });
-      toast('Broadcast sent to ' + emails.length + ' players ✅');
-    }
-  } else {
-    toast('Broadcast saved ✅');
-  }
+  toast('Broadcast sent ✅');
   document.getElementById('bc-title').value='';
   document.getElementById('bc-message').value='';
   loadCommunity();
@@ -1280,7 +1224,7 @@ function exportToCSV(data, filename) {
 }
 
 async function exportPlayers() {
-  const { data } = await sb.from('players').select('full_name,email,school_name,team_number,payment_status,eligibility_status,year_of_matriculation').order('full_name');
+  const { data } = await sb.from('players').select('full_name,email,school,team_number,payment_status,eligibility_status,year_of_matriculation').order('full_name');
   exportToCSV(data||[], 'AlumniGolf_Players.xlsx');
 }
 
@@ -1334,7 +1278,7 @@ async function confirmImport() {
     const { error } = await sb.from('players').upsert({
       full_name: row.full_name||row['Full Name']||'',
       email: (row.email||row['Email']||'').toLowerCase().trim(),
-      school_name: row.school_name||row['School']||'',
+      school: row.school_name||row['School']||'',
       year_of_matriculation: row.year_of_matriculation||row['Matric Year']||null,
       id_number: row.id_number||row['ID Number']||null,
       eligibility_status: 'pending',
