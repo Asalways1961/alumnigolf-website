@@ -12,17 +12,19 @@ const ANON_KEY     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 // ── SEND HELPER — routes via Supabase Edge Function to avoid CORS ─────────────
 async function sendEmail({ to, from, subject, html }) {
   try {
+    console.log('Sending email to:', to, 'subject:', subject);
     const res = await fetch(EMAIL_FN_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${ANON_KEY}`
+        'Authorization': 'Bearer ' + ANON_KEY,
+        'apikey': ANON_KEY
       },
       body: JSON.stringify({ from: from || FROM_NOREPLY, to, subject, html })
     });
-    const data = await res.json();
-    if (!res.ok) console.error('Email error:', data);
-    return data;
+    const text = await res.text();
+    console.log('Email response status:', res.status, 'body:', text);
+    try { return JSON.parse(text); } catch(e) { return text; }
   } catch (err) {
     console.error('Email send failed:', err);
   }

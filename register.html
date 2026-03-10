@@ -232,7 +232,7 @@ footer a{color:rgba(255,255,255,.5);}
         <label>Your Mobile Number</label>
         <div class="mob-wrap">
           <span class="mob-pre">+27</span>
-          <input type="tel" id="lookup-mobile" placeholder="81 234 5678" maxlength="10" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
+          <input type="tel" id="lookup-mobile" placeholder="81 234 5678" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'');if(this.value.startsWith('0'))this.value=this.value.substring(1);" />
         </div>
         <div class="ferr" id="err-lookup">No invitation found for this number. Please check with your captain.</div>
       </div>
@@ -291,7 +291,7 @@ footer a{color:rgba(255,255,255,.5);}
         <label>Mobile Number *</label>
         <div class="mob-wrap" id="mob-wrap">
           <div class="mob-pre">&#127480;&#127462; +27</div>
-          <input type="tel" id="f-mobile" placeholder="81 234 5678" maxlength="10" autocomplete="tel" />
+          <input type="tel" id="f-mobile" placeholder="81 234 5678" maxlength="9" autocomplete="tel" oninput="this.value=this.value.replace(/[^0-9]/g,'');if(this.value.startsWith('0'))this.value=this.value.substring(1);" />
         </div>
         <div class="ferr" id="err-mobile">Enter 9 digits without leading 0 (e.g. 821234567)</div>
       </div>
@@ -493,7 +493,7 @@ footer a{color:rgba(255,255,255,.5);}
           <label>Partner's Mobile *</label>
           <div class="mob-wrap" id="inv-mob-wrap">
             <div class="mob-pre">&#127480;&#127462; +27</div>
-            <input type="tel" id="inv-mob" placeholder="81 234 5678" maxlength="10" />
+            <input type="tel" id="inv-mob" placeholder="81 234 5678" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'');if(this.value.startsWith('0'))this.value=this.value.substring(1);" />
           </div>
           <div class="ferr" id="err-inv-mob">Required</div>
         </div>
@@ -888,11 +888,18 @@ function handlePOP(input) {
 }
 
 async function assignTeamNumber(school) {
-  var prefix=(school||'XX').replace(/\s+/g,'').substring(0,4).toUpperCase();
-  var res=await sb.from('players').select('team_number').like('team_number',prefix+'%').neq('email',reg.email);
-  var existing=((res.data)||[]).map(function(p){ return parseInt((p.team_number||'').replace(prefix,'')); }).filter(function(n){ return !isNaN(n); });
-  var next=existing.length>0?Math.max.apply(null,existing)+1:1;
-  return prefix+String(next).padStart(3,'0');
+  // Team number = full school name + 3-digit number e.g. "Brackenfell HS 001"
+  var name = (school || 'Unknown').trim();
+  var { data } = await sb.from('players').select('team_number').ilike('team_number', name + ' %');
+  var existing = ((data) || [])
+    .map(function(p) {
+      if (!p.team_number) return NaN;
+      var last = p.team_number.trim().split(' ').pop();
+      return parseInt(last);
+    })
+    .filter(function(n) { return !isNaN(n); });
+  var next = existing.length > 0 ? Math.max.apply(null, existing) + 1 : 1;
+  return name + ' ' + String(next).padStart(3, '0');
 }
 
 async function submitPayment() {
