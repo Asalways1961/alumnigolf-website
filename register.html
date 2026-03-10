@@ -176,6 +176,10 @@ nav{background:var(--navy-dark);padding:0 32px;height:64px;display:flex;align-it
 
 .sect-hd{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:10px;}
 
+/* Invitee notice banner */
+.invitee-notice{background:rgba(200,155,60,0.12);border:2px solid var(--gold);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--navy);display:none;}
+.invitee-notice.show{display:block;}
+
 footer{background:var(--navy-dark);color:rgba(255,255,255,.5);text-align:center;padding:20px;font-size:12px;}
 footer a{color:rgba(255,255,255,.5);}
 </style>
@@ -236,7 +240,7 @@ footer a{color:rgba(255,255,255,.5);}
         </div>
         <div class="ferr" id="err-lookup">No invitation found for this number. Please check with your captain.</div>
       </div>
-      <button class="btn-primary" onclick="findInvitation()" id="btn-lookup">Find My Invitation →</button>
+      <button class="btn-primary" onclick="findInvitation()" id="btn-lookup" style="width:100%;padding:15px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Find My Invitation →</button>
 
       <!-- Confirmation box (hidden until found) -->
       <div id="invite-confirm" style="display:none;margin-top:20px;">
@@ -248,8 +252,8 @@ footer a{color:rgba(255,255,255,.5);}
         </div>
         <p style="font-size:13px;color:var(--grey);text-align:center;margin:12px 0;">Is this correct?</p>
         <div style="display:flex;gap:12px;justify-content:center;">
-          <button class="btn-sm btn-outline" onclick="resetLookup()">No, try again</button>
-          <button class="btn-sm btn-gold" onclick="acceptInvite()">Yes, continue →</button>
+          <button class="btn-sm btn-outline" onclick="resetLookup()" style="padding:10px 20px;border-radius:8px;border:1.5px solid var(--light);background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;">No, try again</button>
+          <button onclick="acceptInvite()" style="padding:10px 20px;border-radius:8px;background:var(--gold);color:var(--navy);border:none;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;">Yes, continue →</button>
         </div>
       </div>
     </div>
@@ -274,7 +278,13 @@ footer a{color:rgba(255,255,255,.5);}
   <section class="step active" id="sec-1">
     <div class="card">
       <div class="card-h">Personal Details</div>
-      <div class="card-sub">Step 1 of 4 &mdash; Your basic information</div>
+      <div class="card-sub">Step 1 of 4 — Your basic information</div>
+
+      <!-- Invitee notice -->
+      <div class="invitee-notice" id="invitee-notice-1">
+        🤝 <strong>Your details have been pre-filled</strong> from your captain's invitation. Your name, mobile and school are fixed and cannot be changed.
+      </div>
+
       <div class="row">
         <div class="field">
           <label>First Name *</label>
@@ -290,7 +300,7 @@ footer a{color:rgba(255,255,255,.5);}
       <div class="field">
         <label>Mobile Number *</label>
         <div class="mob-wrap" id="mob-wrap">
-          <div class="mob-pre">&#127480;&#127462; +27</div>
+          <div class="mob-pre">🇿🇦 +27</div>
           <input type="tel" id="f-mobile" placeholder="81 234 5678" maxlength="9" autocomplete="tel" oninput="this.value=this.value.replace(/[^0-9]/g,'');if(this.value.startsWith('0'))this.value=this.value.substring(1);" />
         </div>
         <div class="ferr" id="err-mobile">Enter 9 digits without leading 0 (e.g. 821234567)</div>
@@ -308,7 +318,7 @@ footer a{color:rgba(255,255,255,.5);}
         </div>
         <div class="confirmed" id="school-conf" style="display:none">
           <span id="school-conf-name"></span>
-          <span class="change-btn" onclick="changeSchool()">Change</span>
+          <span class="change-btn" id="school-change-btn" onclick="changeSchool()">Change</span>
         </div>
         <div class="ferr" id="err-school">Please select your school</div>
       </div>
@@ -316,7 +326,7 @@ footer a{color:rgba(255,255,255,.5);}
         <label>Create Password *</label>
         <div class="pw-wrap">
           <input type="password" id="f-pw" placeholder="Min 8 characters" />
-          <span class="pw-eye" onclick="togglePw('f-pw')">&#128065;</span>
+          <span class="pw-eye" onclick="togglePw('f-pw')">👁</span>
         </div>
         <div class="pw-rules">
           <div class="pw-r" id="pw-len">At least 8 characters</div>
@@ -330,24 +340,24 @@ footer a{color:rgba(255,255,255,.5);}
         <label>Confirm Password *</label>
         <div class="pw-wrap">
           <input type="password" id="f-pw2" placeholder="Re-enter password" />
-          <span class="pw-eye" onclick="togglePw('f-pw2')">&#128065;</span>
+          <span class="pw-eye" onclick="togglePw('f-pw2')">👁</span>
         </div>
         <div class="ferr" id="err-pw2">Passwords do not match</div>
       </div>
-      <button class="btn-next" id="btn-s1" onclick="saveStep1()">Save &amp; Continue &#8594;</button>
+      <button class="btn-next" id="btn-s1" onclick="saveStep1()">Save &amp; Continue →</button>
     </div>
-    <p style="text-align:center;font-size:13px;color:var(--grey)">Already registered? <a href="portal.html" style="color:var(--navy);font-weight:600">Sign in to your Player Portal &#8594;</a></p>
+    <p style="text-align:center;font-size:13px;color:var(--grey)">Already registered? <a href="portal.html" style="color:var(--navy);font-weight:600">Sign in to your Player Portal →</a></p>
   </section>
 
   <!-- STEP 2 -->
   <section class="step" id="sec-2">
     <div class="card">
       <div class="card-h">Eligibility &amp; Consent</div>
-      <div class="card-sub">Step 2 of 4 &mdash; Please confirm the following</div>
+      <div class="card-sub">Step 2 of 4 — Please confirm the following</div>
 
-      <div class="hardlock" id="hl-school"><p>&#9940; <strong>Still enrolled at school?</strong> This tournament is exclusively for alumni. <a href="supporter.html">Register as a Supporter instead.</a></p></div>
-      <div class="hardlock" id="hl-hcp"><p>&#9940; <strong>No registered handicap?</strong> A valid GolfRSA / HNA handicap is mandatory. Please register your handicap first.</p></div>
-      <div class="hardlock" id="hl-age"><p>&#9940; <strong>Under 18?</strong> All participants must be at least 18 years old.</p></div>
+      <div class="hardlock" id="hl-school"><p>⛔ <strong>Still enrolled at school?</strong> This tournament is exclusively for alumni. <a href="supporter.html">Register as a Supporter instead.</a></p></div>
+      <div class="hardlock" id="hl-hcp"><p>⛔ <strong>No registered handicap?</strong> A valid GolfRSA / HNA handicap is mandatory. Please register your handicap first.</p></div>
+      <div class="hardlock" id="hl-age"><p>⛔ <strong>Under 18?</strong> All participants must be at least 18 years old.</p></div>
 
       <div class="sect-hd">Privacy &amp; Tournament Agreements</div>
       <label class="chk-item" for="chk-popia">
@@ -366,7 +376,7 @@ footer a{color:rgba(255,255,255,.5);}
       <div class="yn-g">
         <p>Are you currently still enrolled as a learner at a school?</p>
         <div class="yn-opts">
-          <div class="yn-opt" id="yn-sch-no" onclick="setYN('sch','no')">&#10003; No &mdash; I have completed my schooling</div>
+          <div class="yn-opt" id="yn-sch-no" onclick="setYN('sch','no')">✓ No — I have completed my schooling</div>
           <div class="yn-opt" id="yn-sch-yes" onclick="setYN('sch','yes')">Still at school</div>
         </div>
         <div class="ferr" id="err-yn-sch">Please answer this question</div>
@@ -375,7 +385,7 @@ footer a{color:rgba(255,255,255,.5);}
       <div class="yn-g">
         <p>Do you hold a current, active HNA (Handicap Network Africa) registered golf handicap?</p>
         <div class="yn-opts">
-          <div class="yn-opt" id="yn-hcp-yes" onclick="setYN('hcp','yes')">&#10003; Yes &mdash; I have an active HNA handicap</div>
+          <div class="yn-opt" id="yn-hcp-yes" onclick="setYN('hcp','yes')">✓ Yes — I have an active HNA handicap</div>
           <div class="yn-opt" id="yn-hcp-no" onclick="setYN('hcp','no')">No registered handicap</div>
         </div>
         <div class="ferr" id="err-yn-hcp">Please answer this question</div>
@@ -384,7 +394,7 @@ footer a{color:rgba(255,255,255,.5);}
       <div class="yn-g">
         <p>Do you confirm that you are 18 years of age or older?</p>
         <div class="yn-opts">
-          <div class="yn-opt" id="yn-age-yes" onclick="setYN('age','yes')">&#10003; Yes &mdash; I am 18 or older</div>
+          <div class="yn-opt" id="yn-age-yes" onclick="setYN('age','yes')">✓ Yes — I am 18 or older</div>
           <div class="yn-opt" id="yn-age-no" onclick="setYN('age','no')">Under 18</div>
         </div>
         <div class="ferr" id="err-yn-age">Please answer this question</div>
@@ -393,13 +403,13 @@ footer a{color:rgba(255,255,255,.5);}
       <div class="yn-g">
         <p>Do you understand and agree that both players in your team must be alumni of the same school?</p>
         <div class="yn-opts">
-          <div class="yn-opt" id="yn-same-yes" onclick="setYN('same','yes')">&#10003; Agreed &mdash; both from the same school</div>
+          <div class="yn-opt" id="yn-same-yes" onclick="setYN('same','yes')">✓ Agreed — both from the same school</div>
         </div>
         <div class="ferr" id="err-yn-same">Please confirm this requirement</div>
       </div>
 
-      <button class="btn-next" id="btn-s2" onclick="saveStep2()">Confirm &amp; Continue &#8594;</button>
-      <button class="btn-back" onclick="goStep(1)">&#8592; Back</button>
+      <button class="btn-next" id="btn-s2" onclick="saveStep2()">Confirm &amp; Continue →</button>
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
     </div>
   </section>
 
@@ -407,7 +417,7 @@ footer a{color:rgba(255,255,255,.5);}
   <section class="step" id="sec-3">
     <div class="card">
       <div class="card-h">Tournament Entry</div>
-      <div class="card-sub">Step 3 of 4 &mdash; Your golf &amp; location details</div>
+      <div class="card-sub">Step 3 of 4 — Your golf &amp; location details</div>
 
       <div class="field">
         <label>Golf Club Membership *</label>
@@ -426,7 +436,7 @@ footer a{color:rgba(255,255,255,.5);}
         <div class="field">
           <label>Handicap Index *</label>
           <input type="number" id="f-hcap" placeholder="e.g. 12.4" min="0" max="54" step="0.1" />
-          <div class="ferr" id="err-hcap">Enter a valid index (0&ndash;54)</div>
+          <div class="ferr" id="err-hcap">Enter a valid index (0–54)</div>
         </div>
         <div class="field">
           <label>HNA Number *</label>
@@ -450,10 +460,10 @@ footer a{color:rgba(255,255,255,.5);}
           <div class="ferr" id="err-postal">Must be exactly 4 digits</div>
         </div>
       </div>
-      <p style="font-size:12px;color:var(--grey);margin-top:-10px;margin-bottom:16px">&#9888;&#65039; Your postal code determines which Division your team is placed in. Ensure it is correct.</p>
+      <p style="font-size:12px;color:var(--grey);margin-top:-10px;margin-bottom:16px">⚠️ Your postal code determines which Division your team is placed in. Ensure it is correct.</p>
 
-      <button class="btn-next" id="btn-s3" onclick="saveStep3()">Save &amp; Continue &#8594;</button>
-      <button class="btn-back" onclick="goStep(2)">&#8592; Back</button>
+      <button class="btn-next" id="btn-s3" onclick="saveStep3()">Save &amp; Continue →</button>
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
     </div>
   </section>
 
@@ -461,78 +471,87 @@ footer a{color:rgba(255,255,255,.5);}
   <section class="step" id="sec-4">
     <div class="card">
       <div class="card-h">Partner &amp; Payment</div>
-      <div class="card-sub">Step 4 of 4 &mdash; Partner option and entry fee</div>
+      <div class="card-sub">Step 4 of 4 — Partner option and entry fee</div>
 
-      <div class="sect-hd">Your Partner</div>
-      <div class="p-opts">
-        <div class="p-opt" id="po-have" onclick="selPartner('have')">
-          <div class="ico">&#129309;</div>
-          <div><div class="ttl">I have a partner</div><div class="dsc">I know who my partner is &mdash; invite them now</div></div>
-          <div class="chk" id="poc-have"></div>
+      <!-- PARTNER SECTION — hidden for invitees -->
+      <div id="partner-section">
+        <div class="sect-hd">Your Partner</div>
+        <div class="p-opts">
+          <div class="p-opt" id="po-have" onclick="selPartner('have')">
+            <div class="ico">🤝</div>
+            <div><div class="ttl">I have a partner</div><div class="dsc">I know who my partner is — invite them now</div></div>
+            <div class="chk" id="poc-have"></div>
+          </div>
+          <div class="p-opt" id="po-later" onclick="selPartner('later')">
+            <div class="ico">⏳</div>
+            <div><div class="ttl">I will invite my partner later</div><div class="dsc">Register now and invite from your Player Portal</div></div>
+            <div class="chk" id="poc-later"></div>
+          </div>
+          <div class="p-opt" id="po-find" onclick="selPartner('find')">
+            <div class="ico">🔍</div>
+            <div><div class="ttl">I need a partner</div><div class="dsc">Place me in the player pool to find a partner</div></div>
+            <div class="chk" id="poc-find"></div>
+          </div>
         </div>
-        <div class="p-opt" id="po-later" onclick="selPartner('later')">
-          <div class="ico">&#9203;</div>
-          <div><div class="ttl">I will invite my partner later</div><div class="dsc">Register now and invite from your Player Portal</div></div>
-          <div class="chk" id="poc-later"></div>
-        </div>
-        <div class="p-opt" id="po-find" onclick="selPartner('find')">
-          <div class="ico">&#128269;</div>
-          <div><div class="ttl">I need a partner</div><div class="dsc">Place me in the player pool to find a partner</div></div>
-          <div class="chk" id="poc-find"></div>
+        <div class="ferr" id="err-partner">Please select a partner option</div>
+
+        <div class="inv-form" id="inv-form">
+          <div class="sect-hd">Invite Your Partner</div>
+          <div class="row">
+            <div class="field"><label>Partner's First Name *</label><input type="text" id="inv-fn" placeholder="First name" /><div class="ferr" id="err-inv-fn">Required</div></div>
+            <div class="field"><label>Partner's Surname *</label><input type="text" id="inv-sn" placeholder="Surname" /><div class="ferr" id="err-inv-sn">Required</div></div>
+          </div>
+          <div class="field">
+            <label>Partner's Mobile *</label>
+            <div class="mob-wrap" id="inv-mob-wrap">
+              <div class="mob-pre">🇿🇦 +27</div>
+              <input type="tel" id="inv-mob" placeholder="81 234 5678" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'');if(this.value.startsWith('0'))this.value=this.value.substring(1);" />
+            </div>
+            <div class="ferr" id="err-inv-mob">Required</div>
+          </div>
+          <div class="field"><label>Partner's Email (optional)</label><input type="email" id="inv-email" placeholder="partner at domain.com" /></div>
+          <div class="field"><label>School</label><input type="text" id="inv-school" readonly style="opacity:.6;background:var(--offwhite)" /></div>
+
+          <div class="field" style="margin-top:8px;">
+            <label>Send Invite Via</label>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+              <div style="display:flex;align-items:center;gap:8px;background:rgba(200,155,60,0.1);border:2px solid var(--gold);border-radius:8px;padding:10px 16px;cursor:default;">
+                <span style="font-size:18px;">📧</span>
+                <span style="font-size:13px;font-weight:700;color:var(--navy);">Email</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.03);border:2px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 16px;cursor:not-allowed;opacity:0.5;" title="Coming Soon">
+                <span style="font-size:18px;">💬</span>
+                <span style="font-size:13px;font-weight:600;color:#aaa;">WhatsApp</span>
+                <span style="font-size:10px;background:#aaa;color:#fff;padding:2px 7px;border-radius:10px;margin-left:4px;">SOON</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.03);border:2px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 16px;cursor:not-allowed;opacity:0.5;" title="Coming Soon">
+                <span style="font-size:18px;">📱</span>
+                <span style="font-size:13px;font-weight:600;color:#aaa;">SMS</span>
+                <span style="font-size:10px;background:#aaa;color:#fff;padding:2px 7px;border-radius:10px;margin-left:4px;">SOON</span>
+              </div>
+            </div>
+            <p style="font-size:11px;color:var(--grey);margin-top:8px;">📧 An invitation email will be sent to your partner and a copy to you.</p>
+          </div>
         </div>
       </div>
-      <div class="ferr" id="err-partner">Please select a partner option</div>
+      <!-- END PARTNER SECTION -->
 
-      <div class="inv-form" id="inv-form">
-        <div class="sect-hd">Invite Your Partner</div>
-        <div class="row">
-          <div class="field"><label>Partner's First Name *</label><input type="text" id="inv-fn" placeholder="First name" /><div class="ferr" id="err-inv-fn">Required</div></div>
-          <div class="field"><label>Partner's Surname *</label><input type="text" id="inv-sn" placeholder="Surname" /><div class="ferr" id="err-inv-sn">Required</div></div>
-        </div>
-        <div class="field">
-          <label>Partner's Mobile *</label>
-          <div class="mob-wrap" id="inv-mob-wrap">
-            <div class="mob-pre">&#127480;&#127462; +27</div>
-            <input type="tel" id="inv-mob" placeholder="81 234 5678" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'');if(this.value.startsWith('0'))this.value=this.value.substring(1);" />
-          </div>
-          <div class="ferr" id="err-inv-mob">Required</div>
-        </div>
-        <div class="field"><label>Partner's Email (optional)</label><input type="email" id="inv-email" placeholder="partner at domain.com" /></div>
-        <div class="field"><label>School</label><input type="text" id="inv-school" readonly style="opacity:.6;background:var(--offwhite)" /></div>
-
-        <!-- Invite Method -->
-        <div class="field" style="margin-top:8px;">
-          <label>Send Invite Via</label>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
-            <div style="display:flex;align-items:center;gap:8px;background:rgba(200,155,60,0.1);border:2px solid var(--gold);border-radius:8px;padding:10px 16px;cursor:default;">
-              <span style="font-size:18px;">📧</span>
-              <span style="font-size:13px;font-weight:700;color:var(--navy);">Email</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.03);border:2px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 16px;cursor:not-allowed;opacity:0.5;position:relative;" title="Coming Soon">
-              <span style="font-size:18px;">💬</span>
-              <span style="font-size:13px;font-weight:600;color:#aaa;">WhatsApp</span>
-              <span style="font-size:10px;background:#aaa;color:#fff;padding:2px 7px;border-radius:10px;margin-left:4px;">SOON</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.03);border:2px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 16px;cursor:not-allowed;opacity:0.5;position:relative;" title="Coming Soon">
-              <span style="font-size:18px;">📱</span>
-              <span style="font-size:13px;font-weight:600;color:#aaa;">SMS</span>
-              <span style="font-size:10px;background:#aaa;color:#fff;padding:2px 7px;border-radius:10px;margin-left:4px;">SOON</span>
-            </div>
-          </div>
-          <p style="font-size:11px;color:var(--grey);margin-top:8px;">📧 An invitation email will be sent to your partner and a copy to you.</p>
-        </div>
+      <!-- Invitee: already has a team notice -->
+      <div id="invitee-team-notice" style="display:none;background:rgba(27,77,46,0.08);border:2px solid rgba(27,77,46,0.3);border-radius:12px;padding:16px 20px;margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:700;color:var(--ok);margin-bottom:4px;">✅ You're joining an existing team</div>
+        <div style="font-size:13px;color:var(--navy);" id="invitee-team-display">—</div>
       </div>
 
       <div class="sect-hd" style="margin-top:20px">Select Payment Amount</div>
       <div class="pay-opts">
         <div class="pay-opt" id="pay-single" onclick="selPay('single')">
-          <div style="font-size:20px">&#128100;</div>
-          <div><div style="font-size:14px;font-weight:700;color:var(--navy)">Pay for myself &mdash; R1,500</div><div style="font-size:12px;color:var(--grey)">My partner pays their own entry fee separately</div></div>
+          <div style="font-size:20px">👤</div>
+          <div><div style="font-size:14px;font-weight:700;color:var(--navy)">Pay for myself — R1,500</div><div style="font-size:12px;color:var(--grey)">My partner pays their own entry fee separately</div></div>
           <div class="chk" id="payc-single"></div>
         </div>
         <div class="pay-opt" id="pay-team" onclick="selPay('team')">
-          <div style="font-size:20px">&#129309;</div>
-          <div><div style="font-size:14px;font-weight:700;color:var(--navy)">Pay for the full team &mdash; R2,800 <span style="background:var(--gold);color:var(--navy-dark);font-size:10px;padding:2px 6px;border-radius:4px;font-weight:800">SAVE R200</span></div><div style="font-size:12px;color:var(--grey)">Pay for both players at the discounted team rate</div></div>
+          <div style="font-size:20px">🤝</div>
+          <div><div style="font-size:14px;font-weight:700;color:var(--navy)">Pay for the full team — R2,800 <span style="background:var(--gold);color:var(--navy-dark);font-size:10px;padding:2px 6px;border-radius:4px;font-weight:800">SAVE R200</span></div><div style="font-size:12px;color:var(--grey)">Pay for both players at the discounted team rate</div></div>
           <div class="chk" id="payc-team"></div>
         </div>
       </div>
@@ -540,8 +559,8 @@ footer a{color:rgba(255,255,255,.5);}
 
       <div class="sect-hd">When would you like to pay?</div>
       <div class="when-opts">
-        <div class="when-opt" id="when-now" onclick="selWhen('now')">&#128179; Pay Now via EFT</div>
-        <div class="when-opt" id="when-later" onclick="selWhen('later')">&#9200; I will pay later</div>
+        <div class="when-opt" id="when-now" onclick="selWhen('now')">💳 Pay Now via EFT</div>
+        <div class="when-opt" id="when-later" onclick="selWhen('later')">⏰ I will pay later</div>
       </div>
       <div class="ferr" id="err-when">Please select when you will pay</div>
 
@@ -551,23 +570,23 @@ footer a{color:rgba(255,255,255,.5);}
           <div class="bank-row"><span>Bank</span><span>FNB — Cape Gate</span></div>
           <div class="bank-row"><span>Account Number</span><span>63192217123</span></div>
           <div class="bank-row"><span>Branch Code</span><span>251945</span></div>
-          <div class="bank-row"><span>Amount</span><span id="eft-amt">&mdash;</span></div>
-          <div class="bank-row"><span>Reference</span><span id="eft-ref">&mdash;</span></div>
+          <div class="bank-row"><span>Amount</span><span id="eft-amt">—</span></div>
+          <div class="bank-row"><span>Reference</span><span id="eft-ref">—</span></div>
         </div>
         <div class="pop-zone" id="pop-zone" onclick="document.getElementById('pop-file').click()">
-          <div style="font-size:28px">&#128206;</div>
+          <div style="font-size:28px">📎</div>
           <p>Click to attach your proof of payment</p>
-          <p style="font-size:11px">PDF, JPG or PNG &mdash; max 5MB</p>
+          <p style="font-size:11px">PDF, JPG or PNG — max 5MB</p>
           <input type="file" id="pop-file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="handlePOP(this)" />
         </div>
         <p style="font-size:12px;color:var(--grey);margin-top:10px;text-align:center">Or email your proof of payment to <strong>asmgolf123 [at] gmail.com</strong> with your name and reference.</p>
       </div>
 
-      <button class="btn-next" id="btn-s4" style="margin-top:20px">&#10003; Submit &amp; Complete Registration</button>
+      <button class="btn-next" id="btn-s4" style="margin-top:20px">✓ Submit &amp; Complete Registration</button>
       <div style="text-align:center;margin-top:10px">
-        <a href="#" onclick="submitPayLater(event)" style="font-size:13px;color:var(--grey);text-decoration:none;">Skip &mdash; pay from Player Portal later &#8594;</a>
+        <a href="#" onclick="submitPayLater(event)" style="font-size:13px;color:var(--grey);text-decoration:none;">Skip — pay from Player Portal later →</a>
       </div>
-      <button class="btn-back" onclick="goStep(3)">&#8592; Back</button>
+      <button class="btn-back" onclick="goStep(3)">← Back</button>
     </div>
   </section>
 
@@ -575,14 +594,14 @@ footer a{color:rgba(255,255,255,.5);}
   <section class="step" id="sec-success">
     <div class="card">
       <div class="success-wrap">
-        <div class="success-ico">&#127881;</div>
+        <div class="success-ico">🎉</div>
         <h2>Congratulations!</h2>
         <p>You have successfully registered for the Alumni Schools Golf Challenge.</p>
         <p style="margin-bottom:12px;font-size:13px">Your team name is:</p>
-        <div class="success-team" id="success-team">&mdash;</div>
+        <div class="success-team" id="success-team">—</div>
         <div class="success-btns">
-          <button onclick="window.location.href='home.html'" style="background:#fff;border:2px solid var(--navy);color:var(--navy)">&#127968; Back to Website</button>
-          <button onclick="window.location.href='portal.html'" style="background:var(--navy-dark);border:none;color:#fff">&#128100; Player Login &#8594;</button>
+          <button onclick="window.location.href='home.html'" style="background:#fff;border:2px solid var(--navy);color:var(--navy)">🏠 Back to Website</button>
+          <button onclick="window.location.href='portal.html'" style="background:var(--navy-dark);border:none;color:#fff">👤 Player Login →</button>
         </div>
       </div>
     </div>
@@ -591,12 +610,12 @@ footer a{color:rgba(255,255,255,.5);}
 </div>
 
 <footer>
-  <p>&copy; 2026 Alumni Schools Golf Challenge | <a href="contact.html">Contact Us</a></p>
+  <p>© 2026 Alumni Schools Golf Challenge | <a href="contact.html">Contact Us</a></p>
 </footer>
 
 <script>
 var SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
-var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlelRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 var reg = {};
@@ -609,6 +628,7 @@ var selPayOpt = null;
 var selWhenOpt = null;
 var popFile = null;
 var SCHOOLS = [];
+var isInvitee = false; // ← NEW: tracks if registering as invited partner
 
 // Load schools from Supabase
 sb.from('schools').select('id, name').order('name', {ascending:true}).then(function(res) {
@@ -625,6 +645,13 @@ function goStep(n) {
     var l = document.getElementById('line-'+i);
     s.className = 'prog-step' + (i<n?' done':i===n?' active':'');
     if (l) l.className = 'prog-line' + (i<n?' done':'');
+  }
+  // When invitee reaches step 4, hide partner section and show team notice
+  if (n === 4 && isInvitee) {
+    document.getElementById('partner-section').style.display = 'none';
+    document.getElementById('invitee-team-notice').style.display = 'block';
+    document.getElementById('invitee-team-display').textContent = 'Team: ' + (reg.team_display || reg.school || '—');
+    selPartnerOpt = 'invited'; // automatically set
   }
 }
 
@@ -731,7 +758,6 @@ function setYN(key, val) {
   ynState[key] = val;
   var ids = { sch:['yn-sch-no','yn-sch-yes'], hcp:['yn-hcp-yes','yn-hcp-no'], age:['yn-age-yes','yn-age-no'], same:['yn-same-yes'] };
   (ids[key]||[]).forEach(function(id){ var el=document.getElementById(id); if(el){ el.classList.remove('sel-yes','sel-no'); } });
-  // Good answers get green, bad answers get red
   var goodAnswers = { sch:'no', hcp:'yes', age:'yes', same:'yes' };
   var el = document.getElementById('yn-'+key+'-'+val);
   if (el) el.classList.add(val === goodAnswers[key] ? 'sel-yes' : 'sel-no');
@@ -782,7 +808,7 @@ async function saveStep1() {
 
   reg = { full_name: name+' '+surname, email: email, mobile: '+27'+mobile, school: selectedSchool.name, school_id: selectedSchool.id, password: pw };
 
-  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, eligibility_status:'pending', payment_status:'unpaid' }, {onConflict:'email'});
+  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school_name:reg.school, eligibility_status:'pending', payment_status:'unpaid' }, {onConflict:'email'});
   btn.disabled=false; btn.textContent='Save & Continue →';
   if (res.error) { alert('Error: '+res.error.message); return; }
   goStep(2);
@@ -799,14 +825,14 @@ async function saveStep2() {
   if (!ynState.same) { ferr('err-yn-same',true); ok=false; } else { ferr('err-yn-same',false); }
   if (!ok) return;
 
-  if (ynState.sch==='yes') { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
-  if (ynState.hcp==='no')  { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
-  if (ynState.age==='no')  { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
+  if (ynState.sch==='yes') { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school_name:reg.school,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
+  if (ynState.hcp==='no')  { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school_name:reg.school,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
+  if (ynState.age==='no')  { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school_name:reg.school,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
 
   var btn = document.getElementById('btn-s2');
   btn.disabled=true; btn.textContent='Saving...';
 
-  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, popia_accepted:true, rules_accepted:true, still_at_school:false, has_handicap:true, eligibility_status:'eligible' }, {onConflict:'email'});
+  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school_name:reg.school, popia_accepted:true, rules_accepted:true, still_at_school:false, has_handicap:true, eligibility_status:'eligible' }, {onConflict:'email'});
   btn.disabled=false; btn.textContent='Confirm & Continue →';
   if (res.error) { alert('Error: '+res.error.message); return; }
   goStep(3);
@@ -820,7 +846,6 @@ async function saveStep3() {
   var postal = document.getElementById('f-postal').value.trim();
   var ok = true;
 
-  // Accept typed club name if nothing selected from dropdown
   if (!selectedClub) {
     var typed = document.getElementById('f-club').value.trim();
     if (typed) { selectedClub = typed; } else { ferr('err-club',true); ok=false; }
@@ -836,7 +861,7 @@ async function saveStep3() {
   btn.disabled=true; btn.textContent='Saving...';
 
   var fullHNA = '2700'+hna;
-  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, club:selectedClub, handicap_index:hcap, hna_number:fullHNA, city:city, postal_code:postal }, {onConflict:'email'});
+  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school_name:reg.school, club:selectedClub, handicap_index:hcap, hna_number:fullHNA, city:city, postal_code:postal }, {onConflict:'email'});
   btn.disabled=false; btn.textContent='Save & Continue →';
   if (res.error) { alert('Error: '+res.error.message); return; }
 
@@ -888,7 +913,12 @@ function handlePOP(input) {
 }
 
 async function assignTeamNumber(school) {
-  // Team number = full school name + 3-digit number e.g. "Brackenfell HS 001"
+  // For invitees: use the captain's existing team number
+  if (isInvitee && inviteData) {
+    var capRes = await sb.from('players').select('team_number').eq('mobile', inviteData.invited_by_mobile).maybeSingle();
+    if (capRes.data && capRes.data.team_number) return capRes.data.team_number;
+  }
+  // For captains: assign new sequential team number
   var name = (school || 'Unknown').trim();
   var { data } = await sb.from('players').select('team_number').ilike('team_number', name + ' %');
   var existing = ((data) || [])
@@ -905,19 +935,30 @@ async function assignTeamNumber(school) {
 async function submitPayment() {
   try {
   var ok=true;
-  if (!selPartnerOpt) { ferr('err-partner',true); ok=false; }
+
+  // Partner validation — SKIP for invitees
+  if (!isInvitee && !selPartnerOpt) { ferr('err-partner',true); ok=false; } else { ferr('err-partner',false); }
+
   if (!selWhenOpt) { ferr('err-when',true); ok=false; }
-  // Payment amount only required if paying now
   if (selWhenOpt==='now' && !selPayOpt) { ferr('err-pay',true); ok=false; } else { ferr('err-pay',false); }
   if (!ok) return;
 
-  if (selPartnerOpt==='have') {
+  // Partner invite details — only for captains choosing 'have'
+  if (!isInvitee && selPartnerOpt==='have') {
     var pn=document.getElementById('inv-fn').value.trim();
     var ps=document.getElementById('inv-sn').value.trim();
     var pm=document.getElementById('inv-mob').value.replace(/\s/g,'');
     if (!pn){ferr('err-inv-fn',true);return;} if (!ps){ferr('err-inv-sn',true);return;} if(!/^[0-9]{9}$/.test(pm)){ferr('err-inv-mob',true);return;}
     var pe=document.getElementById('inv-email').value.trim().toLowerCase();
-    await sb.from('player_invitations').insert({email:reg.email,invited_name:pn+' '+ps,invited_mobile:'+27'+pm,invited_email:pe||null,school:reg.school,invited_by_mobile:reg.mobile});
+    // FIX: save partner's email (pe), not captain's email (reg.email)
+    await sb.from('player_invitations').insert({
+      email: reg.email,           // captain's email
+      invited_name: pn+' '+ps,
+      invited_mobile: '+27'+pm,
+      invited_email: pe||null,    // partner's email
+      school: reg.school,
+      invited_by_mobile: reg.mobile
+    });
   }
 
   var btn=document.getElementById('btn-s4');
@@ -934,11 +975,12 @@ async function submitPayment() {
   var amount=selPayOpt==='team'?2800:1500;
 
   await sb.from('players').upsert({
-    email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,
-    partner_status:selPartnerOpt,payment_status:popFile?'pending_verification':'unpaid',
-    payment_type:selPayOpt,payment_method:'eft',payment_amount:amount,
-    payment_reference:reg.payment_reference||null,payment_proof_path:popPath,
-    team_number:teamNumber,registration_complete:true
+    email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school_name:reg.school,
+    partner_status: isInvitee ? 'invited' : selPartnerOpt,
+    payment_status:popFile?'pending_verification':'unpaid',
+    payment_type:selPayOpt||'single', payment_method:'eft', payment_amount:amount,
+    payment_reference:reg.payment_reference||null, payment_proof_path:popPath,
+    team_number:teamNumber, registration_complete:true
   },{onConflict:'email'});
 
   var authRes=await sb.auth.signUp({email:reg.email,password:reg.password});
@@ -955,34 +997,25 @@ async function submitPayment() {
       referenceNumber: reg.payment_reference || teamNumber
     });
 
-    // Send partner invitation
-    var partnerEmail = document.getElementById('inv-email') ? document.getElementById('inv-email').value.trim() : '';
-    var partnerMobile = document.getElementById('inv-mob') ? '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'') : '';
-    var partnerFirstName = document.getElementById('inv-fn') ? document.getElementById('inv-fn').value.trim() : '';
-    var partnerSurname = document.getElementById('inv-sn') ? document.getElementById('inv-sn').value.trim() : '';
-    var partnerFullName = (partnerFirstName + ' ' + partnerSurname).trim();
-
-    if (selPartnerOpt === 'have' && partnerFirstName) {
+    // Send partner invitation — only for captains
+    if (!isInvitee && selPartnerOpt === 'have') {
+      var partnerEmail = document.getElementById('inv-email').value.trim();
+      var partnerMobile = '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'');
+      var partnerFirstName = document.getElementById('inv-fn').value.trim();
+      var partnerSurname = document.getElementById('inv-sn').value.trim();
+      var partnerFullName = (partnerFirstName + ' ' + partnerSurname).trim();
       var inviteLink = window.location.origin + '/register.html?invite=1&mobile=' + encodeURIComponent(partnerMobile);
-      // Send to captain first (always — they always have an email)
+
+      // Copy to captain always
       EmailService.sendPartnerInvitationEmail({
-        inviterName: reg.full_name,
-        inviterSchool: reg.school,
-        teamNumber: teamNumber,
-        partnerEmail: reg.email,
-        partnerName: partnerFullName,
-        inviteLink: inviteLink,
-        isCaptainCopy: true
+        inviterName: reg.full_name, inviterSchool: reg.school, teamNumber: teamNumber,
+        partnerEmail: reg.email, partnerName: partnerFullName, inviteLink: inviteLink, isCaptainCopy: true
       });
-      // Send to partner only if they provided an email
+      // Send to partner if email provided
       if (partnerEmail) {
         EmailService.sendPartnerInvitationEmail({
-          inviterName: reg.full_name,
-          inviterSchool: reg.school,
-          teamNumber: teamNumber,
-          partnerEmail: partnerEmail,
-          partnerName: partnerFullName,
-          inviteLink: inviteLink
+          inviterName: reg.full_name, inviterSchool: reg.school, teamNumber: teamNumber,
+          partnerEmail: partnerEmail, partnerName: partnerFullName, inviteLink: inviteLink
         });
       }
     }
@@ -1002,60 +1035,26 @@ async function submitPayLater(e) {
   var teamNumber=await assignTeamNumber(reg.school);
   var amount=selPayOpt==='team'?2800:1500;
   await sb.from('players').upsert({
-    email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,
-    partner_status:selPartnerOpt||'later',payment_status:'unpaid',
-    payment_type:selPayOpt||'single',payment_amount:amount,
-    team_number:teamNumber,registration_complete:true
+    email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school_name:reg.school,
+    partner_status: isInvitee ? 'invited' : (selPartnerOpt||'later'),
+    payment_status:'unpaid',
+    payment_type:selPayOpt||'single', payment_amount:amount,
+    team_number:teamNumber, registration_complete:true
   },{onConflict:'email'});
   var authRes=await sb.auth.signUp({email:reg.email,password:reg.password});
   if (authRes.error && authRes.error.message.indexOf('already registered')===-1) console.warn('Auth:',authRes.error.message);
-  // Send welcome email
   if (window.EmailService) {
-    EmailService.sendWelcomeEmail({
-      name: reg.full_name,
-      email: reg.email,
-      school: reg.school,
-      referenceNumber: teamNumber
-    });
-    var partnerEmail = document.getElementById('inv-email') ? document.getElementById('inv-email').value.trim() : '';
-    var partnerMobile = document.getElementById('inv-mob') ? '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'') : '';
-    var partnerFN = document.getElementById('inv-fn') ? document.getElementById('inv-fn').value.trim() : '';
-    var partnerSN = document.getElementById('inv-sn') ? document.getElementById('inv-sn').value.trim() : '';
-    var partnerFullName = (partnerFN + ' ' + partnerSN).trim();
-    if (selPartnerOpt === 'have' && partnerFN) {
-      var inviteLink = window.location.origin + '/register.html?invite=1&mobile=' + encodeURIComponent(partnerMobile);
-      // Always send copy to captain
-      EmailService.sendPartnerInvitationEmail({
-        inviterName: reg.full_name,
-        inviterSchool: reg.school,
-        teamNumber: teamNumber,
-        partnerEmail: reg.email,
-        partnerName: partnerFullName,
-        inviteLink: inviteLink,
-        isCaptainCopy: true
-      });
-      // Send to partner if email provided
-      if (partnerEmail) {
-        EmailService.sendPartnerInvitationEmail({
-          inviterName: reg.full_name,
-          inviterSchool: reg.school,
-          teamNumber: teamNumber,
-          partnerEmail: partnerEmail,
-          partnerName: partnerFullName,
-          inviteLink: inviteLink
-        });
-      }
-    }
+    EmailService.sendWelcomeEmail({ name:reg.full_name, email:reg.email, school:reg.school, referenceNumber:teamNumber });
   }
   await sb.auth.signOut();
   window.location.href='portal.html';
 }
 
-
-// ── PATH SELECTION ────────────────────────────────────────────────────────────
+// ── PATH SELECTION
 var inviteData = null;
 
 function showChoice() {
+  isInvitee = false;
   document.getElementById('sec-choice').style.display = 'block';
   document.getElementById('sec-invite-lookup').style.display = 'none';
   document.getElementById('prog-wrap').style.display = 'none';
@@ -1064,6 +1063,7 @@ function showChoice() {
 
 function selectPath(path) {
   if (path === 'new') {
+    isInvitee = false;
     document.getElementById('sec-choice').style.display = 'none';
     document.getElementById('sec-invite-lookup').style.display = 'none';
     document.getElementById('prog-wrap').style.display = 'block';
@@ -1076,7 +1076,7 @@ function selectPath(path) {
   }
 }
 
-// ── INVITE LOOKUP ─────────────────────────────────────────────────────────────
+// ── INVITE LOOKUP
 async function findInvitation() {
   var raw = document.getElementById('lookup-mobile').value.replace(/\s/g,'');
   if (!/^[0-9]{9,10}$/.test(raw)) {
@@ -1101,7 +1101,6 @@ async function findInvitation() {
   ferr('err-lookup', false);
   inviteData = data;
 
-  // Get captain details
   var capRes = await sb.from('players').select('team_number,full_name').eq('mobile', data.invited_by_mobile).maybeSingle();
   var captain = capRes.data;
 
@@ -1121,22 +1120,41 @@ function resetLookup() {
 
 function acceptInvite() {
   if (!inviteData) return;
+  isInvitee = true; // ← Mark as invitee
+
   var nameParts = (inviteData.invited_name || '').split(' ');
-  var fn = document.getElementById('f-fname');
-  var sn = document.getElementById('f-sname');
-  var mob = document.getElementById('f-mobile');
-  var email = document.getElementById('f-email');
-  var schoolInput = document.getElementById('f-school');
+  var firstName = nameParts[0] || '';
+  var surname = nameParts.slice(1).join(' ') || '';
 
-  if (fn) fn.value = nameParts[0] || '';
-  if (sn) sn.value = nameParts.slice(1).join(' ') || '';
-  if (mob) mob.value = (inviteData.invited_mobile || '').replace('+27','');
-  if (email && inviteData.invited_email) email.value = inviteData.invited_email;
-  if (schoolInput) schoolInput.value = inviteData.school || '';
+  // Pre-fill and LOCK name fields
+  var fnEl = document.getElementById('f-name');
+  var snEl = document.getElementById('f-surname');
+  if (fnEl) { fnEl.value = firstName; fnEl.readOnly = true; fnEl.style.opacity = '0.7'; fnEl.style.background = 'var(--offwhite)'; }
+  if (snEl) { snEl.value = surname; snEl.readOnly = true; snEl.style.opacity = '0.7'; snEl.style.background = 'var(--offwhite)'; }
 
+  // Pre-fill and LOCK mobile
+  var mobileDigits = (inviteData.invited_mobile || '').replace('+27','').replace(/\s/g,'');
+  var mobEl = document.getElementById('f-mobile');
+  if (mobEl) { mobEl.value = mobileDigits; mobEl.readOnly = true; mobEl.style.opacity = '0.7'; mobEl.style.background = 'var(--offwhite)'; }
+
+  // Pre-fill email if available
+  var emailEl = document.getElementById('f-email');
+  if (emailEl && inviteData.invited_email) emailEl.value = inviteData.invited_email;
+
+  // Pre-fill and LOCK school (show confirmed box, hide change button)
   selectedSchool = { name: inviteData.school, id: inviteData.school_id || null };
-  reg.invited_team_number = null;
-  reg.is_invited = true;
+  document.getElementById('f-school').style.display = 'none';
+  document.getElementById('school-conf').style.display = 'flex';
+  document.getElementById('school-conf-name').textContent = inviteData.school || '';
+  var changeBtn = document.getElementById('school-change-btn');
+  if (changeBtn) changeBtn.style.display = 'none';
+
+  // Store team display for step 4
+  reg.school = inviteData.school;
+  reg.team_display = inviteData.team_number || inviteData.school;
+
+  // Show the invitee notice banner
+  document.getElementById('invitee-notice-1').classList.add('show');
 
   document.getElementById('sec-invite-lookup').style.display = 'none';
   document.getElementById('prog-wrap').style.display = 'block';
@@ -1144,7 +1162,7 @@ function acceptInvite() {
   goStep(1);
 }
 
-// ── AUTO-SELECT FROM URL PARAMS ───────────────────────────────────────────────
+// ── AUTO-SELECT FROM URL PARAMS
 (function() {
   var params = new URLSearchParams(window.location.search);
   if (params.get('invite') === '1') {
@@ -1158,7 +1176,7 @@ function acceptInvite() {
   }
 })();
 
-// Bind submit button via addEventListener so Cloudflare can't break it
+// Bind submit button
 document.getElementById('btn-s4').addEventListener('click', function() { submitPayment(); });
 </script>
 </body>
