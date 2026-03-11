@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — Alumni Schools Golf Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/email-service.js"></script>
+
+<style>
+:root {
+  --navy:#0A1F44; --navy-dark:#0A1F44; --navy-mid:#0A1F44;
+  --gold:#C89B3C; --white:#fff; --offwhite:#F4E7C6;
+  --light:#F4E7C6; --grey:#9a9490; --text:#0A1F44;
+  --err:#c0392b; --ok:#1B4D2E; --r:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+#sec-choice { display:block; }
+.choice-wrap { max-width:620px; margin:0 auto; padding:60px 20px 80px; }
+.choice-heading { text-align:center; margin-bottom:40px; }
+.choice-heading h2 { font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:700; color:var(--navy); margin-bottom:8px; }
+.choice-heading p { font-size:14px; color:var(--grey); }
+.choice-cards { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media(max-width:560px){ .choice-cards { grid-template-columns:1fr; } }
+.choice-card {
+  background:#fff; border:2px solid rgba(10,31,68,0.1); border-radius:16px;
+  padding:36px 28px; text-align:center; cursor:pointer;
+  transition:all 0.2s; box-shadow:0 2px 16px rgba(0,0,0,0.06);
+}
+.choice-card:hover { border-color:var(--gold); transform:translateY(-3px); box-shadow:0 8px 32px rgba(200,155,60,0.2); }
+.choice-card .choice-icon { font-size:48px; margin-bottom:16px; }
+.choice-card h3 { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:700; color:var(--navy); margin-bottom:8px; }
+.choice-card p { font-size:13px; color:var(--grey); line-height:1.6; margin-bottom:20px; }
+.choice-btn { display:inline-block; padding:12px 28px; border-radius:8px; font-size:13px; font-weight:700; letter-spacing:0.5px; }
+.choice-btn-gold { background:var(--gold); color:var(--navy); }
+.choice-btn-navy { background:var(--navy); color:#fff; }
+.invite-lookup { background:#fff; border-radius:16px; padding:36px; box-shadow:0 2px 20px rgba(0,0,0,.06); max-width:480px; margin:0 auto; }
+.invite-lookup h3 { font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--navy); margin-bottom:6px; }
+.invite-lookup p { font-size:13px; color:var(--grey); margin-bottom:24px; }
+.invite-confirm-box { background:rgba(200,155,60,0.08); border:2px solid var(--gold); border-radius:12px; padding:20px; margin:20px 0; text-align:center; }
+.invite-confirm-box .team-name { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--navy); }
+.invite-confirm-box .invited-by { font-size:13px; color:var(--grey); margin-top:4px; }
+.invite-confirm-box .school-badge { display:inline-block; background:var(--navy); color:#fff; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; margin-top:8px; }
+body{font-family:'DM Sans',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh;}
+nav{background:var(--navy-dark);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:22px;color:#fff;font-weight:700;text-decoration:none;}
+.nav-links{display:flex;gap:24px;align-items:center;}
+.nav-links a{color:rgba(255,255,255,0.75);font-size:13px;font-weight:500;text-decoration:none;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);}
+.nav-cta{background:var(--gold);color:var(--navy-dark) !important;padding:8px 18px;border-radius:8px;font-weight:700 !important;}
+@media(max-width:640px){.nav-links{display:none;}}
+.prog-wrap{background:var(--navy);padding:14px 32px;}
+.prog-steps{display:flex;align-items:center;max-width:560px;margin:0 auto;}
+.prog-step{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.35);letter-spacing:.5px;text-transform:uppercase;flex:1;}
+.prog-step .circle{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:rgba(255,255,255,0.35);transition:all .3s;}
+.prog-step.active{color:var(--gold);}
+.prog-step.active .circle{border-color:var(--gold);color:var(--gold);background:rgba(200,155,60,0.15);}
+.prog-step.done .circle{background:var(--gold);border-color:var(--gold);color:var(--navy-dark);}
+.prog-step.done{color:rgba(255,255,255,.55);}
+.prog-line{flex:1;height:2px;background:rgba(255,255,255,.15);margin:0 6px 18px;transition:background .3s;}
+.prog-line.done{background:var(--gold);}
+.page{max-width:620px;margin:0 auto;padding:40px 20px 80px;overflow:visible;}
+.step{display:none;}.step.active{display:block;}
+.card{background:#fff;border-radius:16px;padding:36px;box-shadow:0 2px 20px rgba(0,0,0,.06);margin-bottom:20px;overflow:visible;}
+.card-h{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.card-sub{font-size:13px;color:var(--grey);margin-bottom:28px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:500px){.row{grid-template-columns:1fr;}}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:6px;}
+.field input,.field select{width:100%;padding:12px 14px;border:1.5px solid var(--light);border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:#fff;transition:border-color .2s;-webkit-appearance:none;}
+.field input:focus,.field select:focus{outline:none;border-color:var(--navy);}
+.field input.err{border-color:var(--err);}
+.ferr{color:var(--err);font-size:12px;margin-top:5px;display:none;}
+.ferr.show{display:block;}
+.mob-wrap{display:flex;border:1.5px solid var(--light);border-radius:10px;overflow:hidden;transition:border-color .2s;}
+.mob-wrap:focus-within{border-color:var(--navy);}
+.mob-wrap.err{border-color:var(--err);}
+.mob-pre{background:var(--offwhite);padding:12px 14px;font-size:14px;font-weight:600;color:var(--navy);border-right:1.5px solid var(--light);white-space:nowrap;display:flex;align-items:center;gap:6px;}
+.mob-wrap input{border:none;border-radius:0;flex:1;padding:12px 14px;}
+.mob-wrap input:focus{outline:none;}
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-right:44px;}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;color:var(--grey);user-select:none;}
+.pw-rules{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.pw-r{font-size:11px;color:var(--grey);display:flex;align-items:center;gap:5px;}
+.pw-r.ok{color:var(--ok);}
+.pw-r::before{content:'○';font-size:9px;}
+.pw-r.ok::before{content:'●';}
+.dd-wrap{position:relative;}
+.dd{position:absolute;top:100%;margin-top:4px;left:0;right:0;background:#fff;border:1.5px solid var(--navy);border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:9999;max-height:220px;overflow-y:auto;display:none;}
+.dd-opt{padding:11px 14px;font-size:13px;cursor:pointer;transition:background .15s;}
+.dd-opt:hover{background:rgba(27,58,107,.07);}
+.confirmed{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(27,77,46,.08);border:1.5px solid rgba(27,77,46,.3);border-radius:10px;font-size:13px;font-weight:600;color:var(--ok);}
+.confirmed span{flex:1;}
+.change-btn{font-size:12px;color:var(--navy);cursor:pointer;text-decoration:underline;font-weight:400;}
+.btn-next{width:100%;padding:15px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;margin-top:8px;}
+.btn-next:hover{background:var(--navy-mid);}
+.btn-next:disabled{opacity:.6;cursor:not-allowed;}
+.btn-back{background:none;border:none;color:var(--grey);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;padding:10px 0;display:flex;align-items:center;gap:6px;}
+.btn-back:hover{color:var(--navy);}
+.yn-g{margin-bottom:18px;}
+.yn-g>p{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.5;}
+.yn-opts{display:flex;gap:10px;}
+.yn-opt{flex:1;padding:12px;border:1.5px solid var(--light);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;text-align:center;transition:all .2s;background:#fff;user-select:none;}
+.yn-opt.sel-yes{border-color:var(--ok);background:rgba(27,77,46,.08);color:var(--ok);font-weight:700;}
+.yn-opt.sel-no{border-color:var(--err);background:rgba(192,57,43,.08);color:var(--err);font-weight:700;}
+.hardlock{background:rgba(192,57,43,.08);border:1.5px solid rgba(192,57,43,.3);border-radius:10px;padding:16px;margin-bottom:16px;display:none;}
+.hardlock.show{display:block;}
+.hardlock p{font-size:13px;color:var(--err);line-height:1.6;}
+.hardlock a{color:var(--err);font-weight:700;}
+.chk-item{display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--offwhite);border-radius:10px;margin-bottom:10px;cursor:pointer;border:1.5px solid transparent;transition:border-color .2s;}
+.chk-item:hover{border-color:var(--light);}
+.chk-item input[type=checkbox]{width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--navy);cursor:pointer;}
+.chk-text{font-size:13px;line-height:1.6;}
+.chk-text a{color:var(--navy);font-weight:600;}
+.p-opts{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+.p-opt{border:1.5px solid var(--light);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all .2s;background:#fff;display:flex;align-items:center;gap:14px;}
+.p-opt:hover{border-color:var(--navy);}
+.p-opt.sel{border-color:var(--navy);background:rgba(27,58,107,.04);}
+.p-opt .ico{font-size:24px;flex-shrink:0;}
+.p-opt .ttl{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:2px;}
+.p-opt .dsc{font-size:12px;color:var(--grey);}
+.p-opt .chk{margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid var(--light);flex-shrink:0;transition:all .2s;}
+.p-opt.sel .chk{background:var(--navy);border-color:var(--navy);}
+.inv-form{background:var(--offwhite);border-radius:12px;padding:20px;margin-top:16px;display:none;}
+.inv-form.show{display:block;}
+.pay-opts{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+.pay-opt{border:1.5px solid var(--light);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all .2s;background:#fff;display:flex;align-items:center;gap:14px;}
+.pay-opt:hover{border-color:var(--gold);}
+.pay-opt.sel{border-color:var(--gold);background:rgba(200,155,60,.06);}
+.pay-opt .chk{margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid var(--light);flex-shrink:0;}
+.pay-opt.sel .chk{background:var(--gold);border-color:var(--gold);}
+.when-opts{display:flex;gap:10px;margin-bottom:16px;}
+.when-opt{flex:1;padding:12px;border:1.5px solid var(--light);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;text-align:center;transition:all .2s;background:#fff;}
+.when-opt.sel{border-color:var(--gold);background:rgba(200,155,60,.08);color:var(--navy);font-weight:700;}
+.bank-box{background:var(--navy-dark);border-radius:12px;padding:20px;margin:16px 0;}
+.bank-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px;}
+.bank-row:last-child{border:none;}
+.bank-row span:first-child{color:rgba(255,255,255,.5);}
+.bank-row span:last-child{color:#fff;font-weight:600;}
+.pop-zone{border:2px dashed var(--light);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s;margin-top:12px;}
+.pop-zone:hover{border-color:var(--navy);}
+.pop-zone p{font-size:13px;color:var(--grey);margin-top:6px;}
+.pop-zone.ok{border-color:var(--ok);background:rgba(27,77,46,.05);}
+.success-wrap{text-align:center;padding:40px 20px;}
+.success-ico{font-size:64px;margin-bottom:16px;}
+.success-wrap h2{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--navy);margin-bottom:8px;}
+.success-wrap p{color:var(--grey);font-size:14px;margin-bottom:20px;}
+.success-team{background:var(--navy-dark);color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;border-radius:12px;padding:14px 24px;display:inline-block;margin-bottom:24px;}
+.success-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.success-btns button{padding:13px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.sect-hd{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:10px;}
+.invitee-notice{background:rgba(200,155,60,0.12);border:2px solid var(--gold);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--navy);display:none;}
+.invitee-notice.show{display:block;}
+footer{background:var(--navy-dark);color:rgba(255,255,255,.5);text-align:center;padding:20px;font-size:12px;}
+footer a{color:rgba(255,255,255,.5);}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="home.html" class="nav-brand" style="display:flex;align-items:center;gap:10px;"><img src="/Full_Logo.jpg" alt="Alumni Schools Golf Challenge" style="height:44px;width:auto;object-fit:contain;"><span>Alumni Golf</span></a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="schools.html">Schools</a>
+    <a href="register.html" class="active">Register</a>
+    <a href="contact.html">Contact</a>
+    <a href="register.html" class="nav-cta">Register Now</a>
+  </div>
+</nav>
+
+<!-- CHOICE SCREEN -->
+<section id="sec-choice">
+  <div class="choice-wrap">
+    <div class="choice-heading">
+      <h2>How would you like to enter?</h2>
+      <p>Choose your registration path below</p>
+    </div>
+    <div class="choice-cards">
+      <div class="choice-card" onclick="selectPath('new')">
+        <div class="choice-icon">🏌️</div>
+        <h3>New Team</h3>
+        <p>Start fresh — register yourself and your school. You can invite your partner during registration.</p>
+        <span class="choice-btn choice-btn-gold">Register New Team</span>
+      </div>
+      <div class="choice-card" onclick="selectPath('invited')">
+        <div class="choice-icon">🤝</div>
+        <h3>I Received an Invite</h3>
+        <p>Your captain has already registered your team. Complete your details to join them.</p>
+        <span class="choice-btn choice-btn-navy">Join My Team</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INVITE LOOKUP SCREEN -->
+<section id="sec-invite-lookup" style="display:none;">
+  <div class="choice-wrap">
+    <div style="text-align:center;margin-bottom:32px;">
+      <a href="#" onclick="showChoice()" style="color:var(--grey);font-size:13px;text-decoration:none;">← Back</a>
+    </div>
+    <div class="invite-lookup">
+      <h3>🤝 Join Your Team</h3>
+      <p>Enter your mobile number to find your invitation. Use the number your captain registered for you.</p>
+      <div class="field">
+        <label>Your Mobile Number</label>
+        <div class="mob-wrap">
+          <span class="mob-pre">+27</span>
+          <input type="tel" id="lookup-mobile" placeholder="81 234 5678" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'');if(this.value.startsWith('0'))this.value=this.value.substring(1);" />
+        </div>
+        <div class="ferr" id="err-lookup">No invitation found for this number. Please check with your captain.</div>
+      </div>
+      <button onclick="findInvitation()" id="btn-lookup" style="width:100%;padding:15px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Find My Invitation →</button>
+      <div id="invite-confirm" style="display:none;margin-top:20px;">
+        <div class="invite-confirm-box">
+          <div style="font-size:13px;color:var(--grey);margin-bottom:4px;">Invitation found! You're joining:</div>
+          <div class="team-name" id="confirm-team">—</div>
+          <div class="invited-by" id="confirm-captain">—</div>
+          <div><span class="school-badge" id="confirm-school">—</span></div>
+        </div>
+        <p style="font-size:13px;color:var(--grey);text-align:center;margin:12px 0;">Is this correct?</p>
+        <div style="display:flex;gap:12px;justify-content:center;">
+          <button onclick="resetLookup()" style="padding:10px 20px;border-radius:8px;border:1.5px solid var(--light);background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;">No, try again</button>
+          <button onclick="acceptInvite()" style="padding:10px 20px;border-radius:8px;background:var(--gold);color:var(--navy);border:none;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;">Yes, continue →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="prog-wrap" id="prog-wrap" style="display:none;">
+  <div class="prog-steps">
+    <div class="prog-step active" id="prog-1"><div class="circle">1</div><span>Personal</span></div>
+    <div class="prog-line" id="line-1"></div>
+    <div class="prog-step" id="prog-2"><div class="circle">2</div><span>Eligibility</span></div>
+    <div class="prog-line" id="line-2"></div>
+    <div class="prog-step" id="prog-3"><div class="circle">3</div><span>Golf</span></div>
+    <div class="prog-line" id="line-3"></div>
+    <div class="prog-step" id="prog-4"><div class="circle">4</div><span>Payment</span></div>
+  </div>
+</div>
+
+<div class="page" id="main-page" style="display:none;">
+
+  <!-- STEP 1 -->
+  <section class="step active" id="sec-1">
+    <div class="card">
+      <div class="card-h">Personal Details</div>
+      <div class="card-sub">Step 1 of 4 — Your basic information</div>
+      <div class="invitee-notice" id="invitee-notice-1">
+        🤝 <strong>Your details have been pre-filled</strong> from your captain's invitation. Your name, mobile and school are fixed and cannot be changed.
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>First Name *</label>
+          <input type="text" id="f-name" placeholder="e.g. John" autocomplete="given-name" />
+          <div class="ferr" id="err-name">Please enter your first name</div>
+        </div>
+        <div class="field">
+          <label>Surname *</label>
+          <input type="text" id="f-surname" placeholder="e.g. Smith" autocomplete="family-name" />
+          <div class="ferr" id="err-surname">Please enter your surname</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Mobile Number *</label>
+        <div class="mob-wrap" id="mob-wrap">
+          <div class="mob-pre">🇿🇦 +27</div>
+          <input type="tel" id="f-mobile" placeholder="81 234 5678" maxlength="9" autocomplete="tel" oninput="this.value=this.value.replace(/[^0-9]/g,'');if(this.value.startsWith('0'))this.value=this.value.substring(1);" />
+        </div>
+        <div class="ferr" id="err-mobile">Enter 9 digits without leading 0 (e.g. 821234567)</div>
+      </div>
+      <div class="field">
+        <label>Email Address *</label>
+        <input type="email" id="f-email" placeholder="your.name at domain.com" autocomplete="email" />
+        <div class="ferr" id="err-email">Please enter a valid email address</div>
+      </div>
+      <div class="field">
+        <label>Gender *</label>
+        <select id="f-gender">
+          <option value="">-- Select --</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </select>
+        <div class="ferr" id="err-gender">Please select your gender</div>
+      </div>
+      <div class="field">
+        <label>School You Represent *</label>
+        <div class="dd-wrap" id="school-wrap">
+          <input type="text" id="f-school" placeholder="Type to search, or enter school name manually..." autocomplete="off" />
+          <div class="dd" id="school-dd"></div>
+        </div>
+        <div class="confirmed" id="school-conf" style="display:none">
+          <span id="school-conf-name"></span>
+          <span class="change-btn" id="school-change-btn" onclick="changeSchool()">Change</span>
+        </div>
+        <div class="ferr" id="err-school">Please select your school</div>
+      </div>
+      <div class="field">
+        <label>Create Password *</label>
+        <div class="pw-wrap">
+          <input type="password" id="f-pw" placeholder="Min 8 characters" />
+          <span class="pw-eye" onclick="togglePw('f-pw')">👁</span>
+        </div>
+        <div class="pw-rules">
+          <div class="pw-r" id="pw-len">At least 8 characters</div>
+          <div class="pw-r" id="pw-cap">1 Capital letter</div>
+          <div class="pw-r" id="pw-num">1 Number</div>
+          <div class="pw-r" id="pw-sym">1 Special character</div>
+        </div>
+        <div class="ferr" id="err-pw">Password does not meet requirements</div>
+      </div>
+      <div class="field">
+        <label>Confirm Password *</label>
+        <div class="pw-wrap">
+          <input type="password" id="f-pw2" placeholder="Re-enter password" />
+          <span class="pw-eye" onclick="togglePw('f-pw2')">👁</span>
+        </div>
+        <div class="ferr" id="err-pw2">Passwords do not match</div>
+      </div>
+      <button class="btn-next" id="btn-s1" onclick="saveStep1()">Save &amp; Continue →</button>
+    </div>
+    <p style="text-align:center;font-size:13px;color:var(--grey)">Already registered? <a href="portal.html" style="color:var(--navy);font-weight:600">Sign in to your Player Portal →</a></p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="step" id="sec-2">
+    <div class="card">
+      <div class="card-h">Eligibility &amp; Consent</div>
+      <div class="card-sub">Step 2 of 4 — Please confirm the following</div>
+      <div class="hardlock" id="hl-school"><p>⛔ <strong>Still enrolled at school?</strong> This tournament is exclusively for alumni. <a href="supporter.html">Register as a Supporter instead.</a></p></div>
+      <div class="hardlock" id="hl-hcp"><p>⛔ <strong>No registered handicap?</strong> A valid GolfRSA / HNA handicap is mandatory. Please register your handicap first.</p></div>
+      <div class="hardlock" id="hl-age"><p>⛔ <strong>Under 18?</strong> All participants must be at least 18 years old.</p></div>
+      <div class="sect-hd">Privacy &amp; Tournament Agreements</div>
+      <label class="chk-item" for="chk-popia">
+        <input type="checkbox" id="chk-popia" />
+        <div class="chk-text">I have read and agree to the <a href="#" onclick="return false">POPIA Privacy Policy</a> of Legacy Events Ventures (Pty) Ltd. I consent to my personal information being processed for the purpose of administering the Alumni Schools Golf Challenge.</div>
+      </label>
+      <div class="ferr" id="err-popia">You must accept the Privacy Policy to proceed</div>
+      <label class="chk-item" for="chk-rules">
+        <input type="checkbox" id="chk-rules" />
+        <div class="chk-text">I have read and agree to the <a href="#" onclick="return false">Tournament Rules &amp; Conditions</a> and the <a href="#" onclick="return false">Code of Conduct</a> of the Alumni Schools Golf Challenge.</div>
+      </label>
+      <div class="ferr" id="err-rules">You must accept the Tournament Rules to proceed</div>
+      <div class="sect-hd" style="margin-top:20px">Eligibility Confirmation</div>
+      <div class="yn-g">
+        <p>Are you currently still enrolled as a learner at a school?</p>
+        <div class="yn-opts">
+          <div class="yn-opt" id="yn-sch-no" onclick="setYN('sch','no')">✓ No — I have completed my schooling</div>
+          <div class="yn-opt" id="yn-sch-yes" onclick="setYN('sch','yes')">Still at school</div>
+        </div>
+        <div class="ferr" id="err-yn-sch">Please answer this question</div>
+      </div>
+      <div class="yn-g">
+        <p>Do you hold a current, active HNA (Handicap Network Africa) registered golf handicap?</p>
+        <div class="yn-opts">
+          <div class="yn-opt" id="yn-hcp-yes" onclick="setYN('hcp','yes')">✓ Yes — I have an active HNA handicap</div>
+          <div class="yn-opt" id="yn-hcp-no" onclick="setYN('hcp','no')">No registered handicap</div>
+        </div>
+        <div class="ferr" id="err-yn-hcp">Please answer this question</div>
+      </div>
+      <div class="yn-g">
+        <p>Do you confirm that you are 18 years of age or older?</p>
+        <div class="yn-opts">
+          <div class="yn-opt" id="yn-age-yes" onclick="setYN('age','yes')">✓ Yes — I am 18 or older</div>
+          <div class="yn-opt" id="yn-age-no" onclick="setYN('age','no')">Under 18</div>
+        </div>
+        <div class="ferr" id="err-yn-age">Please answer this question</div>
+      </div>
+      <div class="yn-g">
+        <p>Do you understand and agree that both players in your team must be alumni of the same school?</p>
+        <div class="yn-opts">
+          <div class="yn-opt" id="yn-same-yes" onclick="setYN('same','yes')">✓ Agreed — both from the same school</div>
+        </div>
+        <div class="ferr" id="err-yn-same">Please confirm this requirement</div>
+      </div>
+      <button class="btn-next" id="btn-s2" onclick="saveStep2()">Confirm &amp; Continue →</button>
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="step" id="sec-3">
+    <div class="card">
+      <div class="card-h">Tournament Entry</div>
+      <div class="card-sub">Step 3 of 4 — Your golf &amp; location details</div>
+      <div class="field">
+        <label>Golf Club Membership *</label>
+        <div class="dd-wrap" id="club-wrap">
+          <input type="text" id="f-club" placeholder="Type to search, or enter club name manually..." autocomplete="off" />
+          <div class="dd" id="club-dd"></div>
+        </div>
+        <div class="confirmed" id="club-conf" style="display:none">
+          <span id="club-conf-name"></span>
+          <span class="change-btn" onclick="changeClub()">Change</span>
+        </div>
+        <div class="ferr" id="err-club">Please select your golf club</div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Handicap Index *</label>
+          <input type="number" id="f-hcap" placeholder="e.g. 12.4" min="0" max="54" step="0.1" />
+          <div class="ferr" id="err-hcap">Enter a valid index (0–54)</div>
+        </div>
+        <div class="field">
+          <label>HNA Number *</label>
+          <div style="display:flex;border:1.5px solid var(--light);border-radius:10px;overflow:hidden;" id="hna-wrap">
+            <span style="background:var(--offwhite);padding:12px 10px;font-size:13px;font-weight:700;color:var(--navy);border-right:1.5px solid var(--light);white-space:nowrap">2700</span>
+            <input type="text" id="f-hna" placeholder="XXXXXXX" maxlength="10" style="border:none;border-radius:0;flex:1;padding:12px 10px;font-family:'DM Sans',sans-serif;" />
+          </div>
+          <div class="ferr" id="err-hna">Enter digits after 2700</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>City / Town *</label>
+          <input type="text" id="f-city" placeholder="e.g. Cape Town" autocomplete="address-level2" />
+          <div class="ferr" id="err-city">Please enter your city or town</div>
+        </div>
+        <div class="field">
+          <label>Postal Code *</label>
+          <input type="text" id="f-postal" placeholder="e.g. 8001" maxlength="4" />
+          <div class="ferr" id="err-postal">Must be exactly 4 digits</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--grey);margin-top:-10px;margin-bottom:16px">⚠️ Your postal code determines which Division your team is placed in. Ensure it is correct.</p>
+      <button class="btn-next" id="btn-s3" onclick="saveStep3()">Save &amp; Continue →</button>
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="step" id="sec-4">
+    <div class="card">
+      <div class="card-h">Partner &amp; Payment</div>
+      <div class="card-sub">Step 4 of 4 — Partner option and entry fee</div>
+      <div id="partner-section">
+        <div class="sect-hd">Your Partner</div>
+        <div class="p-opts">
+          <div class="p-opt" id="po-have" onclick="selPartner('have')">
+            <div class="ico">🤝</div>
+            <div><div class="ttl">I have a partner</div><div class="dsc">I know who my partner is — invite them now</div></div>
+            <div class="chk" id="poc-have"></div>
+          </div>
+          <div class="p-opt" id="po-later" onclick="selPartner('later')">
+            <div class="ico">⏳</div>
+            <div><div class="ttl">I will invite my partner later</div><div class="dsc">Register now and invite from your Player Portal</div></div>
+            <div class="chk" id="poc-later"></div>
+          </div>
+          <div class="p-opt" id="po-find" onclick="selPartner('find')">
+            <div class="ico">🔍</div>
+            <div><div class="ttl">I need a partner</div><div class="dsc">Place me in the player pool to find a partner</div></div>
+            <div class="chk" id="poc-find"></div>
+          </div>
+        </div>
+        <div class="ferr" id="err-partner">Please select a partner option</div>
+        <div class="inv-form" id="inv-form">
+          <div class="sect-hd">Invite Your Partner</div>
+          <div class="row">
+            <div class="field"><label>Partner's First Name *</label><input type="text" id="inv-fn" placeholder="First name" /><div class="ferr" id="err-inv-fn">Required</div></div>
+            <div class="field"><label>Partner's Surname *</label><input type="text" id="inv-sn" placeholder="Surname" /><div class="ferr" id="err-inv-sn">Required</div></div>
+          </div>
+          <div class="field">
+            <label>Partner's Mobile *</label>
+            <div class="mob-wrap" id="inv-mob-wrap">
+              <div class="mob-pre">🇿🇦 +27</div>
+              <input type="tel" id="inv-mob" placeholder="81 234 5678" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'');if(this.value.startsWith('0'))this.value=this.value.substring(1);" />
+            </div>
+            <div class="ferr" id="err-inv-mob">Required</div>
+          </div>
+          <div class="field"><label>Partner's Email (optional)</label><input type="email" id="inv-email" placeholder="partner at domain.com" /></div>
+          <div class="field"><label>School</label><input type="text" id="inv-school" readonly style="opacity:.6;background:var(--offwhite)" /></div>
+          <div class="field" style="margin-top:8px;">
+            <label>Send Invite Via</label>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+              <div style="display:flex;align-items:center;gap:8px;background:rgba(200,155,60,0.1);border:2px solid var(--gold);border-radius:8px;padding:10px 16px;cursor:default;">
+                <span style="font-size:18px;">📧</span>
+                <span style="font-size:13px;font-weight:700;color:var(--navy);">Email</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.03);border:2px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 16px;cursor:not-allowed;opacity:0.5;">
+                <span style="font-size:18px;">💬</span>
+                <span style="font-size:13px;font-weight:600;color:#aaa;">WhatsApp</span>
+                <span style="font-size:10px;background:#aaa;color:#fff;padding:2px 7px;border-radius:10px;margin-left:4px;">SOON</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.03);border:2px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 16px;cursor:not-allowed;opacity:0.5;">
+                <span style="font-size:18px;">📱</span>
+                <span style="font-size:13px;font-weight:600;color:#aaa;">SMS</span>
+                <span style="font-size:10px;background:#aaa;color:#fff;padding:2px 7px;border-radius:10px;margin-left:4px;">SOON</span>
+              </div>
+            </div>
+            <p style="font-size:11px;color:var(--grey);margin-top:8px;">📧 An invitation email will be sent to your partner and a copy to you.</p>
+          </div>
+          <button type="button" id="btn-send-invite" onclick="sendInviteNow()" style="width:100%;margin-top:16px;padding:14px;background:var(--gold);color:var(--navy);border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">📧 Send Invite Now</button>
+          <div id="invite-sent-confirm" style="display:none;background:rgba(27,77,46,0.08);border:2px solid rgba(27,77,46,0.3);border-radius:10px;padding:14px 18px;margin-top:12px;font-size:13px;color:var(--ok);font-weight:600;">
+            ✅ Invite sent! <span id="invite-sent-name"></span> will receive an email invitation. A copy has been sent to you.
+          </div>
+        </div>
+      </div>
+      <div id="invitee-team-notice" style="display:none;background:rgba(27,77,46,0.08);border:2px solid rgba(27,77,46,0.3);border-radius:12px;padding:16px 20px;margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:700;color:var(--ok);margin-bottom:4px;">✅ You're joining an existing team</div>
+        <div style="font-size:13px;color:var(--navy);" id="invitee-team-display">—</div>
+      </div>
+      <div id="payment-section" style="display:none">
+        <div class="sect-hd" style="margin-top:20px">Select Payment Amount</div>
+        <div class="pay-opts">
+          <div class="pay-opt" id="pay-single" onclick="selPay('single')">
+            <div style="font-size:20px">👤</div>
+            <div><div style="font-size:14px;font-weight:700;color:var(--navy)">Pay for myself — R1,500</div><div style="font-size:12px;color:var(--grey)">My partner pays their own entry fee separately</div></div>
+            <div class="chk" id="payc-single"></div>
+          </div>
+          <div class="pay-opt" id="pay-team" onclick="selPay('team')">
+            <div style="font-size:20px">🤝</div>
+            <div><div style="font-size:14px;font-weight:700;color:var(--navy)">Pay for the full team — R2,800 <span style="background:var(--gold);color:var(--navy-dark);font-size:10px;padding:2px 6px;border-radius:4px;font-weight:800">SAVE R200</span></div><div style="font-size:12px;color:var(--grey)">Pay for both players at the discounted team rate</div></div>
+            <div class="chk" id="payc-team"></div>
+          </div>
+        </div>
+        <div class="ferr" id="err-pay">Please select a payment amount</div>
+        <div class="sect-hd">When would you like to pay?</div>
+        <div class="when-opts">
+          <div class="when-opt" id="when-now" onclick="selWhen('now')">💳 Pay Now via EFT</div>
+          <div class="when-opt" id="when-later" onclick="selWhen('later')">⏰ I will pay later</div>
+        </div>
+        <div class="ferr" id="err-when">Please select when you will pay</div>
+        <div id="eft-sec" style="display:none">
+          <div class="bank-box">
+            <div class="bank-row"><span>Account Name</span><span>Legacy Events Ventures (Pty) Ltd</span></div>
+            <div class="bank-row"><span>Bank</span><span>FNB — Cape Gate</span></div>
+            <div class="bank-row"><span>Account Number</span><span>63192217123</span></div>
+            <div class="bank-row"><span>Branch Code</span><span>251945</span></div>
+            <div class="bank-row"><span>Amount</span><span id="eft-amt">—</span></div>
+            <div class="bank-row"><span>Reference</span><span id="eft-ref">—</span></div>
+          </div>
+          <div class="pop-zone" id="pop-zone" onclick="document.getElementById('pop-file').click()">
+            <div style="font-size:28px">📎</div>
+            <p>Click to attach your proof of payment</p>
+            <p style="font-size:11px">PDF, JPG or PNG — max 5MB</p>
+            <input type="file" id="pop-file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="handlePOP(this)" />
+          </div>
+          <p style="font-size:12px;color:var(--grey);margin-top:10px;text-align:center">Or email your proof of payment to <strong>asmgolf123 [at] gmail.com</strong> with your name and reference.</p>
+        </div>
+        <button class="btn-next" id="btn-s4" style="margin-top:20px">✓ Submit &amp; Complete Registration</button>
+        <div style="text-align:center;margin-top:10px">
+          <a href="#" onclick="submitPayLater(event)" style="font-size:13px;color:var(--grey);text-decoration:none;">Skip — pay from Player Portal later →</a>
+        </div>
+      </div>
+      <button class="btn-back" onclick="goStep(3)">← Back</button>
+    </div>
+  </section>
+
+  <!-- SUCCESS -->
+  <section class="step" id="sec-success">
+    <div class="card">
+      <div class="success-wrap">
+        <div class="success-ico">🎉</div>
+        <h2>Congratulations!</h2>
+        <p>You have successfully registered for the Alumni Schools Golf Challenge.</p>
+        <p style="margin-bottom:12px;font-size:13px">Your team name is:</p>
+        <div class="success-team" id="success-team">—</div>
+        <div class="success-btns">
+          <button onclick="window.location.href='home.html'" style="background:#fff;border:2px solid var(--navy);color:var(--navy)">🏠 Back to Website</button>
+          <button onclick="window.location.href='portal.html'" style="background:var(--navy-dark);border:none;color:#fff">👤 Player Login →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>© 2026 Alumni Schools Golf Challenge | <a href="contact.html">Contact Us</a></p>
+</footer>
+
+<script>
+var SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+var reg = {};
+var selectedSchool = null;
+var selectedClub = null;
+var pwValid = false;
+var ynState = {};
+var selPartnerOpt = null;
+var selPayOpt = null;
+var selWhenOpt = null;
+var popFile = null;
+var SCHOOLS = [];
+var isInvitee = false;
+var inviteData = null;
+
+sb.from('schools').select('id, name').order('name', {ascending:true}).then(function(res) {
+  if (res.data) SCHOOLS = res.data;
+});
+
+function goStep(n) {
+  document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('sec-'+n).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  for (var i=1; i<=4; i++) {
+    var s = document.getElementById('prog-'+i);
+    var l = document.getElementById('line-'+i);
+    s.className = 'prog-step' + (i<n?' done':i===n?' active':'');
+    if (l) l.className = 'prog-line' + (i<n?' done':'');
+  }
+  if (n === 4 && isInvitee) {
+    document.getElementById('partner-section').style.display = 'none';
+    document.getElementById('invitee-team-notice').style.display = 'block';
+    document.getElementById('invitee-team-display').textContent = 'Team: ' + (reg.team_display || reg.school || '—');
+    selPartnerOpt = 'invited';
+    document.getElementById('payment-section').style.display = 'block';
+    document.getElementById('btn-s4').addEventListener('click', function() { submitPayment(); }, {once:true});
+  }
+}
+
+document.getElementById('f-school').addEventListener('input', function() { searchSchools(this.value); });
+
+function searchSchools(val) {
+  var dd = document.getElementById('school-dd');
+  if (val.length < 3) { dd.style.display='none'; return; }
+  var q = val.toLowerCase();
+  var matches = SCHOOLS.filter(function(s){ return s.name.toLowerCase().indexOf(q) !== -1; }).slice(0,10);
+  if (!matches.length) { dd.style.display='none'; return; }
+  dd.innerHTML = matches.map(function(s){
+    return '<div class="dd-opt" data-id="'+s.id+'" data-name="'+s.name.replace(/"/g,'&quot;')+'">' + s.name + '</div>';
+  }).join('');
+  Array.from(dd.querySelectorAll('.dd-opt')).forEach(function(el){
+    el.addEventListener('mousedown', function(e){ e.preventDefault(); selSchool(this.getAttribute('data-id'), this.getAttribute('data-name')); });
+  });
+  dd.style.display='block';
+}
+
+function selSchool(id, name) {
+  selectedSchool = {id:id, name:name};
+  document.getElementById('school-dd').style.display='none';
+  document.getElementById('f-school').style.display='none';
+  document.getElementById('school-conf').style.display='flex';
+  document.getElementById('school-conf-name').textContent = name;
+  ferr('err-school', false);
+}
+
+function changeSchool() {
+  selectedSchool = null;
+  document.getElementById('f-school').style.display='block';
+  document.getElementById('f-school').value='';
+  document.getElementById('school-conf').style.display='none';
+}
+
+var CLUBS = ["Aberdeen Golf Club","Adelaide Golf Club","Afrikander Golf Club","Akasia Country Club","Albertinia Golf Club","Alexander Golf Club","Alexandria Golf Club","Aliwal North Golf Club","Allanridge Golf Club","Amandelbult Golf Club","Amanzimtoti Country Club","Amatola Golf Club","Amersfoort Golf Club","Arcade Golf Club","Arcon Park Golf Club","Atok Golf Club","Atoll Golf Club","Atlantis Golf Club","Aurora Golf Club","Avontuur Golf Club","Badplaas Golf Club","Baphalane-Sun City Golf Club","Barberton Golf Club","Batavia Golf Club","Beaufort West Golf Club","Bedford Golf Club","Bellville Golf Club","Benoni Country Club","Benoni Lake Golf Club","Bergvliet Golf Club","Bethal Golf Club","Bethlehem Golf Club","Bettys Bay Golf Club","Bitterfontein Golf Club","Blaauwberg Golf Club","Black Mountain Golf Club","Blackwood Golf Club","Bloemfontein Golf Club","Bloemhof Golf Club","Blue Valley Golf Club","Bochum Golf Club","Boekenhoutskloof Golf Club","Boksburg Golf Club","Bophelong Golf Club","Bothaville Golf Club","Brakpan Golf Club","Brandfort Golf Club","Brandvlei Golf Club","Bredasdorp Golf Club","Brits Golf Club","Broodsnyersplaas Golf Club","Buffelspoort Golf Club","Burgersdorp Golf Club","Caledon Golf Club","Cape Golf Club","Carletonville Golf Club","Carlswald Golf Club","Carnarvon Golf Club","Cathedral Peak Golf Club","Cathkin Park Golf Club","Cedar Golf Club","Cedarberg Golf Club","Ceres Golf Club","Christiana Golf Club","Citrusdal Golf Club","Clanwilliam Golf Club","Clovelly Golf Club","Colenso Golf Club","Colesburg Golf Club","Constantia Uitsig Golf Club","Cradock Golf Club","Cullinan Golf Club","De Aar Golf Club","De Beers Golf Club","De Doorns Golf Club","De Hoek Golf Club","De Zalze Golf Club","Delmas Golf Club","Despatch Golf Club","Devonvale Golf Club","Doon Estate Golf Club","Doringkloof Golf Club","Drie Riviere Golf Club","Dundee Golf Club","Durban Country Club","Durban Golf Club","East London Golf Club","Edenvale Golf Club","Ekurhuleni Golf Club","Elgin Golf Club","Ellisras Golf Club","Emfuleni Golf Club","Empangeni Golf Club","Ermelo Golf Club","Estcourt Golf Club","Evander Golf Club","Eye of Africa Golf Club","Fancourt Golf Club","Farrarmere Golf Club","Fisherhaven Golf Club","Flamboyant Golf Club","Fochville Golf Club","Fort Beaufort Golf Club","Fourways Golf Club","Franklin Golf Club","Fraserburg Golf Club","Gariep Golf Club","Garies Golf Club","George Golf Club","Giyani Golf Club","Glenbuck Golf Club","Glenmore Golf Club","Glenwood Golf Club","Glenvista Golf Club","Goedgedacht Golf Club","Gouda Golf Club","Graaf Reinet Golf Club","Grahamstown Golf Club","Graskop Golf Club","Greytown Golf Club","Groot Brakrivier Golf Club","Hammanskraal Golf Club","Hanover Golf Club","Hartbeeshoek Golf Club","Hartenbos Golf Club","Hartswater Golf Club","Hazyview Golf Club","Heidelberg Golf Club","Helderberg Golf Club","Hennenman Golf Club","Hermanus Golf Club","Hex River Golf Club","Hibberdene Golf Club","Highveld Golf Club","Hoedspruit Golf Club","Hogsback Golf Club","Honeydew Golf Club","Hopefield Golf Club","Howick Golf Club","Humansdorp Golf Club","Inkwazi Golf Club","Irene Country Club","Isipingo Golf Club","Ixopo Golf Club","Jeffrey's Bay Golf Club","Johannesburg Country Club","Johannesburg Golf Club","Kalahari Golf Club","Kanonkop Golf Club","Kareedouw Golf Club","Karoo Golf Club","Kempton Park Golf Club","King William's Town Golf Club","Kingfisher Golf Club","Kirkwood Golf Club","Klerksdorp Golf Club","Klipheuwel Golf Club","Knysna Golf Club","Kokstad Golf Club","Komatipoort Golf Club","Komga Golf Club","Kraaifontein Golf Club","Kranskop Golf Club","Kroonstad Golf Club","Krugersdorp Golf Club","Kuils River Golf Club","Kuruman Golf Club","Kyalami Golf Club","Langebaan Golf Club","Lanseria Golf Club","Lephalale Golf Club","Letaba Golf Club","Lichtenburg Golf Club","Lions River Golf Club","Loskop Dam Golf Club","Louis Trichardt Golf Club","Lydenburg Golf Club","Mafikeng Golf Club","Magaliesberg Golf Club","Malmesbury Golf Club","Marble Hall Golf Club","Marquard Golf Club","Melrose Golf Club","Messina Golf Club","Meyerton Golf Club","Middelburg Golf Club","Midrand Golf Club","Milnerton Golf Club","Mkuze Golf Club","Modimolle Golf Club","Mogwase Golf Club","Mooinooi Golf Club","Mossel Bay Golf Club","Mount Edgecombe Golf Club","Muldersdrift Golf Club","Musina Golf Club","Nelspruit Golf Club","Newcastle Golf Club","Nongoma Golf Club","Northcliff Golf Club","Northmead Golf Club","Ogies Golf Club","Oudtshoorn Golf Club","Paarl Golf Club","Paarlvallei Golf Club","Palm Lakes Golf Club","Parys Golf Club","Pearl Valley Golf Club","Phalaborwa Golf Club","Pietermaritzburg Golf Club","Piketberg Golf Club","Pilgrim's Rest Golf Club","Pinetown Golf Club","Plettenberg Bay Golf Club","Polokwane Golf Club","Port Alfred Golf Club","Port Elizabeth Golf Club","Port Nolloth Golf Club","Port Shepstone Golf Club","Potchefstroom Golf Club","Queenstown Golf Club","Randburg Golf Club","Randpark Golf Club","Randfontein Golf Club","Riebeek Kasteel Golf Club","Robertson Golf Club","Roodepoort Golf Club","Royal Cape Golf Club","Royal Durban Golf Club","Royal Johannesburg Golf Club","Rustenburg Golf Club","Sabie Golf Club","Saint Andrews Golf Club","Sandton Golf Club","Scottburgh Golf Club","Selborne Golf Club","Silverton Golf Club","Somerset West Golf Club","Southbroom Golf Club","Springbok Golf Club","Springs Golf Club","Standerton Golf Club","Stellenbosch Golf Club","Strand Golf Club","Sun City Golf Club","Swellendam Golf Club","Table View Golf Club","Tzaneen Golf Club","Uitenhage Golf Club","Umdoni Park Golf Club","Umhlali Golf Club","Umtata Golf Club","Upington Golf Club","Vaal de Grace Golf Club","Vaalpark Golf Club","Vanderbijlpark Golf Club","Vereeniging Golf Club","Volksrust Golf Club","Vryburg Golf Club","Vryheid Golf Club","Welkom Golf Club","Wellington Golf Club","West Rand Golf Club","Westville Golf Club","White River Golf Club","Wilderness Golf Club","Witbank Golf Club","Worcester Golf Club","Zeerust Golf Club","Zimbali Golf Club"];
+
+document.getElementById('f-club').addEventListener('input', function() { searchClubs(this.value); });
+
+function searchClubs(val) {
+  var dd = document.getElementById('club-dd');
+  if (val.length < 2) { dd.style.display='none'; return; }
+  var q = val.toLowerCase();
+  var matches = CLUBS.filter(function(c){ return c.toLowerCase().indexOf(q) !== -1; }).slice(0,10);
+  if (!matches.length) { dd.style.display='none'; return; }
+  dd.innerHTML = matches.map(function(c){
+    return '<div class="dd-opt" data-name="'+c.replace(/"/g,'&quot;')+'">' + c + '</div>';
+  }).join('');
+  Array.from(dd.querySelectorAll('.dd-opt')).forEach(function(el){
+    el.addEventListener('mousedown', function(e){ e.preventDefault(); selClub(this.getAttribute('data-name')); });
+  });
+  dd.style.display='block';
+}
+
+function selClub(name) {
+  selectedClub = name;
+  document.getElementById('club-dd').style.display='none';
+  document.getElementById('f-club').style.display='none';
+  document.getElementById('club-conf').style.display='flex';
+  document.getElementById('club-conf-name').textContent = name;
+  ferr('err-club', false);
+}
+
+function changeClub() {
+  selectedClub = null;
+  document.getElementById('f-club').style.display='block';
+  document.getElementById('f-club').value='';
+  document.getElementById('club-conf').style.display='none';
+}
+
+document.addEventListener('click', function(e) {
+  if (!document.getElementById('school-wrap').contains(e.target)) document.getElementById('school-dd').style.display='none';
+  if (!document.getElementById('club-wrap').contains(e.target)) document.getElementById('club-dd').style.display='none';
+});
+
+function togglePw(id) {
+  var el = document.getElementById(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+document.getElementById('f-pw').addEventListener('input', function() {
+  var pw = this.value;
+  var r = { 'pw-len': pw.length>=8, 'pw-cap': /[A-Z]/.test(pw), 'pw-num': /[0-9]/.test(pw), 'pw-sym': /[^A-Za-z0-9]/.test(pw) };
+  Object.keys(r).forEach(function(id){ document.getElementById(id).classList.toggle('ok', r[id]); });
+  pwValid = Object.values(r).every(Boolean);
+  if (pwValid) ferr('err-pw', false);
+});
+
+document.getElementById('f-pw2').addEventListener('input', function() {
+  if (this.value === document.getElementById('f-pw').value) ferr('err-pw2', false);
+});
+
+function setYN(key, val) {
+  ynState[key] = val;
+  var ids = { sch:['yn-sch-no','yn-sch-yes'], hcp:['yn-hcp-yes','yn-hcp-no'], age:['yn-age-yes','yn-age-no'], same:['yn-same-yes'] };
+  (ids[key]||[]).forEach(function(id){ var el=document.getElementById(id); if(el){ el.classList.remove('sel-yes','sel-no'); } });
+  var goodAnswers = { sch:'no', hcp:'yes', age:'yes', same:'yes' };
+  var el = document.getElementById('yn-'+key+'-'+val);
+  if (el) el.classList.add(val === goodAnswers[key] ? 'sel-yes' : 'sel-no');
+  if (key==='sch') document.getElementById('hl-school').classList.toggle('show', val==='yes');
+  if (key==='hcp') document.getElementById('hl-hcp').classList.toggle('show', val==='no');
+  if (key==='age') document.getElementById('hl-age').classList.toggle('show', val==='no');
+  ferr('err-yn-'+key, false);
+}
+
+function ferr(id, show, msg) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('show', show);
+  if (msg) el.textContent = msg;
+}
+
+function ierr(id, show) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('err', show);
+}
+
+async function assignTeamNumber(school) {
+  if (isInvitee && inviteData) {
+    var capRes = await sb.from('players').select('team_number').eq('mobile', inviteData.invited_by_mobile).maybeSingle();
+    if (capRes.data && capRes.data.team_number) return capRes.data.team_number;
+  }
+  var name = (school || 'Unknown').trim();
+  var { data } = await sb.from('players').select('team_number').ilike('team_number', name + ' %');
+  var existing = ((data) || []).map(function(p) {
+    if (!p.team_number) return NaN;
+    var last = p.team_number.trim().split(' ').pop();
+    return parseInt(last);
+  }).filter(function(n) { return !isNaN(n); });
+  var next = existing.length > 0 ? Math.max.apply(null, existing) + 1 : 1;
+  return name + ' ' + String(next).padStart(3, '0');
+}
+
+// ── STEP 1 — NOW ASSIGNS TEAM NUMBER IMMEDIATELY ─────────────────────────────
+async function saveStep1() {
+  var name = document.getElementById('f-name').value.trim();
+  var surname = document.getElementById('f-surname').value.trim();
+  var mobile = document.getElementById('f-mobile').value.replace(/\s/g,'');
+  var email = document.getElementById('f-email').value.trim().toLowerCase();
+  var pw = document.getElementById('f-pw').value;
+  var pw2 = document.getElementById('f-pw2').value;
+  var ok = true;
+  if (!name) { ferr('err-name',true); ierr('f-name',true); ok=false; } else { ferr('err-name',false); ierr('f-name',false); }
+  if (!surname) { ferr('err-surname',true); ierr('f-surname',true); ok=false; } else { ferr('err-surname',false); ierr('f-surname',false); }
+  if (!/^[0-9]{9}$/.test(mobile)) { ferr('err-mobile',true); document.getElementById('mob-wrap').classList.add('err'); ok=false; } else { ferr('err-mobile',false); document.getElementById('mob-wrap').classList.remove('err'); }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { ferr('err-email',true); ierr('f-email',true); ok=false; } else { ferr('err-email',false); ierr('f-email',false); }
+  var gender = document.getElementById('f-gender').value;
+  if (!gender) { ferr('err-gender',true); ok=false; } else { ferr('err-gender',false); }
+  if (!selectedSchool) {
+    var typedSchool = document.getElementById('f-school').value.trim();
+    if (typedSchool) { selectedSchool = {id: null, name: typedSchool}; } else { ferr('err-school',true); ok=false; }
+  }
+  if (selectedSchool) ferr('err-school',false);
+  if (!pwValid) { ferr('err-pw',true); ok=false; } else { ferr('err-pw',false); }
+  if (pw !== pw2) { ferr('err-pw2',true); ok=false; } else { ferr('err-pw2',false); }
+  if (!ok) return;
+  var btn = document.getElementById('btn-s1');
+  btn.disabled=true; btn.textContent='Saving...';
+  reg = { full_name: name+' '+surname, email: email, mobile: '+27'+mobile, school: selectedSchool.name, school_id: selectedSchool.id, password: pw, gender: gender };
+
+  // ── ASSIGN TEAM NUMBER AT STEP 1 (matches app behaviour) ──────────────────
+  var teamNumber = await assignTeamNumber(reg.school);
+  reg.team_number = teamNumber;
+
+  var step1Data = {
+    email: reg.email,
+    full_name: reg.full_name,
+    mobile: reg.mobile,
+    school: reg.school,
+    gender: reg.gender,
+    eligibility_status: 'pending',
+    payment_status: 'unpaid',
+    team_number: teamNumber
+  };
+  // If invitee, link back to captain
+  if (isInvitee && reg.invited_by_mobile) {
+    step1Data.invited_by_mobile = reg.invited_by_mobile;
+    // Also look up captain's name and write partner details back to invitee record
+    var capRes = await sb.from('players').select('full_name,team_number').eq('mobile', reg.invited_by_mobile).maybeSingle();
+    if (capRes.data) {
+      step1Data.partner_name = capRes.data.full_name;
+      step1Data.partner_mobile = reg.invited_by_mobile;
+    }
+  }
+  var res = await sb.from('players').upsert(step1Data, {onConflict:'email'});
+
+  btn.disabled=false; btn.textContent='Save & Continue →';
+  if (res.error) { alert('Error: '+res.error.message); return; }
+  goStep(2);
+}
+
+async function saveStep2() {
+  var ok = true;
+  if (!document.getElementById('chk-popia').checked) { ferr('err-popia',true); ok=false; } else { ferr('err-popia',false); }
+  if (!document.getElementById('chk-rules').checked) { ferr('err-rules',true); ok=false; } else { ferr('err-rules',false); }
+  if (!ynState.sch) { ferr('err-yn-sch',true); ok=false; } else { ferr('err-yn-sch',false); }
+  if (!ynState.hcp) { ferr('err-yn-hcp',true); ok=false; } else { ferr('err-yn-hcp',false); }
+  if (!ynState.age) { ferr('err-yn-age',true); ok=false; } else { ferr('err-yn-age',false); }
+  if (!ynState.same) { ferr('err-yn-same',true); ok=false; } else { ferr('err-yn-same',false); }
+  if (!ok) return;
+  if (ynState.sch==='yes') { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,gender:reg.gender,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
+  if (ynState.hcp==='no')  { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,gender:reg.gender,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
+  if (ynState.age==='no')  { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,gender:reg.gender,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
+  var btn = document.getElementById('btn-s2');
+  btn.disabled=true; btn.textContent='Saving...';
+  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, gender:reg.gender, popia_accepted:true, rules_accepted:true, still_at_school:false, has_handicap:true, eligibility_status:'eligible' }, {onConflict:'email'});
+  btn.disabled=false; btn.textContent='Confirm & Continue →';
+  if (res.error) { alert('Error: '+res.error.message); return; }
+  goStep(3);
+}
+
+async function saveStep3() {
+  var hcap = parseFloat(document.getElementById('f-hcap').value);
+  var hna = document.getElementById('f-hna').value.trim();
+  var city = document.getElementById('f-city').value.trim();
+  var postal = document.getElementById('f-postal').value.trim();
+  var ok = true;
+  if (!selectedClub) {
+    var typed = document.getElementById('f-club').value.trim();
+    if (typed) { selectedClub = typed; } else { ferr('err-club',true); ok=false; }
+  }
+  if (selectedClub) ferr('err-club',false);
+  if (isNaN(hcap)||hcap<0||hcap>54) { ferr('err-hcap',true); ierr('f-hcap',true); ok=false; } else { ferr('err-hcap',false); ierr('f-hcap',false); }
+  if (!hna) { ferr('err-hna',true); ok=false; } else { ferr('err-hna',false); }
+  if (!city) { ferr('err-city',true); ierr('f-city',true); ok=false; } else { ferr('err-city',false); ierr('f-city',false); }
+  if (!/^[0-9]{4}$/.test(postal)) { ferr('err-postal',true); ierr('f-postal',true); ok=false; } else { ferr('err-postal',false); ierr('f-postal',false); }
+  if (!ok) return;
+  var btn = document.getElementById('btn-s3');
+  btn.disabled=true; btn.textContent='Saving...';
+  var fullHNA = '2700'+hna;
+  // Geocode postal code via OpenStreetMap
+  var lat = null; var lng = null; var geoCoded = false;
+  try {
+    var geoRes = await fetch('https://nominatim.openstreetmap.org/search?postalcode=' + encodeURIComponent(postal) + '&country=ZA&format=json&limit=1', { headers: { 'Accept-Language': 'en' } });
+    var geoData = await geoRes.json();
+    if (geoData && geoData.length > 0) { lat = parseFloat(geoData[0].lat); lng = parseFloat(geoData[0].lon); geoCoded = true; }
+  } catch(e) { console.warn('Geocoding failed:', e); }
+  var updateData = { email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, gender:reg.gender, club:selectedClub, handicap_index:hcap, hna_number:fullHNA, city:city, postal_code:postal };
+  if (geoCoded) { updateData.latitude = lat; updateData.longitude = lng; updateData.geo_coded = true; }
+  var res = await sb.from('players').upsert(updateData, {onConflict:'email'});
+  btn.disabled=false; btn.textContent='Save & Continue →';
+  if (res.error) { alert('Error: '+res.error.message); return; }
+  reg.club=selectedClub; reg.handicap_index=hcap; reg.hna_number=fullHNA; reg.city=city; reg.postal_code=postal; reg.latitude=lat; reg.longitude=lng;
+  var ref = (reg.school||'AG').replace(/\s+/g,'').substring(0,4).toUpperCase()+(reg.mobile||'').slice(-4);
+  reg.payment_reference=ref;
+  document.getElementById('eft-ref').textContent=ref;
+  document.getElementById('inv-school').value=reg.school||'';
+  goStep(4);
+}
+
+function selPartner(opt) {
+  selPartnerOpt=opt;
+  ['have','later','find'].forEach(function(o){
+    document.getElementById('po-'+o).classList.toggle('sel', o===opt);
+    document.getElementById('poc-'+o).style.background = o===opt?'var(--navy)':'';
+    document.getElementById('poc-'+o).style.borderColor = o===opt?'var(--navy)':'';
+  });
+  document.getElementById('inv-form').classList.toggle('show', opt==='have');
+  ferr('err-partner',false);
+  // Show payment immediately for later/find; for 'have' it shows after invite is sent
+  if (opt === 'later' || opt === 'find') {
+    document.getElementById('payment-section').style.display = 'block';
+    document.getElementById('btn-s4').addEventListener('click', function() { submitPayment(); }, {once:true});
+  } else {
+    document.getElementById('payment-section').style.display = 'none';
+  }
+}
+
+async function sendInviteNow() {
+  var pn = document.getElementById('inv-fn').value.trim();
+  var ps = document.getElementById('inv-sn').value.trim();
+  var pm = document.getElementById('inv-mob').value.replace(/\s/g,'');
+  var pe = document.getElementById('inv-email').value.trim().toLowerCase();
+  var ok = true;
+  if (!pn) { ferr('err-inv-fn',true); ok=false; } else { ferr('err-inv-fn',false); }
+  if (!ps) { ferr('err-inv-sn',true); ok=false; } else { ferr('err-inv-sn',false); }
+  if (!/^[0-9]{9}$/.test(pm)) { ferr('err-inv-mob',true); ok=false; } else { ferr('err-inv-mob',false); }
+  if (!ok) return;
+  var btn = document.getElementById('btn-send-invite');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  var partnerFullName = pn + ' ' + ps;
+  var partnerMobile = '+27' + pm;
+  // Save to player_invitations table
+  await sb.from('player_invitations').upsert({
+    email: reg.email,
+    invited_name: partnerFullName,
+    invited_mobile: partnerMobile,
+    invited_email: pe || null,
+    school: reg.school,
+    invited_by_mobile: reg.mobile,
+    team_number: reg.team_number
+  }, {onConflict:'invited_mobile'});
+  // Update player record with partner details
+  await sb.from('players').upsert({
+    email: reg.email, full_name: reg.full_name, mobile: reg.mobile, school: reg.school, gender: reg.gender,
+    partner_status: 'pending',
+    partner_name: partnerFullName,
+    partner_mobile: partnerMobile,
+    partner_email: pe || null
+  }, {onConflict:'email'});
+  // Send invite emails
+  if (window.EmailService) {
+    var inviteLink = window.location.origin + '/register.html?invite=1&mobile=' + encodeURIComponent(partnerMobile);
+    // Copy to captain
+    EmailService.sendPartnerInvitationEmail({ inviterName: reg.full_name, inviterSchool: reg.school, teamNumber: reg.team_number, partnerEmail: reg.email, partnerName: partnerFullName, inviteLink: inviteLink, isCaptainCopy: true });
+    // Email to partner
+    if (pe) { EmailService.sendPartnerInvitationEmail({ inviterName: reg.full_name, inviterSchool: reg.school, teamNumber: reg.team_number, partnerEmail: pe, partnerName: partnerFullName, inviteLink: inviteLink }); }
+  }
+  btn.disabled = false;
+  btn.style.display = 'none';
+  document.getElementById('invite-sent-name').textContent = partnerFullName;
+  document.getElementById('invite-sent-confirm').style.display = 'block';
+  // Lock partner fields
+  ['inv-fn','inv-sn','inv-mob','inv-email'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) { el.readOnly = true; el.style.opacity = '0.6'; el.style.background = 'var(--offwhite)'; }
+  });
+  // Reveal payment section
+  document.getElementById('payment-section').style.display = 'block';
+  document.getElementById('btn-s4').addEventListener('click', function() { submitPayment(); }, {once:true});
+  document.getElementById('payment-section').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function selPay(opt) {
+  selPayOpt=opt;
+  ['single','team'].forEach(function(o){
+    document.getElementById('pay-'+o).classList.toggle('sel', o===opt);
+    document.getElementById('payc-'+o).style.background = o===opt?'var(--gold)':'';
+    document.getElementById('payc-'+o).style.borderColor = o===opt?'var(--gold)':'';
+  });
+  document.getElementById('eft-amt').textContent = opt==='team'?'R2,800':'R1,500';
+  ferr('err-pay',false);
+}
+
+function selWhen(opt) {
+  selWhenOpt=opt;
+  ['now','later'].forEach(function(o){ document.getElementById('when-'+o).classList.toggle('sel', o===opt); });
+  document.getElementById('eft-sec').style.display = opt==='now'?'block':'none';
+  ferr('err-when',false);
+}
+
+function handlePOP(input) {
+  var file=input.files[0];
+  if (!file) return;
+  if (file.size>5*1024*1024) { alert('File too large. Max 5MB.'); return; }
+  popFile=file;
+  document.getElementById('pop-zone').classList.add('ok');
+  document.getElementById('pop-zone').querySelector('p').textContent=file.name;
+}
+
+async function submitPayment() {
+  try {
+    var ok=true;
+    if (!isInvitee && !selPartnerOpt) { ferr('err-partner',true); ok=false; } else { ferr('err-partner',false); }
+    if (!selWhenOpt) { ferr('err-when',true); ok=false; }
+    if (selWhenOpt==='now' && !selPayOpt) { ferr('err-pay',true); ok=false; } else { ferr('err-pay',false); }
+    if (!ok) return;
+    if (!isInvitee && selPartnerOpt==='have') {
+      var pn=document.getElementById('inv-fn').value.trim();
+      var ps=document.getElementById('inv-sn').value.trim();
+      var pm=document.getElementById('inv-mob').value.replace(/\s/g,'');
+      if (!pn){ferr('err-inv-fn',true);return;} if (!ps){ferr('err-inv-sn',true);return;} if(!/^[0-9]{9}$/.test(pm)){ferr('err-inv-mob',true);return;}
+      var pe=document.getElementById('inv-email').value.trim().toLowerCase();
+      await sb.from('player_invitations').insert({
+        email: reg.email, invited_name: pn+' '+ps,
+        invited_mobile: '+27'+pm, invited_email: pe||null,
+        school: reg.school, invited_by_mobile: reg.mobile
+      });
+    }
+    var btn=document.getElementById('btn-s4');
+    btn.disabled=true; btn.textContent='Submitting...';
+    var popPath=null;
+    if (popFile) {
+      var path=reg.email.replace('@','_').replace('.','_')+'_'+Date.now()+'_'+popFile.name;
+      var up=await sb.storage.from('payment_proofs').upload(path,popFile);
+      if (up.data) popPath=path;
+    }
+    var teamNumber = reg.team_number || await assignTeamNumber(reg.school);
+    var amount = selPayOpt==='team' ? 2800 : 1500;
+
+    // If invitee, look up captain — try mobile, then email, then partner_email on players
+    var captainMobile = reg.invited_by_mobile || null;
+    var captainName = null;
+    var captainTeam = null;
+    if (isInvitee && !captainMobile) {
+      var invResA = await sb.from('player_invitations').select('invited_by_mobile, team_number').eq('invited_mobile', reg.mobile).order('created_at', {ascending:false}).limit(1).maybeSingle();
+      if (invResA.data && invResA.data.invited_by_mobile) { captainMobile = invResA.data.invited_by_mobile; captainTeam = invResA.data.team_number || null; }
+      if (!captainMobile) {
+        var invResB = await sb.from('player_invitations').select('invited_by_mobile, team_number').eq('invited_email', reg.email).order('created_at', {ascending:false}).limit(1).maybeSingle();
+        if (invResB.data && invResB.data.invited_by_mobile) { captainMobile = invResB.data.invited_by_mobile; captainTeam = invResB.data.team_number || null; }
+      }
+      if (!captainMobile) {
+        var capDirect2 = await sb.from('players').select('mobile, full_name, team_number').eq('partner_email', reg.email).maybeSingle();
+        if (capDirect2.data) { captainMobile = capDirect2.data.mobile; captainName = capDirect2.data.full_name; captainTeam = capDirect2.data.team_number || null; }
+      }
+    }
+    if (captainMobile && !captainName) {
+      var capRes2 = await sb.from('players').select('full_name, team_number').eq('mobile', captainMobile).maybeSingle();
+      if (capRes2.data) { captainName = capRes2.data.full_name; if (!captainTeam) captainTeam = capRes2.data.team_number; }
+    }
+
+    var finalData = {
+      email: reg.email, full_name: reg.full_name, mobile: reg.mobile, school: reg.school, gender: reg.gender,
+      partner_status: isInvitee ? 'has_partner' : (selPartnerOpt==='have' ? 'pending' : selPartnerOpt),
+      payment_status: popFile ? 'pending_verification' : 'unpaid',
+      payment_type: selPayOpt||'single', payment_method: 'eft', payment_amount: amount,
+      payment_reference: reg.payment_reference||null, payment_proof_path: popPath,
+      team_number: teamNumber, registration_complete: true
+    };
+    if (!isInvitee && selPartnerOpt==='have') {
+      finalData.partner_name = (document.getElementById('inv-fn').value.trim()+' '+document.getElementById('inv-sn').value.trim()).trim();
+      finalData.partner_mobile = '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'');
+      finalData.partner_email = document.getElementById('inv-email').value.trim().toLowerCase()||null;
+    }
+    if (isInvitee && captainMobile) {
+      finalData.invited_by_mobile = captainMobile;
+      finalData.partner_mobile = captainMobile;
+      if (captainName) finalData.partner_name = captainName;
+      if (captainTeam) finalData.invited_by_team = captainTeam;
+    }
+    await sb.from('players').upsert(finalData, {onConflict:'email'});
+    // Update captain record when invitee completes
+    if (isInvitee && captainMobile) {
+      await sb.from('players').update({
+        partner_status: 'has_partner',
+        registration_complete: true
+      }).eq('mobile', captainMobile);
+    }
+    var authRes=await sb.auth.signUp({email:reg.email,password:reg.password});
+    if (authRes.error && authRes.error.message.indexOf('already registered')===-1) console.warn('Auth:',authRes.error.message);
+    await sb.auth.signOut();
+    if (window.EmailService) {
+      EmailService.sendWelcomeEmail({ name:reg.full_name, email:reg.email, school:reg.school, teamNumber:teamNumber, referenceNumber:reg.payment_reference||teamNumber });
+      if (!isInvitee && selPartnerOpt === 'have') {
+        var partnerEmail = document.getElementById('inv-email').value.trim();
+        var partnerMobile = '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'');
+        var partnerFullName = (document.getElementById('inv-fn').value.trim() + ' ' + document.getElementById('inv-sn').value.trim()).trim();
+        var inviteLink = window.location.origin + '/register.html?invite=1&mobile=' + encodeURIComponent(partnerMobile);
+        EmailService.sendPartnerInvitationEmail({ inviterName:reg.full_name, inviterSchool:reg.school, teamNumber:teamNumber, partnerEmail:reg.email, partnerName:partnerFullName, inviteLink:inviteLink, isCaptainCopy:true });
+        if (partnerEmail) { EmailService.sendPartnerInvitationEmail({ inviterName:reg.full_name, inviterSchool:reg.school, teamNumber:teamNumber, partnerEmail:partnerEmail, partnerName:partnerFullName, inviteLink:inviteLink }); }
+      }
+    }
+    btn.disabled=false;
+    document.getElementById('success-team').textContent=teamNumber;
+    document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});
+    document.getElementById('sec-success').classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  } catch(err) { console.error('submitPayment error:', err); alert('Error: '+err.message); if(document.getElementById('btn-s4')) document.getElementById('btn-s4').disabled=false; }
+}
+
+async function submitPayLater(e) {
+  if (e) e.preventDefault();
+  if (!reg.email) { window.location.href='portal.html'; return; }
+  var teamNumber = reg.team_number || await assignTeamNumber(reg.school);
+
+  // If invitee, look up captain from player_invitations
+  // Try by invited_mobile first, then fall back to invited_email
+  var captainMobile = reg.invited_by_mobile || null;
+  var captainName = null;
+  var captainTeam = null;
+  if (isInvitee && !captainMobile) {
+    // Try match by mobile
+    var invRes = await sb.from('player_invitations')
+      .select('invited_by_mobile, team_number')
+      .eq('invited_mobile', reg.mobile)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (invRes.data && invRes.data.invited_by_mobile) {
+      captainMobile = invRes.data.invited_by_mobile;
+      captainTeam = invRes.data.team_number || null;
+    }
+    // Fall back: match by invited_email
+    if (!captainMobile) {
+      var invRes2 = await sb.from('player_invitations')
+        .select('invited_by_mobile, team_number')
+        .eq('invited_email', reg.email)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (invRes2.data && invRes2.data.invited_by_mobile) {
+        captainMobile = invRes2.data.invited_by_mobile;
+        captainTeam = invRes2.data.team_number || null;
+      }
+    }
+    // Last resort: look up captain directly via partner_email on players table
+    if (!captainMobile) {
+      var capDirect = await sb.from('players')
+        .select('mobile, full_name, team_number')
+        .eq('partner_email', reg.email)
+        .maybeSingle();
+      if (capDirect.data) {
+        captainMobile = capDirect.data.mobile;
+        captainName = capDirect.data.full_name;
+        captainTeam = capDirect.data.team_number || null;
+      }
+    }
+  }
+  // Look up captain full name and team if not already found
+  if (captainMobile && !captainName) {
+    var capRes = await sb.from('players').select('full_name, team_number').eq('mobile', captainMobile).maybeSingle();
+    if (capRes.data) { captainName = capRes.data.full_name; if (!captainTeam) captainTeam = capRes.data.team_number; }
+  }
+
+  var payLaterData = {
+    email: reg.email,
+    full_name: reg.full_name,
+    mobile: reg.mobile,
+    school: reg.school,
+    gender: reg.gender,
+    team_number: teamNumber,
+    registration_complete: true,
+    partner_status: isInvitee ? 'has_partner' : (selPartnerOpt || 'later'),
+    payment_status: 'unpaid',
+    payment_type: 'single',
+    payment_method: 'eft',
+    payment_amount: 1500
+  };
+  // Write partner details for invitee
+  if (isInvitee && captainMobile) {
+    payLaterData.invited_by_mobile = captainMobile;
+    payLaterData.partner_mobile = captainMobile;
+    if (captainName) payLaterData.partner_name = captainName;
+    if (captainTeam) payLaterData.invited_by_team = captainTeam;
+  }
+  await sb.from('players').upsert(payLaterData, {onConflict:'email'});
+
+  // Update captain record — mark partner registered and complete
+  if (isInvitee && captainMobile) {
+    await sb.from('players').update({
+      partner_status: 'has_partner',
+      registration_complete: true
+    }).eq('mobile', captainMobile);
+  }
+
+  var authRes = await sb.auth.signUp({email:reg.email, password:reg.password});
+  if (authRes.error && authRes.error.message.indexOf('already registered') === -1) console.warn('Auth:', authRes.error.message);
+  if (window.EmailService) { EmailService.sendWelcomeEmail({ name:reg.full_name, email:reg.email, school:reg.school, referenceNumber:teamNumber }); }
+  await sb.auth.signOut();
+  window.location.href='portal.html';
+}
+
+function showChoice() {
+  isInvitee = false;
+  document.getElementById('sec-choice').style.display = 'block';
+  document.getElementById('sec-invite-lookup').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'none';
+  document.getElementById('main-page').style.display = 'none';
+}
+
+function selectPath(path) {
+  if (path === 'new') {
+    isInvitee = false;
+    document.getElementById('sec-choice').style.display = 'none';
+    document.getElementById('sec-invite-lookup').style.display = 'none';
+    document.getElementById('prog-wrap').style.display = 'block';
+    document.getElementById('main-page').style.display = 'block';
+  } else {
+    document.getElementById('sec-choice').style.display = 'none';
+    document.getElementById('sec-invite-lookup').style.display = 'block';
+    document.getElementById('prog-wrap').style.display = 'none';
+    document.getElementById('main-page').style.display = 'none';
+  }
+}
+
+async function findInvitation() {
+  var raw = document.getElementById('lookup-mobile').value.replace(/\s/g,'');
+  if (!/^[0-9]{9,10}$/.test(raw)) {
+    ferr('err-lookup', true);
+    document.getElementById('err-lookup').textContent = 'Please enter a valid mobile number.';
+    return;
+  }
+  var mobile = raw.length === 9 ? '+27' + raw : '+27' + raw.substring(1);
+  var btn = document.getElementById('btn-lookup');
+  btn.disabled = true; btn.textContent = 'Searching...';
+  var res = await sb.from('player_invitations')
+    .select('*')
+    .eq('invited_mobile', mobile)
+    .order('created_at', { ascending: false })
+    .limit(1);
+  btn.disabled = false; btn.textContent = 'Find My Invitation →';
+  var data = (res.data && res.data.length > 0) ? res.data[0] : null;
+  if (!data) {
+    ferr('err-lookup', true);
+    document.getElementById('err-lookup').textContent = 'No invitation found for this number. Please check with your captain.';
+    return;
+  }
+  ferr('err-lookup', false);
+  inviteData = data;
+  var capRes = await sb.from('players').select('team_number,full_name').eq('mobile', data.invited_by_mobile).maybeSingle();
+  var captain = capRes.data;
+  document.getElementById('confirm-team').textContent = (captain && captain.team_number) ? captain.team_number : data.school;
+  document.getElementById('confirm-captain').textContent = 'Invited by: ' + ((captain && captain.full_name) ? captain.full_name : 'Your captain');
+  document.getElementById('confirm-school').textContent = data.school;
+  document.getElementById('invite-confirm').style.display = 'block';
+  document.getElementById('btn-lookup').style.display = 'none';
+}
+
+function resetLookup() {
+  inviteData = null;
+  document.getElementById('lookup-mobile').value = '';
+  document.getElementById('invite-confirm').style.display = 'none';
+  document.getElementById('btn-lookup').style.display = 'block';
+}
+
+function acceptInvite() {
+  if (!inviteData) return;
+  isInvitee = true;
+  // Store captain mobile so we can write invited_by_mobile at Step 1
+  reg.invited_by_mobile = inviteData.invited_by_mobile || null;
+  var nameParts = (inviteData.invited_name || '').split(' ');
+  var firstName = nameParts[0] || '';
+  var surname = nameParts.slice(1).join(' ') || '';
+  var fnEl = document.getElementById('f-name');
+  var snEl = document.getElementById('f-surname');
+  if (fnEl) { fnEl.value = firstName; fnEl.readOnly = true; fnEl.style.opacity = '0.7'; fnEl.style.background = 'var(--offwhite)'; }
+  if (snEl) { snEl.value = surname; snEl.readOnly = true; snEl.style.opacity = '0.7'; snEl.style.background = 'var(--offwhite)'; }
+  var mobileDigits = (inviteData.invited_mobile || '').replace('+27','').replace(/\s/g,'');
+  var mobEl = document.getElementById('f-mobile');
+  if (mobEl) { mobEl.value = mobileDigits; mobEl.readOnly = true; mobEl.style.opacity = '0.7'; mobEl.style.background = 'var(--offwhite)'; }
+  var emailEl = document.getElementById('f-email');
+  if (emailEl && inviteData.invited_email) emailEl.value = inviteData.invited_email;
+  selectedSchool = { name: inviteData.school, id: inviteData.school_id || null };
+  document.getElementById('f-school').style.display = 'none';
+  document.getElementById('school-conf').style.display = 'flex';
+  document.getElementById('school-conf-name').textContent = inviteData.school || '';
+  var changeBtn = document.getElementById('school-change-btn');
+  if (changeBtn) changeBtn.style.display = 'none';
+  reg.school = inviteData.school;
+  reg.team_display = inviteData.team_number || inviteData.school;
+  document.getElementById('invitee-notice-1').classList.add('show');
+  document.getElementById('sec-invite-lookup').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'block';
+  document.getElementById('main-page').style.display = 'block';
+  goStep(1);
+}
+
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('invite') === '1') {
+    selectPath('invited');
+    var mobile = params.get('mobile');
+    if (mobile) {
+      var stripped = mobile.replace('+27','').replace(/\s/g,'');
+      var el = document.getElementById('lookup-mobile');
+      if (el) {
+        el.value = stripped;
+        // Auto-trigger the invitation lookup so inviteData is populated immediately
+        setTimeout(async function() {
+          var raw = stripped.replace(/\s/g,'');
+          var fullMobile = raw.length === 9 ? '+27' + raw : '+27' + raw.substring(1);
+          var res = await sb.from('player_invitations')
+            .select('*')
+            .eq('invited_mobile', fullMobile)
+            .order('created_at', { ascending: false })
+            .limit(1);
+          var data = (res.data && res.data.length > 0) ? res.data[0] : null;
+          if (!data) return;
+          inviteData = data;
+          // Look up captain details
+          var capRes = await sb.from('players').select('team_number,full_name,mobile').eq('mobile', data.invited_by_mobile).maybeSingle();
+          var captain = capRes.data;
+          document.getElementById('confirm-team').textContent = (captain && captain.team_number) ? captain.team_number : data.school;
+          document.getElementById('confirm-captain').textContent = 'Invited by: ' + ((captain && captain.full_name) ? captain.full_name : 'Your captain');
+          document.getElementById('confirm-school').textContent = data.school;
+          document.getElementById('invite-confirm').style.display = 'block';
+          document.getElementById('btn-lookup').style.display = 'none';
+        }, 500);
+      }
+    }
+  }
+})();
+</script>
+</body>
+</html>
