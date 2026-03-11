@@ -262,15 +262,22 @@ async function sendInviteEmails({ inviterName, inviterEmail, inviterSchool, team
   const FN_URL = SUPABASE_URL + '/functions/v1/super-function';
   const inviteLink = 'https://alumnigolf.net/register.html?invite=1&mobile=' + encodeURIComponent(partnerMobile);
 
+  console.log('=== sendInviteEmails called ===');
+  console.log('inviterEmail:', inviterEmail);
+  console.log('partnerEmail:', partnerEmail);
+  console.log('partnerMobile:', partnerMobile);
+
   async function send(to, subject, html) {
     try {
+      console.log('>>> Sending to:', to);
       const res = await fetch(FN_URL, {
         method:'POST',
         headers:{'Content-Type':'application/json','Authorization':'Bearer '+ANON_KEY},
         body: JSON.stringify({ from:'Alumni Golf <noreply@alumnigolf.net>', to, subject, html })
       });
-      console.log('Email to', to, '→', res.status);
-    } catch(e) { console.error('Email failed:', e); }
+      const body = await res.text();
+      console.log('>>> Response for', to, '— status:', res.status, '— body:', body);
+    } catch(e) { console.error('>>> Email FAILED for', to, ':', e); }
   }
 
   const infoBox = `<div style="background:#f8f6f0;border-left:3px solid #C89B3C;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
@@ -289,7 +296,8 @@ async function sendInviteEmails({ inviterName, inviterEmail, inviterSchool, team
      <p style="font-size:13px;color:#888;">Their registration link: <a href="${inviteLink}">${inviteLink}</a></p>`
   );
 
-  // 2. Partner invite (only if they have an email)
+  // 2. Partner invite
+  console.log('partnerEmail check:', partnerEmail, '— truthy?', !!partnerEmail);
   if (partnerEmail) {
     await send(
       partnerEmail,
@@ -300,6 +308,8 @@ async function sendInviteEmails({ inviterName, inviterEmail, inviterSchool, team
        <p>To complete your registration click below:</p>
        <p style="text-align:center;margin:28px 0"><a href="${inviteLink}" style="display:inline-block;background:#C89B3C;color:#0A1F44;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px;">Complete My Registration →</a></p>`
     );
+  } else {
+    console.warn('>>> partnerEmail is empty — skipping partner email');
   }
 }
 
