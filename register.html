@@ -279,6 +279,16 @@ footer a{color:rgba(255,255,255,.5);}
         <div class="ferr" id="err-email">Please enter a valid email address</div>
       </div>
       <div class="field">
+        <label>Gender *</label>
+        <select id="f-gender">
+          <option value="">-- Select --</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </select>
+        <div class="ferr" id="err-gender">Please select your gender</div>
+      </div>
+      <div class="field">
         <label>School You Represent *</label>
         <div class="dd-wrap" id="school-wrap">
           <input type="text" id="f-school" placeholder="Type to search, or enter school name manually..." autocomplete="off" />
@@ -725,6 +735,8 @@ async function saveStep1() {
   if (!surname) { ferr('err-surname',true); ierr('f-surname',true); ok=false; } else { ferr('err-surname',false); ierr('f-surname',false); }
   if (!/^[0-9]{9}$/.test(mobile)) { ferr('err-mobile',true); document.getElementById('mob-wrap').classList.add('err'); ok=false; } else { ferr('err-mobile',false); document.getElementById('mob-wrap').classList.remove('err'); }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { ferr('err-email',true); ierr('f-email',true); ok=false; } else { ferr('err-email',false); ierr('f-email',false); }
+  var gender = document.getElementById('f-gender').value;
+  if (!gender) { ferr('err-gender',true); ok=false; } else { ferr('err-gender',false); }
   if (!selectedSchool) {
     var typedSchool = document.getElementById('f-school').value.trim();
     if (typedSchool) { selectedSchool = {id: null, name: typedSchool}; } else { ferr('err-school',true); ok=false; }
@@ -735,8 +747,8 @@ async function saveStep1() {
   if (!ok) return;
   var btn = document.getElementById('btn-s1');
   btn.disabled=true; btn.textContent='Saving...';
-  reg = { full_name: name+' '+surname, email: email, mobile: '+27'+mobile, school: selectedSchool.name, school_id: selectedSchool.id, password: pw };
-  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, eligibility_status:'pending', payment_status:'unpaid' }, {onConflict:'email'});
+  reg = { full_name: name+' '+surname, email: email, mobile: '+27'+mobile, school: selectedSchool.name, school_id: selectedSchool.id, password: pw, gender: gender };
+  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, gender:reg.gender, eligibility_status:'pending', payment_status:'unpaid' }, {onConflict:'email'});
   btn.disabled=false; btn.textContent='Save & Continue →';
   if (res.error) { alert('Error: '+res.error.message); return; }
   goStep(2);
@@ -751,12 +763,12 @@ async function saveStep2() {
   if (!ynState.age) { ferr('err-yn-age',true); ok=false; } else { ferr('err-yn-age',false); }
   if (!ynState.same) { ferr('err-yn-same',true); ok=false; } else { ferr('err-yn-same',false); }
   if (!ok) return;
-  if (ynState.sch==='yes') { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
-  if (ynState.hcp==='no')  { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
-  if (ynState.age==='no')  { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
+  if (ynState.sch==='yes') { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,gender:reg.gender,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
+  if (ynState.hcp==='no')  { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,gender:reg.gender,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
+  if (ynState.age==='no')  { await sb.from('players').upsert({email:reg.email,full_name:reg.full_name,mobile:reg.mobile,school:reg.school,gender:reg.gender,eligibility_status:'ineligible'},{onConflict:'email'}); return; }
   var btn = document.getElementById('btn-s2');
   btn.disabled=true; btn.textContent='Saving...';
-  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, popia_accepted:true, rules_accepted:true, still_at_school:false, has_handicap:true, eligibility_status:'eligible' }, {onConflict:'email'});
+  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, gender:reg.gender, popia_accepted:true, rules_accepted:true, still_at_school:false, has_handicap:true, eligibility_status:'eligible' }, {onConflict:'email'});
   btn.disabled=false; btn.textContent='Confirm & Continue →';
   if (res.error) { alert('Error: '+res.error.message); return; }
   goStep(3);
@@ -781,7 +793,7 @@ async function saveStep3() {
   var btn = document.getElementById('btn-s3');
   btn.disabled=true; btn.textContent='Saving...';
   var fullHNA = '2700'+hna;
-  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, club:selectedClub, handicap_index:hcap, hna_number:fullHNA, city:city, postal_code:postal }, {onConflict:'email'});
+  var res = await sb.from('players').upsert({ email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, gender:reg.gender, club:selectedClub, handicap_index:hcap, hna_number:fullHNA, city:city, postal_code:postal }, {onConflict:'email'});
   btn.disabled=false; btn.textContent='Save & Continue →';
   if (res.error) { alert('Error: '+res.error.message); return; }
   reg.club=selectedClub; reg.handicap_index=hcap; reg.hna_number=fullHNA; reg.city=city; reg.postal_code=postal;
@@ -876,7 +888,7 @@ async function submitPayment() {
     var teamNumber=await assignTeamNumber(reg.school);
     var amount=selPayOpt==='team'?2800:1500;
     await sb.from('players').upsert({
-      email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school,
+      email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, gender:reg.gender,
       partner_status: isInvitee ? 'invited' : selPartnerOpt,
       payment_status:popFile?'pending_verification':'unpaid',
       payment_type:selPayOpt||'single', payment_method:'eft', payment_amount:amount,
@@ -911,7 +923,7 @@ async function submitPayLater(e) {
   var teamNumber=await assignTeamNumber(reg.school);
   var amount=selPayOpt==='team'?2800:1500;
   await sb.from('players').upsert({
-    email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school,
+    email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, gender:reg.gender,
     partner_status: isInvitee ? 'invited' : (selPartnerOpt||'later'),
     payment_status:'unpaid', payment_type:selPayOpt||'single', payment_amount:amount,
     team_number:teamNumber, registration_complete:true
