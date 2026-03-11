@@ -169,6 +169,7 @@
       <nav class="nav">
         <div class="nav-item active" onclick="showSection('overview')"><span class="icon">🏠</span>Overview</div>
         <div class="nav-item" onclick="showSection('matches')"><span class="icon">🎯</span>My Matches</div>
+        <div class="nav-item" onclick="showSection('partner')"><span class="icon">🤝</span>My Partner</div>
         <div class="nav-item" onclick="showSection('payment')"><span class="icon">💳</span>Payment</div>
         <div class="nav-item" onclick="showSection('standings')"><span class="icon">🏆</span>Standings</div>
         <div class="nav-item" onclick="showSection('profile')"><span class="icon">👤</span>My Profile</div>
@@ -205,6 +206,12 @@
         </section>
         <section class="section" id="sec-matches">
           <div class="card" style="margin-bottom:20px;"><div class="card-title">🎯 All My Matches</div><div id="all-matches-list"><div class="loading"><div class="spinner"></div></div></div></div>
+        </section>
+        <section class="section" id="sec-partner">
+          <div class="card" style="max-width:500px;">
+            <div class="card-title" id="partner-page-title">🤝 My Partner</div>
+            <div id="partner-page-content"><div class="loading"><div class="spinner"></div></div></div>
+          </div>
         </section>
         <section class="section" id="sec-payment">
           <div id="payment-content"><div class="loading"><div class="spinner"></div></div></div>
@@ -324,7 +331,7 @@ function showPaymentPrompt() {
   document.getElementById('pay-later-btn').addEventListener('click', function(){ modal.remove(); });
 }
 
-const titles = { overview:'Overview', matches:'My Matches', payment:'Payment', standings:'Standings', profile:'My Profile' };
+const titles = { overview:'Overview', matches:'My Matches', partner:'My Partner', payment:'Payment', standings:'Standings', profile:'My Profile' };
 function showSection(name) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -333,6 +340,7 @@ function showSection(name) {
   document.getElementById('section-title').textContent = titles[name]||name;
   document.getElementById('sidebar').classList.remove('open');
   if (name==='matches') loadMyMatches();
+  if (name==='partner') loadPartnerPage();
   if (name==='payment') loadPaymentSection();
   if (name==='standings') loadStandings();
   if (name==='profile') loadProfileForm();
@@ -359,10 +367,10 @@ async function loadOverview() {
     if (isPending) {
       partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">⏳ Partner Change Pending</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name.replace(' (pending admin approval)','')+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+(currentPlayer.partner_mobile||'')+'</div><div style="font-size:12px;color:var(--gold);">Awaiting admin approval</div></div>';
     } else {
-      partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);"><div class="card-title">🤝 Your Partner</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+(currentPlayer.partner_mobile||'')+'</div><div style="display:flex;gap:8px;"><button class="btn-sm btn-gold" onclick="showSection(\'profile\');loadPartnerPanel(\'resend\')">📨 Resend Invite</button><button class="btn-sm btn-outline" onclick="showSection(\'profile\');loadPartnerPanel(\'change\')">Change Partner</button></div></div>';
+      partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);"><div class="card-title">🤝 Your Partner</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+(currentPlayer.partner_mobile||'')+'</div><div style="display:flex;gap:8px;"><button class="btn-sm btn-gold" onclick="showSection(\'partner\')">📨 Resend Invite</button><button class="btn-sm btn-outline" onclick="showSection(\'partner\')">Change Partner</button></div></div>';
     }
   } else if (ps==='invite_later' || ps==='later' || !ps) {
-    partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">⏳ Partner Not Yet Invited</div><div style="font-size:13px;color:var(--text2);margin-bottom:14px;">You haven\'t invited your partner yet.</div><button class="btn-sm btn-gold" onclick="showSection(\'profile\');loadPartnerPanel(\'invite\')">📨 Invite Partner Now</button></div>';
+    partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">⏳ Partner Not Yet Invited</div><div style="font-size:13px;color:var(--text2);margin-bottom:14px;">You haven\'t invited your partner yet.</div><button class="btn-sm btn-gold" onclick="showSection(\'partner\')">📨 Invite Partner Now</button></div>';
   } else if (ps==='need_partner') {
     partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">🔍 In the Player Pool</div><div style="font-size:13px;color:var(--text2);">You are in the player pool. We will notify you when we find a partner.</div></div>';
   } else { partnerBlockEl.innerHTML=''; }
@@ -521,6 +529,40 @@ function loadProfileForm() {
   loadPartnerPanel();
 }
 
+function loadPartnerPage() {
+  if (!currentPlayer) return;
+  const ps = currentPlayer.partner_status;
+  const el = document.getElementById('partner-page-content');
+  const title = document.getElementById('partner-page-title');
+  if (ps==='has_partner' && currentPlayer.partner_name) {
+    const isPending = currentPlayer.partner_name.indexOf('(pending admin approval)') !== -1;
+    if (isPending) {
+      title.textContent = '⏳ Partner Change Pending';
+      el.innerHTML = '<div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name.replace(' (pending admin approval)','')+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:16px;">'+(currentPlayer.partner_mobile||'')+'</div><div style="font-size:13px;color:var(--gold);">Awaiting admin approval</div>';
+    } else {
+      title.textContent = '🤝 My Partner';
+      el.innerHTML = '<div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:20px;">'+(currentPlayer.partner_mobile||'')+'</div>'
+        + '<div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Resend Invite</div>'
+        + renderInviteForm('resend');
+      // Pre-fill with existing partner details
+      const parts = (currentPlayer.partner_name||'').split(' ');
+      const fn = document.getElementById('inv2-name'); if(fn) fn.value=parts[0]||'';
+      const sn = document.getElementById('inv2-surname'); if(sn) sn.value=parts.slice(1).join(' ')||'';
+      const mob = document.getElementById('inv2-mobile'); if(mob) mob.value=(currentPlayer.partner_mobile||'').replace('+27','');
+    }
+  } else if (ps==='need_partner') {
+    title.textContent = '🔍 Player Pool';
+    el.innerHTML = '<p style="font-size:13px;color:var(--text2);">You are in the player pool. We will find you a partner and notify you.</p>';
+  } else {
+    // invite_later, later, null, empty — show invite form
+    title.textContent = '📨 Invite Your Partner';
+    el.innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:20px;">You haven\'t invited your partner yet. Fill in their details below and we\'ll send them an invite.</p>'
+      + renderInviteForm('invite');
+  }
+  const btn = document.getElementById('inv2-submit');
+  if (btn) btn.addEventListener('click', function(){ submitPartnerInvite(btn.getAttribute('data-mode'), true); });
+}
+
 function loadPartnerPanel(forceMode) {
   if (!currentPlayer) return;
   const ps = currentPlayer.partner_status;
@@ -565,7 +607,7 @@ function renderInviteForm(mode) {
   return '<div class="form-group"><label>Partner\'s First Name *</label><input type="text" id="inv2-name" placeholder="e.g. John" /></div><div class="form-group"><label>Partner\'s Surname *</label><input type="text" id="inv2-surname" placeholder="e.g. Smith" /></div><div class="form-group"><label>Partner\'s Mobile *</label><div style="display:flex;"><div style="padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-size:13px;font-weight:700;color:var(--text2);">+27</div><input type="tel" id="inv2-mobile" placeholder="821234567" maxlength="9" style="border-radius:0 10px 10px 0;border-left:none;" /></div></div><div class="form-group"><label>Partner\'s Email (optional)</label><input type="email" id="inv2-email" placeholder="partner@gmail.com" /></div><div class="form-group"><label>School</label><input type="text" id="inv2-school" value="'+(currentPlayer.school||'')+'" readonly style="opacity:0.6;cursor:not-allowed;" /></div><div id="inv2-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div><button class="btn-sm btn-gold" id="inv2-submit" data-mode="'+mode+'">'+btnLabel+'</button>';
 }
 
-async function submitPartnerInvite(mode) {
+async function submitPartnerInvite(mode, fromPage) {
   const name=(document.getElementById('inv2-name')?.value||'').trim();
   const surname=(document.getElementById('inv2-surname')?.value||'').trim();
   const mobile=(document.getElementById('inv2-mobile')?.value||'').trim();
@@ -611,11 +653,11 @@ async function submitPartnerInvite(mode) {
     }
     toast('Partner invited successfully ✅');
   }
-  loadPartnerPanel();
+  if (fromPage) { loadPartnerPage(); } else { loadPartnerPanel(); }
   // Refresh dashboard partner block
   const psBlock = document.getElementById('partner-status-block');
   if (psBlock && mode!=='change') {
-    psBlock.innerHTML='<div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);"><div class="card-title">🤝 Your Partner</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+fullName+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+fullMobile+'</div><div style="display:flex;gap:8px;"><button class="btn-sm btn-gold" onclick="showSection(\'profile\');loadPartnerPanel(\'resend\')">📨 Resend Invite</button><button class="btn-sm btn-outline" onclick="showSection(\'profile\');loadPartnerPanel(\'change\')">Change Partner</button></div></div>';
+    psBlock.innerHTML='<div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);"><div class="card-title">🤝 Your Partner</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+fullName+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+fullMobile+'</div><div style="display:flex;gap:8px;"><button class="btn-sm btn-gold" onclick="showSection(\'partner\')">📨 Resend Invite</button><button class="btn-sm btn-outline" onclick="showSection(\'partner\')">Change Partner</button></div></div>';
   }
 }
 
