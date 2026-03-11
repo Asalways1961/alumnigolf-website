@@ -219,7 +219,6 @@
             <div id="profile-form">
               <div class="form-group"><label>Full Name</label><input type="text" id="pf-name" /></div>
               <div class="form-group"><label>School</label><input type="text" id="pf-school" readonly style="opacity:0.6" /></div>
-              <div class="form-group"><label>Year of Matriculation</label><input type="text" id="pf-matric" readonly style="opacity:0.6" /></div>
               <div class="form-group"><label>Phone / WhatsApp</label><input type="tel" id="pf-phone" /></div>
               <div class="form-group"><label>Handicap</label><input type="number" id="pf-handicap" min="0" max="54" step="0.1" /></div>
               <div class="form-group"><label>Email</label><input type="email" id="pf-email" readonly style="opacity:0.5" /></div>
@@ -400,17 +399,87 @@ async function loadPaymentSection() {
   } else if (p.payment_status==='pending_verification') {
     statusHtml = '<div class="payment-status-card pending"><div class="payment-status-icon">⏳</div><div class="payment-status-title" style="color:var(--gold)">Payment Under Review</div><div class="payment-status-sub">We\'ve received your payment details and are verifying. This usually takes 1–2 business days.</div></div>';
   } else {
-    statusHtml = '<div class="payment-status-card unpaid"><div class="payment-status-icon">⚠️</div><div class="payment-status-title" style="color:var(--red)">Payment Outstanding</div><div class="payment-status-sub">Your entry fee of <strong>R1,500</strong> is still outstanding. Please make your EFT payment using the details below.</div></div><div class="bank-box"><div class="bank-row"><span class="bank-key">Bank</span><span class="bank-val">FNB — Cape Gate</span></div><div class="bank-row"><span class="bank-key">Account Name</span><span class="bank-val">Legacy Events Ventures (Pty) Ltd</span></div><div class="bank-row"><span class="bank-key">Account No.</span><span class="bank-val">63192217123</span></div><div class="bank-row"><span class="bank-key">Branch Code</span><span class="bank-val">251945</span></div><div class="bank-row"><span class="bank-key">Reference</span><span class="bank-val">'+(p.payment_reference||(p.full_name||'Your Name'))+'</span></div><div class="bank-row"><span class="bank-key">Amount</span><span class="bank-val">'+(p.payment_type==='team'?'R2,800 (full team)':'R1,500 (individual)')+'</span></div></div><div style="margin-top:20px;"><button class="btn-sm btn-gold" id="notif-btn">📩 I\'ve Made the Payment</button></div>';
+    statusHtml = '<div class="payment-status-card unpaid"><div class="payment-status-icon">⚠️</div><div class="payment-status-title" style="color:var(--red)">Payment Outstanding</div><div class="payment-status-sub">Your entry fee is still outstanding. Please select your payment option below.</div></div>'
+    + '<div style="margin-bottom:20px;">'
+    + '<div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Select Payment Option</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">'
+    + '<div id="pay-opt-single" onclick="selectPayOpt(\'single\')" style="cursor:pointer;padding:16px;border:2px solid var(--gold);border-radius:12px;background:var(--gold-dim);text-align:center;">'
+    + '<div style="font-size:20px;font-weight:800;color:var(--gold)">R1,500</div>'
+    + '<div style="font-size:12px;color:var(--text2);margin-top:4px;">Individual (pay for yourself)</div>'
+    + '</div>'
+    + '<div id="pay-opt-team" onclick="selectPayOpt(\'team\')" style="cursor:pointer;padding:16px;border:2px solid var(--border);border-radius:12px;text-align:center;">'
+    + '<div style="font-size:20px;font-weight:800;color:var(--text)">R2,800</div>'
+    + '<div style="font-size:12px;color:var(--text2);margin-top:4px;">Full team (pay for both players)</div>'
+    + '</div>'
+    + '</div>'
+    + '</div>'
+    + '<div class="bank-box"><div class="bank-row"><span class="bank-key">Bank</span><span class="bank-val">FNB — Cape Gate</span></div><div class="bank-row"><span class="bank-key">Account Name</span><span class="bank-val">Legacy Events Ventures (Pty) Ltd</span></div><div class="bank-row"><span class="bank-key">Account No.</span><span class="bank-val">63192217123</span></div><div class="bank-row"><span class="bank-key">Branch Code</span><span class="bank-val">251945</span></div><div class="bank-row"><span class="bank-key">Reference</span><span class="bank-val">'+(p.payment_reference||(p.full_name||'Your Name'))+'</span></div><div class="bank-row"><span class="bank-key">Amount</span><span class="bank-val" id="pay-amount-display">R1,500 (individual)</span></div></div>'
+    + '<div style="margin-top:20px;">'
+    + '<div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Attach Proof of Payment (optional)</div>'
+    + '<div id="pop-dropzone" onclick="document.getElementById(\'pop-file\').click()" style="border:2px dashed var(--border);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:border-color 0.2s;" onmouseenter="this.style.borderColor=\'var(--gold)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">'
+    + '<div style="font-size:28px;">📎</div>'
+    + '<div style="font-size:13px;color:var(--text2);margin-top:6px;">Click to attach your proof of payment</div>'
+    + '<div id="pop-filename" style="font-size:12px;color:var(--gold);margin-top:6px;"></div>'
+    + '</div>'
+    + '<input type="file" id="pop-file" accept="image/*,.pdf" style="display:none" onchange="handlePopFile(this)" />'
+    + '</div>'
+    + '<div style="margin-top:20px;"><button class="btn-sm btn-gold" id="notif-btn">📩 I\'ve Made the Payment</button></div>';
   }
   el.innerHTML = '<div style="max-width:560px;">'+statusHtml+'<div style="margin-top:20px;font-size:13px;color:var(--text2);"><strong>Payment Method on Record:</strong> '+(p.payment_method||'—')+'<br><strong>Reference:</strong> '+(p.payment_reference||'—')+'</div></div>';
   const nb = document.getElementById('notif-btn');
   if (nb) nb.addEventListener('click', notifyPaymentSent);
 }
 
+let portalPayOpt = 'single';
+let portalPopFile = null;
+
+function selectPayOpt(opt) {
+  portalPayOpt = opt;
+  const single = document.getElementById('pay-opt-single');
+  const team = document.getElementById('pay-opt-team');
+  const display = document.getElementById('pay-amount-display');
+  if (!single||!team) return;
+  if (opt==='single') {
+    single.style.border='2px solid var(--gold)'; single.style.background='var(--gold-dim)';
+    team.style.border='2px solid var(--border)'; team.style.background='transparent';
+    if (display) display.textContent='R1,500 (individual)';
+  } else {
+    team.style.border='2px solid var(--gold)'; team.style.background='var(--gold-dim)';
+    single.style.border='2px solid var(--border)'; single.style.background='transparent';
+    if (display) display.textContent='R2,800 (full team)';
+  }
+}
+
+function handlePopFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  portalPopFile = file;
+  const el = document.getElementById('pop-filename');
+  if (el) el.textContent='📎 '+file.name;
+  const dz = document.getElementById('pop-dropzone');
+  if (dz) dz.style.borderColor='var(--gold)';
+}
+
 async function notifyPaymentSent() {
-  const { error } = await sb.from('players').update({payment_status:'pending_verification'}).eq('email',currentPlayer.email);
-  if (error) { toast('Error: '+error.message,'error'); return; }
+  const btn = document.getElementById('notif-btn');
+  if (btn) { btn.disabled=true; btn.textContent='Sending...'; }
+  let popPath = null;
+  if (portalPopFile) {
+    const path = currentPlayer.email.replace('@','_').replace(/\./g,'_')+'_'+Date.now()+'_'+portalPopFile.name;
+    const up = await sb.storage.from('payment_proofs').upload(path, portalPopFile);
+    if (up.data) popPath = path;
+  }
+  const amount = portalPayOpt==='team' ? 2800 : 1500;
+  const { error } = await sb.from('players').update({
+    payment_status:'pending_verification',
+    payment_type: portalPayOpt||'single',
+    payment_amount: amount,
+    payment_method:'eft',
+    payment_proof_path: popPath||null,
+  }).eq('email',currentPlayer.email);
+  if (error) { toast('Error: '+error.message,'error'); if(btn){btn.disabled=false;btn.textContent='📩 I\'ve Made the Payment';} return; }
   currentPlayer.payment_status='pending_verification';
+  currentPlayer.payment_type=portalPayOpt||'single';
   toast('Thanks! Payment marked as sent — admin will verify shortly ✅');
   loadPaymentSection();
   document.getElementById('topbar-payment-badge').innerHTML='<span class="badge badge-gold">⏳ Payment Pending</span>';
@@ -443,7 +512,6 @@ function loadProfileForm() {
   const p = currentPlayer;
   document.getElementById('pf-name').value=p.full_name||'';
   document.getElementById('pf-school').value=p.school||'';
-  document.getElementById('pf-matric').value=p.year_of_matriculation||'';
   document.getElementById('pf-phone').value=p.mobile||'';
   document.getElementById('pf-handicap').value=p.handicap_index||'';
   document.getElementById('pf-email').value=p.email||'';
@@ -455,7 +523,7 @@ function loadPartnerPanel(forceMode) {
   const ps = currentPlayer.partner_status;
   const el = document.getElementById('partner-panel-content');
   const title = document.getElementById('partner-panel-title');
-  if (forceMode==='resend' || (ps==='has_partner' && currentPlayer.partner_name && forceMode!=='change')) {
+  if (forceMode==='resend') {
     title.textContent='📨 Resend Partner Invite';
     el.innerHTML='<div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Partner: <strong style="color:var(--text)">'+(currentPlayer.partner_name||'—')+'</strong> &nbsp;('+(currentPlayer.partner_mobile||'—')+')</div>'+renderInviteForm('resend');
     const prefillName = (currentPlayer.partner_name||'').split(' ');
@@ -465,11 +533,21 @@ function loadPartnerPanel(forceMode) {
     if (fnEl) fnEl.value = prefillName[0]||'';
     if (snEl) snEl.value = prefillName.slice(1).join(' ')||'';
     if (mobEl) mobEl.value = (currentPlayer.partner_mobile||'').replace('+27','');
-  } else if (forceMode==='invite' || ps==='invite_later' || !ps) {
+  } else if (forceMode==='invite' || ps==='invite_later' || !ps || ps==='') {
     title.textContent='📨 Invite Your Partner'; el.innerHTML=renderInviteForm('invite');
   } else if (forceMode==='change') {
     title.textContent='🔄 Change Partner';
     el.innerHTML='<div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Current partner: <strong style="color:var(--text)">'+(currentPlayer.partner_name||'—')+'</strong> ('+(currentPlayer.partner_mobile||'—')+')</div><div style="background:rgba(229,57,53,0.08);border:1px solid rgba(229,57,53,0.3);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--red);margin-bottom:16px;">⚠️ Changing your partner requires admin approval.</div>'+renderInviteForm('change');
+  } else if (ps==='has_partner' && currentPlayer.partner_name) {
+    title.textContent='📨 Resend Partner Invite';
+    el.innerHTML='<div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Partner: <strong style="color:var(--text)">'+currentPlayer.partner_name+'</strong> &nbsp;('+(currentPlayer.partner_mobile||'—')+')</div>'+renderInviteForm('resend');
+    const prefillName = (currentPlayer.partner_name||'').split(' ');
+    const fnEl = document.getElementById('inv2-name');
+    const snEl = document.getElementById('inv2-surname');
+    const mobEl = document.getElementById('inv2-mobile');
+    if (fnEl) fnEl.value = prefillName[0]||'';
+    if (snEl) snEl.value = prefillName.slice(1).join(' ')||'';
+    if (mobEl) mobEl.value = (currentPlayer.partner_mobile||'').replace('+27','');
   } else if (ps==='need_partner') {
     title.textContent='🔍 Player Pool'; el.innerHTML='<p style="font-size:13px;color:var(--text2);">You are in the player pool. We will notify you when a match is found.</p>';
   } else {
