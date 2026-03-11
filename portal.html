@@ -149,6 +149,9 @@
     <div class="forgot-link" style="margin-top:12px;"><a id="forgot-link">Forgot password?</a></div>
     <div class="divider"></div>
     <div class="login-links">Not registered yet? <a href="/register.html">Create account →</a></div>
+    <div style="text-align:center;margin-top:12px;">
+      <a href="/index.html" style="font-size:12px;color:var(--text2);text-decoration:none;">← Back to Website</a>
+    </div>
   </div>
 </div>
 <div id="app">
@@ -358,7 +361,7 @@ async function loadOverview() {
     } else {
       partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);"><div class="card-title">🤝 Your Partner</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+(currentPlayer.partner_mobile||'')+'</div><div style="display:flex;gap:8px;"><button class="btn-sm btn-gold" onclick="showSection(\'profile\');loadPartnerPanel(\'resend\')">📨 Resend Invite</button><button class="btn-sm btn-outline" onclick="showSection(\'profile\');loadPartnerPanel(\'change\')">Change Partner</button></div></div>';
     }
-  } else if (ps==='invite_later' || !ps) {
+  } else if (ps==='invite_later' || ps==='later' || !ps) {
     partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">⏳ Partner Not Yet Invited</div><div style="font-size:13px;color:var(--text2);margin-bottom:14px;">You haven\'t invited your partner yet.</div><button class="btn-sm btn-gold" onclick="showSection(\'profile\');loadPartnerPanel(\'invite\')">📨 Invite Partner Now</button></div>';
   } else if (ps==='need_partner') {
     partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">🔍 In the Player Pool</div><div style="font-size:13px;color:var(--text2);">You are in the player pool. We will notify you when we find a partner.</div></div>';
@@ -533,7 +536,7 @@ function loadPartnerPanel(forceMode) {
     if (fnEl) fnEl.value = prefillName[0]||'';
     if (snEl) snEl.value = prefillName.slice(1).join(' ')||'';
     if (mobEl) mobEl.value = (currentPlayer.partner_mobile||'').replace('+27','');
-  } else if (forceMode==='invite' || ps==='invite_later' || !ps || ps==='') {
+  } else if (forceMode==='invite' || ps==='invite_later' || ps==='later' || !ps || ps==='') {
     title.textContent='📨 Invite Your Partner'; el.innerHTML=renderInviteForm('invite');
   } else if (forceMode==='change') {
     title.textContent='🔄 Change Partner';
