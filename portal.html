@@ -255,6 +255,54 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentPlayer = null;
 
+// Inline email sender — does not depend on email-service.js loading
+async function sendInviteEmails({ inviterName, inviterEmail, inviterSchool, teamNumber, partnerName, partnerEmail, partnerMobile }) {
+  const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
+  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+  const FN_URL = SUPABASE_URL + '/functions/v1/super-function';
+  const inviteLink = 'https://alumnigolf.net/register.html?invite=1&mobile=' + encodeURIComponent(partnerMobile);
+
+  async function send(to, subject, html) {
+    try {
+      const res = await fetch(FN_URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+ANON_KEY},
+        body: JSON.stringify({ from:'Alumni Golf <noreply@alumnigolf.net>', to, subject, html })
+      });
+      console.log('Email to', to, '→', res.status);
+    } catch(e) { console.error('Email failed:', e); }
+  }
+
+  const infoBox = `<div style="background:#f8f6f0;border-left:3px solid #C89B3C;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+    <p style="margin:4px 0;font-size:14px;"><strong>Team:</strong> ${teamNumber||inviterSchool}</p>
+    <p style="margin:4px 0;font-size:14px;"><strong>School:</strong> ${inviterSchool}</p>
+    <p style="margin:4px 0;font-size:14px;"><strong>Captain:</strong> ${inviterName}</p>
+  </div>`;
+
+  // 1. Captain copy to invitor
+  await send(
+    inviterEmail,
+    `Copy: Invitation sent to ${partnerName} — Alumni Golf`,
+    `<p>Hi ${inviterName.split(' ')[0]},</p>
+     <p>You have successfully invited <strong>${partnerName}</strong> to join your team in the Alumni Schools Golf Challenge.</p>
+     ${infoBox}
+     <p style="font-size:13px;color:#888;">Their registration link: <a href="${inviteLink}">${inviteLink}</a></p>`
+  );
+
+  // 2. Partner invite (only if they have an email)
+  if (partnerEmail) {
+    await send(
+      partnerEmail,
+      `${inviterName} has invited you to the Alumni Schools Golf Challenge! 🎉`,
+      `<p>Hi ${partnerName.split(' ')[0]},</p>
+       <p><strong>${inviterName}</strong> has invited you to join their team representing <strong>${inviterSchool}</strong> in the Alumni Schools Golf Challenge.</p>
+       ${infoBox}
+       <p>To complete your registration click below:</p>
+       <p style="text-align:center;margin:28px 0"><a href="${inviteLink}" style="display:inline-block;background:#C89B3C;color:#0A1F44;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px;">Complete My Registration →</a></p>`
+    );
+  }
+}
+
 function toast(msg, type='success') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'show ' + type;
@@ -534,17 +582,40 @@ function loadPartnerPage() {
   const ps = currentPlayer.partner_status;
   const el = document.getElementById('partner-page-content');
   const title = document.getElementById('partner-page-title');
+
   if (ps==='has_partner' && currentPlayer.partner_name) {
     const isPending = currentPlayer.partner_name.indexOf('(pending admin approval)') !== -1;
     if (isPending) {
       title.textContent = '⏳ Partner Change Pending';
-      el.innerHTML = '<div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name.replace(' (pending admin approval)','')+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:16px;">'+(currentPlayer.partner_mobile||'')+'</div><div style="font-size:13px;color:var(--gold);">Awaiting admin approval</div>';
+      el.innerHTML = ''
+        + '<div style="background:rgba(200,155,60,0.1);border:1px solid var(--gold);border-radius:10px;padding:16px;margin-bottom:20px;">'
+        + '<div style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;">⏳ Awaiting Admin Approval</div>'
+        + '<div style="font-size:13px;color:var(--text2);">Your partner change request for <strong style="color:var(--text)">'+currentPlayer.partner_name.replace(' (pending admin approval)','')+'</strong> is being reviewed.</div>'
+        + '</div>';
     } else {
       title.textContent = '🤝 My Partner';
-      el.innerHTML = '<div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:20px;">'+(currentPlayer.partner_mobile||'')+'</div>'
-        + '<div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Resend Invite</div>'
-        + renderInviteForm('resend');
-      // Pre-fill with existing partner details
+      el.innerHTML = ''
+        // Partner info card
+        + '<div style="background:rgba(76,175,80,0.08);border:1px solid rgba(76,175,80,0.3);border-radius:10px;padding:16px;margin-bottom:24px;">'
+        + '<div style="font-size:11px;color:var(--text2);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Current Partner</div>'
+        + '<div style="font-size:17px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name+'</div>'
+        + '<div style="font-size:13px;color:var(--text2);">'+(currentPlayer.partner_mobile||'No mobile on record')+'</div>'
+        + '</div>'
+        // Resend section
+        + '<div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">📨 Resend Partner Invite</div>'
+        + '<div style="font-size:12px;color:var(--text3);margin-bottom:14px;">You can update their details below if needed, then resend the invite.</div>'
+        + renderInviteForm('resend')
+        // Change partner section
+        + '<div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);">'
+        + '<div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">🔄 Need to Change Partner?</div>'
+        + '<div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Changing your partner requires admin approval. Submit your request below.</div>'
+        + '<div class="form-group"><label>New Partner\'s First Name *</label><input type="text" id="cp-name" placeholder="e.g. John" /></div>'
+        + '<div class="form-group"><label>New Partner\'s Surname *</label><input type="text" id="cp-surname" placeholder="e.g. Smith" /></div>'
+        + '<div class="form-group"><label>New Partner\'s Mobile *</label><div style="display:flex;"><div style="padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-size:13px;font-weight:700;color:var(--text2);">+27</div><input type="tel" id="cp-mobile" placeholder="821234567" maxlength="9" style="border-radius:0 10px 10px 0;border-left:none;" /></div></div>'
+        + '<div id="cp-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div>'
+        + '<button class="btn-sm btn-outline" onclick="submitChangePartner()" style="border-color:rgba(229,57,53,0.4);color:var(--red);">📨 Submit Change Request to Admin</button>'
+        + '</div>';
+      // Pre-fill resend form
       const parts = (currentPlayer.partner_name||'').split(' ');
       const fn = document.getElementById('inv2-name'); if(fn) fn.value=parts[0]||'';
       const sn = document.getElementById('inv2-surname'); if(sn) sn.value=parts.slice(1).join(' ')||'';
@@ -554,13 +625,32 @@ function loadPartnerPage() {
     title.textContent = '🔍 Player Pool';
     el.innerHTML = '<p style="font-size:13px;color:var(--text2);">You are in the player pool. We will find you a partner and notify you.</p>';
   } else {
-    // invite_later, later, null, empty — show invite form
+    // invite_later, later, null, empty — show fresh invite form
     title.textContent = '📨 Invite Your Partner';
-    el.innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:20px;">You haven\'t invited your partner yet. Fill in their details below and we\'ll send them an invite.</p>'
+    el.innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:20px;">Fill in your partner\'s details below and we\'ll send them an invite to complete their registration.</p>'
       + renderInviteForm('invite');
   }
   const btn = document.getElementById('inv2-submit');
   if (btn) btn.addEventListener('click', function(){ submitPartnerInvite(btn.getAttribute('data-mode'), true); });
+}
+
+async function submitChangePartner() {
+  const name = (document.getElementById('cp-name')?.value||'').trim();
+  const surname = (document.getElementById('cp-surname')?.value||'').trim();
+  const mobile = (document.getElementById('cp-mobile')?.value||'').trim();
+  const errEl = document.getElementById('cp-err');
+  if (!name||!surname) { errEl.textContent='Please enter new partner name and surname.'; errEl.style.display='block'; return; }
+  if (!mobile||mobile.length!==9||!/^[0-9]{9}$/.test(mobile)) { errEl.textContent='Enter a valid 9-digit mobile number.'; errEl.style.display='block'; return; }
+  errEl.style.display='none';
+  const fullName = name+' '+surname;
+  const fullMobile = '+27'+mobile;
+  const btn = document.querySelector('[onclick="submitChangePartner()"]');
+  if (btn) { btn.disabled=true; btn.textContent='Submitting...'; }
+  await sb.from('players').upsert({email:currentPlayer.email, partner_name:fullName+' (pending admin approval)', partner_mobile:fullMobile, partner_status:'has_partner'},{onConflict:'email'});
+  currentPlayer.partner_name = fullName+' (pending admin approval)';
+  currentPlayer.partner_mobile = fullMobile;
+  toast('Partner change request submitted — awaiting admin approval ✅');
+  loadPartnerPage();
 }
 
 function loadPartnerPanel(forceMode) {
@@ -633,24 +723,14 @@ async function submitPartnerInvite(mode, fromPage) {
       invited_by_mobile:currentPlayer.mobile, email:currentPlayer.email
     },{onConflict:'invited_mobile'});
     currentPlayer.partner_name=fullName; currentPlayer.partner_mobile=fullMobile;
-    // Send invite email/SMS
-    if (window.EmailService) {
-      const inviteLink = window.location.origin+'/register.html?invite=1&mobile='+encodeURIComponent(fullMobile);
-      EmailService.sendPartnerInvitationEmail({inviterName:currentPlayer.full_name,inviterSchool:currentPlayer.school,teamNumber:currentPlayer.team_number,partnerEmail:currentPlayer.email,partnerName:fullName,inviteLink:inviteLink,isCaptainCopy:true});
-      if (email) { EmailService.sendPartnerInvitationEmail({inviterName:currentPlayer.full_name,inviterSchool:currentPlayer.school,teamNumber:currentPlayer.team_number,partnerEmail:email,partnerName:fullName,inviteLink:inviteLink}); }
-    }
+    await sendInviteEmails({inviterName:currentPlayer.full_name, inviterEmail:currentPlayer.email, inviterSchool:currentPlayer.school, teamNumber:currentPlayer.team_number, partnerName:fullName, partnerEmail:email||null, partnerMobile:fullMobile});
     toast('Invite resent to '+fullName+' ✅');
   } else {
     // Fresh invite
     await sb.from('players').upsert({email:currentPlayer.email,partner_name:fullName,partner_mobile:fullMobile,partner_status:'has_partner'},{onConflict:'email'});
     await sb.from('player_invitations').insert({email:currentPlayer.email,invited_name:fullName,invited_mobile:fullMobile,invited_email:email||null,school:currentPlayer.school,invited_by_mobile:currentPlayer.mobile});
     currentPlayer.partner_name=fullName; currentPlayer.partner_mobile=fullMobile; currentPlayer.partner_status='has_partner';
-    // Send invite email/SMS
-    if (window.EmailService) {
-      const inviteLink = window.location.origin+'/register.html?invite=1&mobile='+encodeURIComponent(fullMobile);
-      EmailService.sendPartnerInvitationEmail({inviterName:currentPlayer.full_name,inviterSchool:currentPlayer.school,teamNumber:currentPlayer.team_number,partnerEmail:currentPlayer.email,partnerName:fullName,inviteLink:inviteLink,isCaptainCopy:true});
-      if (email) { EmailService.sendPartnerInvitationEmail({inviterName:currentPlayer.full_name,inviterSchool:currentPlayer.school,teamNumber:currentPlayer.team_number,partnerEmail:email,partnerName:fullName,inviteLink:inviteLink}); }
-    }
+    await sendInviteEmails({inviterName:currentPlayer.full_name, inviterEmail:currentPlayer.email, inviterSchool:currentPlayer.school, teamNumber:currentPlayer.team_number, partnerName:fullName, partnerEmail:email||null, partnerMobile:fullMobile});
     toast('Partner invited successfully ✅');
   }
   if (fromPage) { loadPartnerPage(); } else { loadPartnerPanel(); }
