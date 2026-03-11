@@ -890,6 +890,9 @@ async function submitPayment() {
     await sb.from('players').upsert({
       email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, gender:reg.gender,
       partner_status: isInvitee ? 'invited' : selPartnerOpt,
+      partner_name: (!isInvitee && selPartnerOpt==='have') ? (document.getElementById('inv-fn').value.trim()+' '+document.getElementById('inv-sn').value.trim()).trim() : null,
+      partner_mobile: (!isInvitee && selPartnerOpt==='have') ? '+27'+document.getElementById('inv-mob').value.replace(/\s/g,'') : null,
+      partner_email: (!isInvitee && selPartnerOpt==='have') ? (document.getElementById('inv-email').value.trim().toLowerCase()||null) : null,
       payment_status:popFile?'pending_verification':'unpaid',
       payment_type:selPayOpt||'single', payment_method:'eft', payment_amount:amount,
       payment_reference:reg.payment_reference||null, payment_proof_path:popPath,

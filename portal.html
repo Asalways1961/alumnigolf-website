@@ -604,8 +604,7 @@ function loadPartnerPage() {
         + '<div style="font-size:13px;color:var(--text2);">'+(currentPlayer.partner_mobile||'No mobile on record')+'</div>'
         + '</div>'
         // Resend section
-        + '<div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">📨 Resend Partner Invite</div>'
-        + '<div style="font-size:12px;color:var(--text3);margin-bottom:14px;">You can update their details below if needed, then resend the invite.</div>'
+        + '<div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">📨 Re-Invite Your Partner</div>'
         + renderInviteForm('resend')
         // Change partner section
         + '<div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);">'
@@ -617,11 +616,6 @@ function loadPartnerPage() {
         + '<div id="cp-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div>'
         + '<button class="btn-sm btn-outline" onclick="submitChangePartner()" style="border-color:rgba(229,57,53,0.4);color:var(--red);">📨 Submit Change Request to Admin</button>'
         + '</div>';
-      // Pre-fill resend form
-      const parts = (currentPlayer.partner_name||'').split(' ');
-      const fn = document.getElementById('inv2-name'); if(fn) fn.value=parts[0]||'';
-      const sn = document.getElementById('inv2-surname'); if(sn) sn.value=parts.slice(1).join(' ')||'';
-      const mob = document.getElementById('inv2-mobile'); if(mob) mob.value=(currentPlayer.partner_mobile||'').replace('+27','');
     }
   } else if (ps==='need_partner') {
     title.textContent = '🔍 Player Pool';
@@ -695,8 +689,23 @@ function loadPartnerPanel(forceMode) {
 }
 
 function renderInviteForm(mode) {
-  const btnLabel = mode==='change' ? '📨 Submit Change Request to Admin' : mode==='resend' ? '📨 Resend Invite' : '📨 Send Partner Invite';
-  return '<div class="form-group"><label>Partner\'s First Name *</label><input type="text" id="inv2-name" placeholder="e.g. John" /></div><div class="form-group"><label>Partner\'s Surname *</label><input type="text" id="inv2-surname" placeholder="e.g. Smith" /></div><div class="form-group"><label>Partner\'s Mobile *</label><div style="display:flex;"><div style="padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-size:13px;font-weight:700;color:var(--text2);">+27</div><input type="tel" id="inv2-mobile" placeholder="821234567" maxlength="9" style="border-radius:0 10px 10px 0;border-left:none;" /></div></div><div class="form-group"><label>Partner\'s Email *</label><input type="email" id="inv2-email" placeholder="partner@gmail.com" /></div><div class="form-group"><label>School</label><input type="text" id="inv2-school" value="'+(currentPlayer.school||'')+'" readonly style="opacity:0.6;cursor:not-allowed;" /></div><div id="inv2-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div><button class="btn-sm btn-gold" id="inv2-submit" data-mode="'+mode+'">'+btnLabel+'</button>';
+  const btnLabel = mode==='resend' ? '📨 Resend Invite' : '📨 Send Partner Invite';
+  const isResend = mode==='resend';
+  const nameParts = (currentPlayer.partner_name||'').split(' ');
+  const firstName = isResend ? (nameParts[0]||'') : '';
+  const surname = isResend ? (nameParts.slice(1).join(' ')||'') : '';
+  const mobile = isResend ? (currentPlayer.partner_mobile||'').replace('+27','') : '';
+  const emailVal = isResend ? (currentPlayer.partner_email||'') : '';
+  const lockedStyle = 'opacity:0.6;cursor:not-allowed;background:var(--bg3);';
+  const nameField = isResend
+    ? '<div class="form-group"><label>Partner\'s First Name</label><input type="text" id="inv2-name" value="'+firstName+'" readonly style="'+lockedStyle+'" /></div><div class="form-group"><label>Partner\'s Surname</label><input type="text" id="inv2-surname" value="'+surname+'" readonly style="'+lockedStyle+'" /></div>'
+    : '<div class="form-group"><label>Partner\'s First Name *</label><input type="text" id="inv2-name" placeholder="e.g. John" /></div><div class="form-group"><label>Partner\'s Surname *</label><input type="text" id="inv2-surname" placeholder="e.g. Smith" /></div>';
+  return nameField
+    + '<div class="form-group"><label>Partner\'s Mobile *</label><div style="display:flex;"><div style="padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-size:13px;font-weight:700;color:var(--text2);">+27</div><input type="tel" id="inv2-mobile" value="'+mobile+'" placeholder="821234567" maxlength="9" style="border-radius:0 10px 10px 0;border-left:none;" /></div></div>'
+    + '<div class="form-group"><label>Partner\'s Email *</label><input type="email" id="inv2-email" value="'+emailVal+'" placeholder="partner@gmail.com" /></div>'
+    + '<div class="form-group"><label>School</label><input type="text" id="inv2-school" value="'+(currentPlayer.school||'')+'" readonly style="opacity:0.6;cursor:not-allowed;" /></div>'
+    + '<div id="inv2-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div>'
+    + '<button class="btn-sm btn-gold" id="inv2-submit" data-mode="'+mode+'">'+btnLabel+'</button>';
 }
 
 async function submitPartnerInvite(mode, fromPage) {
@@ -718,21 +727,21 @@ async function submitPartnerInvite(mode, fromPage) {
     toast('Partner change request submitted — awaiting admin approval ✅');
   } else if (mode==='resend') {
     // Update partner details in case they changed, then resend
-    await sb.from('players').upsert({email:currentPlayer.email,partner_name:fullName,partner_mobile:fullMobile,partner_status:'has_partner'},{onConflict:'email'});
+    await sb.from('players').upsert({email:currentPlayer.email,partner_name:fullName,partner_mobile:fullMobile,partner_email:email||null,partner_status:'has_partner'},{onConflict:'email'});
     // Update or insert invitation record
     await sb.from('player_invitations').upsert({
       invited_mobile:fullMobile, invited_name:fullName,
       invited_email:email||null, school:currentPlayer.school,
       invited_by_mobile:currentPlayer.mobile, email:currentPlayer.email
     },{onConflict:'invited_mobile'});
-    currentPlayer.partner_name=fullName; currentPlayer.partner_mobile=fullMobile;
+    currentPlayer.partner_name=fullName; currentPlayer.partner_mobile=fullMobile; currentPlayer.partner_email=email||null;
     await sendInviteEmails({inviterName:currentPlayer.full_name, inviterEmail:currentPlayer.email, inviterSchool:currentPlayer.school, teamNumber:currentPlayer.team_number, partnerName:fullName, partnerEmail:email||null, partnerMobile:fullMobile});
     toast('Invite resent to '+fullName+' ✅');
   } else {
     // Fresh invite
-    await sb.from('players').upsert({email:currentPlayer.email,partner_name:fullName,partner_mobile:fullMobile,partner_status:'has_partner'},{onConflict:'email'});
+    await sb.from('players').upsert({email:currentPlayer.email,partner_name:fullName,partner_mobile:fullMobile,partner_email:email||null,partner_status:'has_partner'},{onConflict:'email'});
     await sb.from('player_invitations').insert({email:currentPlayer.email,invited_name:fullName,invited_mobile:fullMobile,invited_email:email||null,school:currentPlayer.school,invited_by_mobile:currentPlayer.mobile});
-    currentPlayer.partner_name=fullName; currentPlayer.partner_mobile=fullMobile; currentPlayer.partner_status='has_partner';
+    currentPlayer.partner_name=fullName; currentPlayer.partner_mobile=fullMobile; currentPlayer.partner_email=email||null; currentPlayer.partner_status='has_partner';
     await sendInviteEmails({inviterName:currentPlayer.full_name, inviterEmail:currentPlayer.email, inviterSchool:currentPlayer.school, teamNumber:currentPlayer.team_number, partnerName:fullName, partnerEmail:email||null, partnerMobile:fullMobile});
     toast('Partner invited successfully ✅');
   }
