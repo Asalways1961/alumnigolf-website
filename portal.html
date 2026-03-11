@@ -6,6 +6,7 @@
 <title>Alumni Golf — Player Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="email-service.js"></script>
 <style>
   :root {
     --gold: #C89B3C;
@@ -351,10 +352,15 @@ async function loadOverview() {
     <div class="stat-card"><div class="stat-label">Eligibility</div><div class="stat-value" style="color:${eligColor};font-size:16px;margin-top:10px;">${currentPlayer.eligibility_status||'pending'}</div><div class="stat-sub" style="margin-top:6px;">Admin verification</div></div>`;
   const ps = currentPlayer.partner_status;
   const partnerBlockEl = document.getElementById('partner-status-block');
-  if (ps==='has_partner'&&currentPlayer.partner_name) {
-    partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);"><div class="card-title">🤝 Your Partner</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+(currentPlayer.partner_mobile||'')+'</div><button class="btn-sm btn-outline" onclick="showSection(\'profile\')">Change Partner</button></div>';
-  } else if (ps==='invite_later') {
-    partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">⏳ Partner Not Yet Invited</div><div style="font-size:13px;color:var(--text2);margin-bottom:14px;">You chose to invite your partner later.</div><button class="btn-sm btn-gold" onclick="showSection(\'profile\')">📨 Invite Partner Now</button></div>';
+  if (ps==='has_partner' && currentPlayer.partner_name) {
+    const isPending = currentPlayer.partner_name.indexOf('(pending admin approval)') !== -1;
+    if (isPending) {
+      partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">⏳ Partner Change Pending</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name.replace(' (pending admin approval)','')+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+(currentPlayer.partner_mobile||'')+'</div><div style="font-size:12px;color:var(--gold);">Awaiting admin approval</div></div>';
+    } else {
+      partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);"><div class="card-title">🤝 Your Partner</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+(currentPlayer.partner_mobile||'')+'</div><div style="display:flex;gap:8px;"><button class="btn-sm btn-gold" onclick="showSection(\'profile\');loadPartnerPanel(\'resend\')">📨 Resend Invite</button><button class="btn-sm btn-outline" onclick="showSection(\'profile\');loadPartnerPanel(\'change\')">Change Partner</button></div></div>';
+    }
+  } else if (ps==='invite_later' || !ps) {
+    partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">⏳ Partner Not Yet Invited</div><div style="font-size:13px;color:var(--text2);margin-bottom:14px;">You haven\'t invited your partner yet.</div><button class="btn-sm btn-gold" onclick="showSection(\'profile\');loadPartnerPanel(\'invite\')">📨 Invite Partner Now</button></div>';
   } else if (ps==='need_partner') {
     partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">🔍 In the Player Pool</div><div style="font-size:13px;color:var(--text2);">You are in the player pool. We will notify you when we find a partner.</div></div>';
   } else { partnerBlockEl.innerHTML=''; }
@@ -449,9 +455,19 @@ function loadPartnerPanel(forceMode) {
   const ps = currentPlayer.partner_status;
   const el = document.getElementById('partner-panel-content');
   const title = document.getElementById('partner-panel-title');
-  if (forceMode==='invite'||ps==='invite_later') {
+  if (forceMode==='resend' || (ps==='has_partner' && currentPlayer.partner_name && forceMode!=='change')) {
+    title.textContent='📨 Resend Partner Invite';
+    el.innerHTML='<div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Partner: <strong style="color:var(--text)">'+(currentPlayer.partner_name||'—')+'</strong> &nbsp;('+(currentPlayer.partner_mobile||'—')+')</div>'+renderInviteForm('resend');
+    const prefillName = (currentPlayer.partner_name||'').split(' ');
+    const fnEl = document.getElementById('inv2-name');
+    const snEl = document.getElementById('inv2-surname');
+    const mobEl = document.getElementById('inv2-mobile');
+    if (fnEl) fnEl.value = prefillName[0]||'';
+    if (snEl) snEl.value = prefillName.slice(1).join(' ')||'';
+    if (mobEl) mobEl.value = (currentPlayer.partner_mobile||'').replace('+27','');
+  } else if (forceMode==='invite' || ps==='invite_later' || !ps) {
     title.textContent='📨 Invite Your Partner'; el.innerHTML=renderInviteForm('invite');
-  } else if (forceMode==='change'||(ps==='has_partner'&&currentPlayer.partner_name)) {
+  } else if (forceMode==='change') {
     title.textContent='🔄 Change Partner';
     el.innerHTML='<div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Current partner: <strong style="color:var(--text)">'+(currentPlayer.partner_name||'—')+'</strong> ('+(currentPlayer.partner_mobile||'—')+')</div><div style="background:rgba(229,57,53,0.08);border:1px solid rgba(229,57,53,0.3);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--red);margin-bottom:16px;">⚠️ Changing your partner requires admin approval.</div>'+renderInviteForm('change');
   } else if (ps==='need_partner') {
@@ -464,7 +480,8 @@ function loadPartnerPanel(forceMode) {
 }
 
 function renderInviteForm(mode) {
-  return '<div class="form-group"><label>Partner\'s First Name *</label><input type="text" id="inv2-name" placeholder="e.g. John" /></div><div class="form-group"><label>Partner\'s Surname *</label><input type="text" id="inv2-surname" placeholder="e.g. Smith" /></div><div class="form-group"><label>Partner\'s Mobile *</label><div style="display:flex;"><div style="padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-size:13px;font-weight:700;color:var(--text2);">+27</div><input type="tel" id="inv2-mobile" placeholder="821234567" maxlength="9" style="border-radius:0 10px 10px 0;border-left:none;" /></div></div><div class="form-group"><label>Partner\'s Email (optional)</label><input type="email" id="inv2-email" placeholder="partner@gmail.com" /></div><div class="form-group"><label>School</label><input type="text" id="inv2-school" value="'+(currentPlayer.school||'')+'" readonly style="opacity:0.6;cursor:not-allowed;" /></div><div id="inv2-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div><button class="btn-sm btn-gold" id="inv2-submit" data-mode="'+mode+'">'+(mode==='change'?'📨 Submit Change Request to Admin':'📨 Send Partner Invite')+'</button>';
+  const btnLabel = mode==='change' ? '📨 Submit Change Request to Admin' : mode==='resend' ? '📨 Resend Invite' : '📨 Send Partner Invite';
+  return '<div class="form-group"><label>Partner\'s First Name *</label><input type="text" id="inv2-name" placeholder="e.g. John" /></div><div class="form-group"><label>Partner\'s Surname *</label><input type="text" id="inv2-surname" placeholder="e.g. Smith" /></div><div class="form-group"><label>Partner\'s Mobile *</label><div style="display:flex;"><div style="padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-size:13px;font-weight:700;color:var(--text2);">+27</div><input type="tel" id="inv2-mobile" placeholder="821234567" maxlength="9" style="border-radius:0 10px 10px 0;border-left:none;" /></div></div><div class="form-group"><label>Partner\'s Email (optional)</label><input type="email" id="inv2-email" placeholder="partner@gmail.com" /></div><div class="form-group"><label>School</label><input type="text" id="inv2-school" value="'+(currentPlayer.school||'')+'" readonly style="opacity:0.6;cursor:not-allowed;" /></div><div id="inv2-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div><button class="btn-sm btn-gold" id="inv2-submit" data-mode="'+mode+'">'+btnLabel+'</button>';
 }
 
 async function submitPartnerInvite(mode) {
@@ -474,20 +491,51 @@ async function submitPartnerInvite(mode) {
   const email=(document.getElementById('inv2-email')?.value||'').trim();
   const errEl=document.getElementById('inv2-err');
   if (!name||!surname){errEl.textContent='Please enter partner name and surname.';errEl.style.display='block';return;}
-  if (!mobile||mobile.length!==9||!/^[678]/.test(mobile)){errEl.textContent='Enter a valid 9-digit mobile number.';errEl.style.display='block';return;}
+  if (!mobile||mobile.length!==9||!/^[0-9]{9}$/.test(mobile)){errEl.textContent='Enter a valid 9-digit mobile number.';errEl.style.display='block';return;}
   errEl.style.display='none';
   const fullName=name+' '+surname;
   const fullMobile='+27'+mobile;
+  const btn=document.getElementById('inv2-submit');
+  if (btn){btn.disabled=true;btn.textContent='Sending...';}
   if (mode==='change') {
     await sb.from('players').upsert({email:currentPlayer.email,partner_name:fullName+' (pending admin approval)',partner_mobile:fullMobile,partner_status:'has_partner'},{onConflict:'email'});
     toast('Partner change request submitted — awaiting admin approval ✅');
+  } else if (mode==='resend') {
+    // Update partner details in case they changed, then resend
+    await sb.from('players').upsert({email:currentPlayer.email,partner_name:fullName,partner_mobile:fullMobile,partner_status:'has_partner'},{onConflict:'email'});
+    // Update or insert invitation record
+    await sb.from('player_invitations').upsert({
+      invited_mobile:fullMobile, invited_name:fullName,
+      invited_email:email||null, school:currentPlayer.school,
+      invited_by_mobile:currentPlayer.mobile, email:currentPlayer.email
+    },{onConflict:'invited_mobile'});
+    currentPlayer.partner_name=fullName; currentPlayer.partner_mobile=fullMobile;
+    // Send invite email/SMS
+    if (window.EmailService) {
+      const inviteLink = window.location.origin+'/register.html?invite=1&mobile='+encodeURIComponent(fullMobile);
+      EmailService.sendPartnerInvitationEmail({inviterName:currentPlayer.full_name,inviterSchool:currentPlayer.school,teamNumber:currentPlayer.team_number,partnerEmail:currentPlayer.email,partnerName:fullName,inviteLink:inviteLink,isCaptainCopy:true});
+      if (email) { EmailService.sendPartnerInvitationEmail({inviterName:currentPlayer.full_name,inviterSchool:currentPlayer.school,teamNumber:currentPlayer.team_number,partnerEmail:email,partnerName:fullName,inviteLink:inviteLink}); }
+    }
+    toast('Invite resent to '+fullName+' ✅');
   } else {
+    // Fresh invite
     await sb.from('players').upsert({email:currentPlayer.email,partner_name:fullName,partner_mobile:fullMobile,partner_status:'has_partner'},{onConflict:'email'});
     await sb.from('player_invitations').insert({email:currentPlayer.email,invited_name:fullName,invited_mobile:fullMobile,invited_email:email||null,school:currentPlayer.school,invited_by_mobile:currentPlayer.mobile});
-    currentPlayer.partner_name=fullName;currentPlayer.partner_mobile=fullMobile;currentPlayer.partner_status='has_partner';
+    currentPlayer.partner_name=fullName; currentPlayer.partner_mobile=fullMobile; currentPlayer.partner_status='has_partner';
+    // Send invite email/SMS
+    if (window.EmailService) {
+      const inviteLink = window.location.origin+'/register.html?invite=1&mobile='+encodeURIComponent(fullMobile);
+      EmailService.sendPartnerInvitationEmail({inviterName:currentPlayer.full_name,inviterSchool:currentPlayer.school,teamNumber:currentPlayer.team_number,partnerEmail:currentPlayer.email,partnerName:fullName,inviteLink:inviteLink,isCaptainCopy:true});
+      if (email) { EmailService.sendPartnerInvitationEmail({inviterName:currentPlayer.full_name,inviterSchool:currentPlayer.school,teamNumber:currentPlayer.team_number,partnerEmail:email,partnerName:fullName,inviteLink:inviteLink}); }
+    }
     toast('Partner invited successfully ✅');
   }
   loadPartnerPanel();
+  // Refresh dashboard partner block
+  const psBlock = document.getElementById('partner-status-block');
+  if (psBlock && mode!=='change') {
+    psBlock.innerHTML='<div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);"><div class="card-title">🤝 Your Partner</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+fullName+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+fullMobile+'</div><div style="display:flex;gap:8px;"><button class="btn-sm btn-gold" onclick="showSection(\'profile\');loadPartnerPanel(\'resend\')">📨 Resend Invite</button><button class="btn-sm btn-outline" onclick="showSection(\'profile\');loadPartnerPanel(\'change\')">Change Partner</button></div></div>';
+  }
 }
 
 async function saveProfile() {
