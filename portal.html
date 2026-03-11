@@ -270,7 +270,8 @@ async function sendInviteEmails({ inviterName, inviterEmail, inviterSchool, team
         headers:{'Content-Type':'application/json','Authorization':'Bearer '+ANON_KEY},
         body: JSON.stringify({ from:'Alumni Golf <noreply@alumnigolf.net>', to, subject, html })
       });
-      const body = await res.text();
+      await res.text();
+    } catch(e) { /* silent fail */ }
   }
 
   const infoBox = `<div style="background:#f8f6f0;border-left:3px solid #C89B3C;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
