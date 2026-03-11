@@ -661,7 +661,7 @@
       <span class="modal-close" onclick="closeModal('modal-import')">✕</span>
     </div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">
-      CSV must have headers: <strong>full_name, email, school_name, year_of_matriculation, id_number</strong>
+      CSV must have headers: <strong>full_name, email, school_name, id_number</strong>
     </p>
     <div class="dropzone" id="dropzone" onclick="document.getElementById('csv-file').click()">
       <div class="icon">📁</div>
@@ -1224,7 +1224,7 @@ function exportToCSV(data, filename) {
 }
 
 async function exportPlayers() {
-  const { data } = await sb.from('players').select('full_name,email,school,team_number,payment_status,eligibility_status,year_of_matriculation').order('full_name');
+  const { data } = await sb.from('players').select('full_name,email,school,team_number,payment_status,eligibility_status').order('full_name');
   exportToCSV(data||[], 'AlumniGolf_Players.xlsx');
 }
 
@@ -1279,7 +1279,6 @@ async function confirmImport() {
       full_name: row.full_name||row['Full Name']||'',
       email: (row.email||row['Email']||'').toLowerCase().trim(),
       school: row.school_name||row['School']||'',
-      year_of_matriculation: row.year_of_matriculation||row['Matric Year']||null,
       id_number: row.id_number||row['ID Number']||null,
       eligibility_status: 'pending',
       payment_status: 'unpaid',
