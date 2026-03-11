@@ -694,7 +694,7 @@ function loadPartnerPanel(forceMode) {
 
 function renderInviteForm(mode) {
   const btnLabel = mode==='change' ? '📨 Submit Change Request to Admin' : mode==='resend' ? '📨 Resend Invite' : '📨 Send Partner Invite';
-  return '<div class="form-group"><label>Partner\'s First Name *</label><input type="text" id="inv2-name" placeholder="e.g. John" /></div><div class="form-group"><label>Partner\'s Surname *</label><input type="text" id="inv2-surname" placeholder="e.g. Smith" /></div><div class="form-group"><label>Partner\'s Mobile *</label><div style="display:flex;"><div style="padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-size:13px;font-weight:700;color:var(--text2);">+27</div><input type="tel" id="inv2-mobile" placeholder="821234567" maxlength="9" style="border-radius:0 10px 10px 0;border-left:none;" /></div></div><div class="form-group"><label>Partner\'s Email (optional)</label><input type="email" id="inv2-email" placeholder="partner@gmail.com" /></div><div class="form-group"><label>School</label><input type="text" id="inv2-school" value="'+(currentPlayer.school||'')+'" readonly style="opacity:0.6;cursor:not-allowed;" /></div><div id="inv2-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div><button class="btn-sm btn-gold" id="inv2-submit" data-mode="'+mode+'">'+btnLabel+'</button>';
+  return '<div class="form-group"><label>Partner\'s First Name *</label><input type="text" id="inv2-name" placeholder="e.g. John" /></div><div class="form-group"><label>Partner\'s Surname *</label><input type="text" id="inv2-surname" placeholder="e.g. Smith" /></div><div class="form-group"><label>Partner\'s Mobile *</label><div style="display:flex;"><div style="padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-right:none;border-radius:10px 0 0 10px;font-size:13px;font-weight:700;color:var(--text2);">+27</div><input type="tel" id="inv2-mobile" placeholder="821234567" maxlength="9" style="border-radius:0 10px 10px 0;border-left:none;" /></div></div><div class="form-group"><label>Partner\'s Email *</label><input type="email" id="inv2-email" placeholder="partner@gmail.com" /></div><div class="form-group"><label>School</label><input type="text" id="inv2-school" value="'+(currentPlayer.school||'')+'" readonly style="opacity:0.6;cursor:not-allowed;" /></div><div id="inv2-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div><button class="btn-sm btn-gold" id="inv2-submit" data-mode="'+mode+'">'+btnLabel+'</button>';
 }
 
 async function submitPartnerInvite(mode, fromPage) {
@@ -705,6 +705,7 @@ async function submitPartnerInvite(mode, fromPage) {
   const errEl=document.getElementById('inv2-err');
   if (!name||!surname){errEl.textContent='Please enter partner name and surname.';errEl.style.display='block';return;}
   if (!mobile||mobile.length!==9||!/^[0-9]{9}$/.test(mobile)){errEl.textContent='Enter a valid 9-digit mobile number.';errEl.style.display='block';return;}
+  if (mode!=='change' && (!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))){errEl.textContent='Please enter your partner\'s email address so we can send them the invite.';errEl.style.display='block';return;}
   errEl.style.display='none';
   const fullName=name+' '+surname;
   const fullMobile='+27'+mobile;
