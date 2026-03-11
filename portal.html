@@ -413,9 +413,9 @@ async function loadOverview() {
   const ps = currentPlayer.partner_status;
   const partnerBlockEl = document.getElementById('partner-status-block');
   if ((ps==='has_partner' || ps==='pending' || ps==='complete')) {
-    const isPending = currentPlayer.partner_name.indexOf('(pending admin approval)') !== -1;
+    const isPending = (currentPlayer.partner_name||'').indexOf('(pending admin approval)') !== -1;
     if (isPending) {
-      partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">⏳ Partner Change Pending</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name.replace(' (pending admin approval)','')+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+(currentPlayer.partner_mobile||'')+'</div><div style="font-size:12px;color:var(--gold);">Awaiting admin approval</div></div>';
+      partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--gold);"><div class="card-title">⏳ Partner Change Pending</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+(currentPlayer.partner_name||'').replace(' (pending admin approval)','')+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+(currentPlayer.partner_mobile||'')+'</div><div style="font-size:12px;color:var(--gold);">Awaiting admin approval</div></div>';
     } else {
       partnerBlockEl.innerHTML = '<div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);"><div class="card-title">🤝 Your Partner</div><div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+currentPlayer.partner_name+'</div><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">'+(currentPlayer.partner_mobile||'')+'</div><div style="display:flex;gap:8px;"><button class="btn-sm btn-gold" onclick="showSection(\'partner\')">📨 Resend Invite</button><button class="btn-sm btn-outline" onclick="showSection(\'partner\')">Change Partner</button></div></div>';
     }
@@ -586,13 +586,13 @@ function loadPartnerPage() {
   const title = document.getElementById('partner-page-title');
 
   if ((ps==='has_partner' || ps==='pending' || ps==='complete')) {
-    const isPending = currentPlayer.partner_name.indexOf('(pending admin approval)') !== -1;
+    const isPending = (currentPlayer.partner_name||'').indexOf('(pending admin approval)') !== -1;
     if (isPending) {
       title.textContent = '⏳ Partner Change Pending';
       el.innerHTML = ''
         + '<div style="background:rgba(200,155,60,0.1);border:1px solid var(--gold);border-radius:10px;padding:16px;margin-bottom:20px;">'
         + '<div style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;">⏳ Awaiting Admin Approval</div>'
-        + '<div style="font-size:13px;color:var(--text2);">Your partner change request for <strong style="color:var(--text)">'+currentPlayer.partner_name.replace(' (pending admin approval)','')+'</strong> is being reviewed.</div>'
+        + '<div style="font-size:13px;color:var(--text2);">Your partner change request for <strong style="color:var(--text)">'+(currentPlayer.partner_name||'').replace(' (pending admin approval)','')+'</strong> is being reviewed.</div>'
         + '</div>';
     } else {
       title.textContent = '🤝 My Partner';
