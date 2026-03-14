@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete Payment — Alumni Schools Golf Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--navy:#0A1F44;--navy-dark:#0A1F44;--gold:#C89B3C;--gold-dim:rgba(200,155,60,0.15);--white:#fff;--off-white:#F4E7C6;--text:#0A1F44;--text2:#555;--border:rgba(27,58,107,0.12);--green:#1B4D2E;--red:#c0392b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);min-height:100vh;}
+nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:70px;border-bottom:2px solid var(--gold);}
+.nav-logo span{font-family:'Cormorant Garamond',serif;color:white;font-size:20px;font-weight:600;}
+.nav-links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:500;margin-left:28px;}
+.nav-links a:hover{color:var(--gold);}
+.hero{background:linear-gradient(135deg,var(--navy-dark),var(--navy));padding:50px 20px;text-align:center;}
+.hero h1{font-family:'Cormorant Garamond',serif;color:white;font-size:40px;font-weight:700;margin-bottom:8px;}
+.gold-line{width:60px;height:3px;background:var(--gold);margin:14px auto;border-radius:2px;}
+.main{max-width:640px;margin:0 auto;padding:40px 20px 80px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 4px 20px rgba(27,58,107,0.08);margin-bottom:20px;}
+.card h2{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--navy);margin-bottom:6px;}
+.card p{font-size:14px;color:var(--text2);margin-bottom:20px;}
+.payment-options{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0;}
+.payment-option{border:2px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all 0.2s;text-align:center;background:var(--white);}
+.payment-option:hover{border-color:var(--gold);transform:translateY(-2px);}
+.payment-option.selected{border-color:var(--navy);background:rgba(27,58,107,0.04);}
+.payment-option .price{font-size:26px;font-weight:700;color:var(--gold);margin:8px 0;}
+.payment-option h3{font-size:15px;font-weight:700;color:var(--navy);}
+.payment-option .save{font-size:11px;color:var(--green);font-weight:700;}
+.payment-option p{font-size:12px;color:var(--text2);}
+.banking-details{background:var(--navy-dark);border-radius:12px;padding:24px;margin:20px 0;}
+.banking-details h3{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;}
+.banking-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);}
+.banking-row:last-child{border-bottom:none;}
+.banking-row .label{color:rgba(255,255,255,0.5);font-size:12px;}
+.banking-row .value{color:white;font-size:13px;font-weight:600;}
+.copy-btn{background:rgba(200,155,60,0.2);border:1px solid var(--gold);color:var(--gold);padding:3px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--navy);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.form-group input{width:100%;padding:12px 16px;background:var(--off-white);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color 0.2s;}
+.form-group input:focus{outline:none;border-color:var(--gold);}
+.upload-area{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:border-color 0.2s;}
+.upload-area:hover{border-color:var(--gold);}
+.upload-area p{color:var(--text2);font-size:13px;margin-top:8px;}
+.btn-primary{width:100%;padding:15px;background:var(--gold);color:var(--navy-dark);border:none;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;}
+.btn-primary:hover{opacity:0.9;}
+.alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;}
+.alert-error{background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:var(--red);}
+.success-box{text-align:center;padding:20px;}
+.success-box .icon{font-size:56px;margin-bottom:16px;}
+.success-box h2{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--navy);margin-bottom:10px;}
+.success-box p{color:var(--text2);font-size:14px;line-height:1.6;}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(0,0,0,0.15);border-top-color:var(--navy-dark);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+footer{background:var(--navy-dark);color:rgba(255,255,255,0.5);text-align:center;padding:24px;font-size:12px;border-top:2px solid var(--gold);}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="home.html" style="text-decoration:none;display:flex;align-items:center;gap:12px;">
+    <img src="/Full_Logo.jpg" alt="Alumni Schools Golf Challenge" style="height:44px;width:auto;object-fit:contain;"><span style="font-family:'Cormorant Garamond',serif;color:white;font-size:18px;font-weight:600;">Alumni Schools Golf Challenge</span>
+  </a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="schools.html">Schools</a>
+    <a href="divisions.html">Divisions</a>
+    <a href="register.html">Register</a>
+    <a href="supporter.html">Follow a School</a>
+    <a href="contact.html">Contact</a>
+    <a href="portal.html">Login</a>
+  </div>
+</nav>
+<div class="hero">
+  <h1>Complete Your Payment</h1>
+  <div class="gold-line"></div>
+  <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,26px);color:rgba(255,255,255,0.9);font-style:italic;font-weight:600;letter-spacing:1px;margin-bottom:10px;">Honouring tradition. Celebrating excellence.</p>
+  <div style="width:180px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 12px;"></div>
+  <p>Your spot is reserved — secure it now with your entry fee</p>
+</div>
+<div class="main">
+  <div id="main-content">
+    <div class="card" id="player-info-card" style="display:none;">
+      <h2>👋 Welcome back, <span id="player-greeting">Player</span>!</h2>
+      <p>Your registration is confirmed. Complete your payment below to officially enter the tournament.</p>
+    </div>
+    <div class="card">
+      <h2>Entry Fee Payment</h2>
+      <p>Choose your payment option below:</p>
+      <div id="pay-error" class="alert alert-error" style="display:none;"></div>
+      <div class="payment-options">
+        <div class="payment-option" id="opt-self">
+          <h3>👤 Pay for Myself</h3>
+          <div class="price">R1,500</div>
+          <p>Your entry only</p>
+        </div>
+        <div class="payment-option" id="opt-team">
+          <h3>👥 Pay for Team</h3>
+          <div class="price">R2,800</div>
+          <div class="save">💰 Save R200!</div>
+          <p>Both players covered</p>
+        </div>
+      </div>
+      <div id="banking-section" style="display:none;">
+        <div class="banking-details">
+          <h3>💳 EFT Banking Details</h3>
+          <div class="banking-row"><span class="label">Account Name</span><span class="value">LEGACY EVENT VENTURES (PTY) LTD</span></div>
+          <div class="banking-row"><span class="label">Bank</span><span class="value">FNB — Cape Gate</span></div>
+          <div class="banking-row">
+            <span class="label">Account Number</span>
+            <span class="value">63192217123</span>
+            <button class="copy-btn" id="copy-acc">Copy</button>
+          </div>
+          <div class="banking-row"><span class="label">Branch Code</span><span class="value">251945</span></div>
+          <div class="banking-row"><span class="label">Swift</span><span class="value">FIRNZAJJ</span></div>
+          <div class="banking-row">
+            <span class="label">Reference</span>
+            <span class="value" id="pay-ref">—</span>
+            <button class="copy-btn" id="copy-ref">Copy</button>
+          </div>
+          <div class="banking-row"><span class="label">Amount</span><span class="value" id="pay-amount" style="color:var(--gold);font-size:18px;">—</span></div>
+        </div>
+        <div class="form-group">
+          <label>Your Email Address <span style="color:var(--gold)">*</span></label>
+          <input type="email" id="pay-email" placeholder="your@email.com" />
+        </div>
+        <div class="form-group">
+          <label>Upload Proof of Payment <span style="color:var(--gold)">*</span></label>
+          <div class="upload-area" id="upload-area">
+            <div style="font-size:28px;">📎</div>
+            <p>Click to upload your proof of payment</p>
+            <p>(PDF, JPG or PNG)</p>
+            <p id="pay-pop-name" style="color:var(--navy);font-weight:600;margin-top:6px;"></p>
+          </div>
+          <input type="file" id="pay-pop" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" />
+        </div>
+        <button class="btn-primary" id="btn-pay-submit" style="display:none;">✅ Submit Proof of Payment</button>
+      </div>
+    </div>
+    <div id="success-card" class="card" style="display:none;">
+      <div class="success-box">
+        <div class="icon">🏆</div>
+        <h2>Payment Submitted!</h2>
+        <p>Thank you — we have received your proof of payment. We will verify it and officially confirm your entry shortly.</p>
+        <a href="portal.html" style="display:inline-block;margin-top:20px;background:var(--gold);color:var(--navy-dark);padding:14px 32px;border-radius:10px;font-weight:700;text-decoration:none;">Go to My Portal</a>
+      </div>
+    </div>
+  </div>
+</div>
+<footer><p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#98f1f6fef7d8f9f4edf5f6f1fff7f4feb6fbf7b6e2f9"><span class="__cf_email__" data-cfemail="1b72757d745b7a776e7675727c74777d35787435617a">[email&#160;protected]</span></a></p></footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const SUPABASE_URL='https://weztrzuxwycypheyiixr.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+const {createClient}=supabase;const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+let selectedAmount=null;
+
+document.getElementById('opt-self').addEventListener('click', function(){ selectAmount('self'); });
+document.getElementById('opt-team').addEventListener('click', function(){ selectAmount('team'); });
+document.getElementById('upload-area').addEventListener('click', function(){ document.getElementById('pay-pop').click(); });
+document.getElementById('pay-pop').addEventListener('change', function(){
+  if(this.files[0]){
+    document.getElementById('pay-pop-name').textContent='✅ '+this.files[0].name;
+    document.getElementById('btn-pay-submit').style.display='block';
+  }
+});
+document.getElementById('btn-pay-submit').addEventListener('click', submitPayment);
+document.getElementById('copy-acc').addEventListener('click', function(){ copyText('63192217123', this); });
+document.getElementById('copy-ref').addEventListener('click', function(){ copyText(document.getElementById('pay-ref').textContent, this); });
+
+sb.auth.getSession().then(({data:{session}})=>{
+  if(session){
+    document.getElementById('pay-email').value=session.user.email;
+    sb.from('players').select('full_name,team_number').eq('email',session.user.email).maybeSingle().then(({data})=>{
+      if(data){
+        document.getElementById('player-greeting').textContent=data.full_name||'Player';
+        document.getElementById('player-info-card').style.display='block';
+        const ref='ASC-'+(data.team_number||session.user.email.split('@')[0]).substring(0,6).toUpperCase();
+        document.getElementById('pay-ref').textContent=ref;
+      }
+    });
+  }
+});
+
+function selectAmount(type){
+  selectedAmount=type;
+  document.getElementById('opt-self').classList.toggle('selected',type==='self');
+  document.getElementById('opt-team').classList.toggle('selected',type==='team');
+  document.getElementById('pay-amount').textContent=type==='team'?'R2,800.00':'R1,500.00';
+  if(!document.getElementById('pay-ref').textContent||document.getElementById('pay-ref').textContent==='—'){
+    document.getElementById('pay-ref').textContent='ASC-'+Date.now().toString().slice(-6);
+  }
+  document.getElementById('banking-section').style.display='block';
+}
+
+function copyText(text,btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig=btn?btn.textContent:'';
+    if(btn){btn.textContent='Copied!';setTimeout(()=>btn.textContent=orig,2000);}
+  });
+}
+
+async function submitPayment(){
+  const email=document.getElementById('pay-email').value.trim().toLowerCase();
+  const file=document.getElementById('pay-pop').files[0];
+  const err=document.getElementById('pay-error');
+  err.style.display='none';
+  if(!email||!email.includes('@')){err.textContent='Please enter your email address.';err.style.display='block';return;}
+  if(!file){err.textContent='Please upload your proof of payment.';err.style.display='block';return;}
+  if(!selectedAmount){err.textContent='Please select a payment amount.';err.style.display='block';return;}
+  const btn=document.getElementById('btn-pay-submit');
+  btn.innerHTML='<span class="spinner"></span>Uploading...';btn.disabled=true;
+  try{
+    const ext=file.name.split('.').pop();
+    const fileName='pop/'+email+'-'+Date.now()+'.'+ext;
+    await sb.storage.from('proofs').upload(fileName,file,{upsert:true});
+    const popUrl=SUPABASE_URL+'/storage/v1/object/public/proofs/'+fileName;
+    await sb.from('players').update({
+      payment_status:'pending_verification',
+      payment_proof_url:popUrl,
+      payment_amount:selectedAmount==='team'?2800:1500,
+    }).eq('email',email);
+    document.querySelectorAll('.card:not(#success-card)').forEach(c=>c.style.display='none');
+    doc
