@@ -608,9 +608,6 @@ async function loadMyMatches() {
     const venue = sched?.venue || '';
     const tee = sched?.tee_time || '';
 
-    const myPlayers = getTeamPlayers(m.home_team);
-    const oppPlayers = getTeamPlayers(m.away_team);
-
     const renderTeamPlayers = (teamPlayers, teamNum, isMyTeam) => {
       if (!teamPlayers.length) return '<div style="color:var(--text3);font-size:12px;">Player details loading...</div>';
       return teamPlayers.map(p => `
@@ -650,11 +647,11 @@ async function loadMyMatches() {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
         <div style="background:var(--bg2);border-radius:8px;padding:10px 12px;">
           <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">${m.home_team}</div>
-          ${renderTeamPlayers(myPlayers.length ? myPlayers : getTeamPlayers(m.home_team), m.home_team, m.home_team===currentPlayer.team_number)}
+          ${renderTeamPlayers(getTeamPlayers(m.home_team), m.home_team, m.home_team===currentPlayer.team_number)}
         </div>
         <div style="background:var(--bg2);border-radius:8px;padding:10px 12px;">
           <div style="font-size:11px;color:var(--text2);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">${m.away_team}</div>
-          ${renderTeamPlayers(oppPlayers.length ? oppPlayers : getTeamPlayers(m.away_team), m.away_team, m.away_team===currentPlayer.team_number)}
+          ${renderTeamPlayers(getTeamPlayers(m.away_team), m.away_team, m.away_team===currentPlayer.team_number)}
         </div>
       </div>
 
