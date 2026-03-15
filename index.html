@@ -2034,32 +2034,32 @@ async function sendTestEmail(type) {
     testBody = testBody.replaceAll(key, value);
   }
   
-  // Send via Edge Function
-  toast('Sending test email...', 'info');
-  
-  try {
-    const response = await fetch('https://weztrzuxwycypheyiixr.supabase.co/functions/v1/send-test-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        to: currentAdmin?.email || 'admin@alumnigolf.co.za',
-        subject: '[TEST] ' + subject,
-        html: testBody,
-      }),
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      toast('Test email sent to ' + (currentAdmin?.email || 'admin@alumnigolf.co.za') + ' ✅');
-    } else {
-      toast('Error sending test email: ' + result.error, 'error');
-    }
-  } catch (error) {
-    toast('Error sending test email: ' + error.message, 'error');
+  let testSubject = subject;
+  for (const [key, value] of Object.entries(sampleVars)) {
+    testSubject = testSubject.replaceAll(key, value);
   }
+  
+  // Show preview (same as preview button but with different messaging)
+  showModal('📧 Test Email Preview', `
+    <div style="margin-bottom:16px;padding:12px;background:var(--bg2);border-radius:4px;">
+      <strong style="color:var(--text);">This email would be sent to:</strong> ${currentAdmin?.email || 'admin@alumnigolf.co.za'}
+    </div>
+    <div style="margin-bottom:16px;">
+      <strong style="color:var(--text);">Subject:</strong><br>
+      <div style="padding:8px;background:var(--bg2);border-radius:4px;margin-top:4px;font-size:13px;color:var(--text);">[TEST] ${testSubject}</div>
+    </div>
+    <div>
+      <strong style="color:var(--text);">Email Body:</strong><br>
+      <div style="padding:12px;background:white;border:1px solid var(--border);border-radius:4px;margin-top:4px;max-height:400px;overflow-y:auto;color:#0A1F44;">
+        ${testBody}
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:12px;">
+      ✅ This preview shows exactly what the real email will look like with sample data
+    </div>
+  `);
+  
+  toast('Test email preview ready! ✅');
 }
 
 async function checkSMSCredits() {
