@@ -176,6 +176,7 @@
         <div class="nav-item" onclick="showSection('statistics')"><span class="icon">📉</span>Statistics</div>
         <div class="nav-item" onclick="showSection('sponsors')"><span class="icon">🤝</span>Sponsors</div>
         <div class="nav-item" onclick="showSection('partnerchanges')"><span class="icon">🔄</span>Partner Changes</div>
+        <div class="nav-item" onclick="showSection('suggestions')"><span class="icon">💡</span>Suggestions</div>
       </nav>
       <div class="sidebar-footer">
         <div class="theme-toggle" onclick="toggleTheme()">
@@ -271,7 +272,25 @@
         <section class="section" id="sec-statistics">
           <div id="stats-content"><div class="loading"><div class="spinner"></div></div></div>
         </section>
-        <section class="section" id="sec-partnerchanges">
+        <section class="section" id="sec-suggestions">
+          <div class="toolbar"><button class="btn-sm btn-outline" onclick="loadSuggestions()">Refresh</button></div>
+          <div class="two-col">
+            <div class="card">
+              <div class="card-title">Pending Schools (add to master list)</div>
+              <div id="sugg-schools-list"><div class="loading"><div class="spinner"></div></div></div>
+            </div>
+            <div class="card">
+              <div class="card-title">Pending Golf Clubs (add to master list)</div>
+              <div id="sugg-clubs-list"><div class="loading"><div class="spinner"></div></div></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:20px;">
+            <div class="card-title">Past Suggestions</div>
+            <div id="sugg-past-list"><div class="loading"><div class="spinner"></div></div></div>
+          </div>
+        </section>
+
+                <section class="section" id="sec-partnerchanges">
           <div class="toolbar"><button class="btn-sm btn-outline" onclick="loadPartnerChanges()">Refresh</button></div>
           <div class="card">
             <div class="card-title">Partner Change Requests</div>
@@ -367,7 +386,7 @@ async function doLogin(){
 
 async function doLogout(){await sb.auth.signOut();currentAdmin=null;document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';}
 
-const sectionTitles={dashboard:'Dashboard',players:'Players',divisions:'Divisions',matches:'Matches',payments:'Payments',community:'Community',reports:'Reports',statistics:'Statistics',sponsors:'Sponsors',partnerchanges:'Partner Changes'};
+const sectionTitles={dashboard:'Dashboard',players:'Players',divisions:'Divisions',matches:'Matches',payments:'Payments',community:'Community',reports:'Reports',statistics:'Statistics',sponsors:'Sponsors',partnerchanges:'Partner Changes',suggestions:'School & Club Suggestions'};
 function showSection(name){
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
@@ -383,6 +402,7 @@ function showSection(name){
   if(name==='statistics')loadStatistics();
   if(name==='sponsors')loadSponsors();
   if(name==='partnerchanges')loadPartnerChanges();
+  if(name==='suggestions')loadSuggestions();
 }
 
 async function loadDashboard(){
@@ -560,6 +580,98 @@ async function rejectPartnerChange(id,playerEmail){
   await sb.from('partner_change_requests').update({status:'rejected',reviewed_at:new Date().toISOString(),reviewed_by:currentAdmin?currentAdmin.email:'admin'}).eq('id',id);
   toast('Partner change rejected');
   loadPartnerChanges();
+}
+
+
+async function loadSuggestions() {
+  const { data } = await sb.from('suggestions').select('*').order('created_at', { ascending: false });
+  if (!data) return;
+
+  const pending_schools = data.filter(function(s){ return s.status === 'pending' && s.type === 'school'; });
+  const pending_clubs   = data.filter(function(s){ return s.status === 'pending' && s.type === 'golf_club'; });
+  const past            = data.filter(function(s){ return s.status !== 'pending'; });
+
+  // Deduplicate pending by name
+  function dedupe(arr) {
+    var seen = {};
+    return arr.filter(function(s) {
+      var key = s.suggested_name.toLowerCase().trim();
+      if (seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
+
+  function renderPending(arr, containerId, type) {
+    var el = document.getElementById(containerId);
+    var unique = dedupe(arr);
+    if (unique.length === 0) {
+      el.innerHTML = '<p style="color:var(--text3);font-size:13px;padding:8px 0;">No pending suggestions</p>';
+      return;
+    }
+    el.innerHTML = unique.map(function(s) {
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);">'
+        + '<div>'
+        + '<div style="font-weight:600;font-size:14px;">' + s.suggested_name + '</div>'
+        + '<div style="font-size:11px;color:var(--text3);margin-top:2px;">Suggested by: ' + s.suggested_by_email + '</div>'
+        + '<div style="font-size:11px;color:var(--text3);">' + new Date(s.created_at).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}) + '</div>'
+        + '</div>'
+        + '<div style="display:flex;gap:8px;">'
+        + '<button class="btn-sm btn-gold" onclick="approveSuggestion(this.dataset.id,this.dataset.name,this.dataset.type)" data-id="' + s.id + '" data-name="' + s.suggested_name.replace(/"/g,'&quot;') + '" data-type="' + type + '">Approve</button>'
+        + '<button class="btn-sm btn-red" onclick="rejectSuggestion(this.dataset.id)" data-id="' + s.id + '">Reject</button>'
+        + '</div></div>';
+    }).join('');
+  }
+
+  renderPending(pending_schools, 'sugg-schools-list', 'school');
+  renderPending(pending_clubs,   'sugg-clubs-list',   'golf_club');
+
+  var pastEl = document.getElementById('sugg-past-list');
+  if (past.length === 0) {
+    pastEl.innerHTML = '<p style="color:var(--text3);font-size:13px;">No past suggestions yet</p>';
+  } else {
+    pastEl.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Type</th><th>Name</th><th>Suggested By</th><th>Status</th><th>Date</th></tr></thead><tbody>'
+      + past.map(function(s) {
+          return '<tr><td>' + (s.type === 'school' ? 'School' : 'Golf Club') + '</td>'
+            + '<td style="font-weight:600;">' + s.suggested_name + '</td>'
+            + '<td style="color:var(--text2);">' + s.suggested_by_email + '</td>'
+            + '<td><span class="badge ' + (s.status === 'approved' ? 'badge-green' : 'badge-red') + '">' + s.status + '</span></td>'
+            + '<td style="color:var(--text3);">' + new Date(s.created_at).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}) + '</td></tr>';
+        }).join('')
+      + '</tbody></table></div>';
+  }
+}
+
+async function approveSuggestion(id, name, type) {
+  if (!confirm('Approve and add "' + name + '" to the ' + (type === 'school' ? 'schools' : 'golf clubs') + ' list?')) return;
+
+  var table = type === 'school' ? 'schools' : 'golf_clubs';
+
+  // Check if already exists
+  var { data: existing } = await sb.from(table).select('id').ilike('name', name);
+  if (existing && existing.length > 0) {
+    toast('Already exists in the ' + table + ' list - marking approved');
+  } else {
+    // Insert into master table
+    var { error: insertError } = await sb.from(table).insert({ name: name });
+    if (insertError) { toast('Error adding to list: ' + insertError.message, 'error'); return; }
+  }
+
+  // Mark ALL suggestions with same name and type as approved
+  await sb.from('suggestions')
+    .update({ status: 'approved' })
+    .eq('type', type)
+    .ilike('suggested_name', name);
+
+  toast('"' + name + '" approved and added to the list');
+  loadSuggestions();
+}
+
+async function rejectSuggestion(id) {
+  if (!confirm('Reject this suggestion?')) return;
+  await sb.from('suggestions').update({ status: 'rejected' }).eq('id', id);
+  toast('Suggestion rejected');
+  loadSuggestions();
 }
 
 sb.auth.getSession().then(function(res){var session=res.data.session;if(session){sb.from('players').select('*').eq('email',session.user.email).maybeSingle().then(function(res2){var data=res2.data;if(data&&data.is_admin){currentAdmin=data;document.getElementById('login-screen').style.display='none';document.getElementById('app').style.display='block';loadDashboard();}});}});
