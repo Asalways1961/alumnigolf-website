@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Alumni Schools Golf Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --navy:#1B3A6B;--gold:#C89B3C;--white:#fff;
+  --off-white:#ffffff;--text:#ffffff;--text2:#aaaaaa;
+  --border:rgba(255,255,255,0.1);--green:#1B4D2E;--red:#c0392b;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#1B3A6B;color:var(--text);}
+nav{background:var(--navy);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:70px;border-bottom:2px solid var(--gold);}
+.nav-links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:500;margin-left:28px;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);}
+.nav-cta{background:var(--gold);color:var(--navy);padding:9px 22px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;}
+.hero{background:linear-gradient(135deg,#0A1F44,#0A2050);padding:60px 20px;text-align:center;}
+.hero h1{font-family:'Cormorant Garamond',serif;color:white;font-size:48px;font-weight:700;margin-bottom:12px;}
+.gold-line{width:60px;height:3px;background:var(--gold);margin:16px auto;border-radius:2px;}
+.tagline{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,24px);color:rgba(255,255,255,0.9);font-style:italic;font-weight:600;letter-spacing:1px;margin-bottom:8px;}
+.tagline-rule{width:180px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 14px;}
+.hero p{color:rgba(255,255,255,0.65);font-size:16px;}
+.main{max-width:820px;margin:0 auto;padding:48px 20px 80px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+@media(max-width:640px){.two-col{grid-template-columns:1fr;}}
+.card{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,0.4);}
+.card h2{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);margin-bottom:20px;}
+.info-item{display:flex;gap:14px;align-items:flex-start;margin-bottom:20px;}
+.info-icon{width:40px;height:40px;background:rgba(200,155,60,0.2);border:1px solid var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.info-item h4{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:3px;}
+.info-item p{font-size:13px;color:var(--text2);}
+.info-item a{color:var(--gold);font-weight:600;text-decoration:none;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;background:rgba(255,255,255,0.08);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color 0.2s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--gold);}
+.form-group textarea{min-height:120px;resize:vertical;}
+.ferr{color:var(--red);font-size:12px;margin-top:4px;display:none;}
+.ferr.show{display:block;}
+.mob-wrap{display:flex;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:rgba(255,255,255,0.08);transition:border-color 0.2s;}
+.mob-wrap:focus-within{border-color:var(--gold);}
+.mob-wrap.mob-err{border-color:var(--red);}
+.mob-pre{background:rgba(200,155,60,0.15);padding:12px 14px;font-size:14px;font-weight:600;color:var(--gold);border-right:1.5px solid var(--border);white-space:nowrap;}
+.mob-wrap input{border:none;border-radius:0;flex:1;padding:12px 14px;font-size:14px;font-family:'DM Sans',sans-serif;background:transparent;color:var(--text);}
+.mob-wrap input:focus{outline:none;}
+.btn-submit{width:100%;padding:14px;background:var(--gold);color:var(--navy);border:none;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s;margin-top:4px;}
+.btn-submit:hover{opacity:0.88;}
+.btn-submit:disabled{opacity:0.55;cursor:not-allowed;}
+.success-box{background:rgba(27,77,46,0.1);border:1px solid rgba(27,77,46,0.3);color:var(--green);padding:16px;border-radius:10px;font-size:14px;line-height:1.7;margin-top:14px;display:none;}
+.error-box{background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.3);color:var(--red);padding:14px;border-radius:10px;font-size:13px;margin-top:12px;display:none;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;}
+.hamburger span{width:25px;height:3px;background:var(--gold);border-radius:2px;}
+@media(max-width:968px){
+  nav{padding:0 20px;height:64px;}
+  .nav-links{position:fixed;top:64px;left:0;right:0;background:var(--navy);flex-direction:column;padding:20px;transform:translateX(-100%);transition:transform 0.3s;border-bottom:2px solid var(--gold);z-index:200;}
+  .nav-links.open{transform:translateX(0);}
+  .nav-links a{margin:0;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);display:block;}
+  .nav-cta{display:none;}
+  .hamburger{display:flex;}
+  .hero h1{font-size:36px;}
+  .main{padding:40px 16px;}
+  .form-group input,.form-group select,.form-group textarea,.mob-wrap input{font-size:16px;}
+}
+@media(max-width:480px){
+  nav{padding:0 16px;}
+  nav img{height:36px !important;}
+  .hero{padding:40px 16px;}
+  .hero h1{font-size:28px;}
+  .main{padding:32px 16px;}
+}
+footer{background:var(--navy);color:rgba(255,255,255,0.5);text-align:center;padding:24px;font-size:12px;border-top:2px solid var(--gold);}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+  <a href="home.html" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
+    <img src="/Full_Logo.jpg" alt="Alumni Schools Golf Challenge" style="height:44px;width:auto;object-fit:contain;">
+    <span style="font-family:'Cormorant Garamond',serif;color:white;font-size:18px;font-weight:600;">Alumni Schools Golf Challenge</span>
+  </a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="schools.html">Schools</a>
+    <a href="divisions.html">Divisions</a>
+    <a href="register.html">Register</a>
+    <a href="contact.html" class="active">Contact</a>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;">
+    <a href="register.html" class="nav-cta">Register Now</a>
+    <a href="portal.html" style="background:transparent;color:var(--gold);border:2px solid var(--gold);padding:7px 18px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.2s;">Login</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Contact Us</h1>
+  <div class="gold-line"></div>
+  <p class="tagline">Honouring tradition. Celebrating excellence.</p>
+  <div class="tagline-rule"></div>
+  <p>Reach out for registration queries, sponsorship or general enquiries</p>
+</div>
+
+<div class="main">
+  <div class="two-col">
+
+    <div class="card">
+      <h2>Get In Touch</h2>
+      <div class="info-item">
+        <div class="info-icon">📧</div>
+        <div><h4>Email</h4><p><a href="/cdn-cgi/l/email-protection#1b72757d745b7a776e7675727c74777d35757e6f"><span class="__cf_email__" data-cfemail="620b0c040d22030e170f0c0b050d0e044c0c0716">[email&#160;protected]</span></a></p></div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">🌐</div>
+        <div><h4>Website</h4><p><a href="https://alumnigolf.net">alumnigolf.net</a></p></div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">📱</div>
+        <div><h4>App</h4><p>Launching soon on iOS and Android</p></div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">🤝</div>
+        <div><h4>Sponsorship</h4><p>Division naming and sponsorship opportunities available. Contact us to get involved!</p></div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">🏆</div>
+        <div><h4>Tournament Info</h4><p>Inaugural Season 2026/27<br>Registration closes 31 July 2026</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Send a Message</h2>
+
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="c-name" placeholder="First name and surname" />
+        <div class="ferr" id="err-name">Please enter your full name</div>
+      </div>
+
+      <div class="form-group">
+        <label>Email Address *</label>
+        <input type="email" id="c-email" placeholder="your@email.com" />
+        <div class="ferr" id="err-email">Please enter a valid email address</div>
+      </div>
+
+      <div class="form-group">
+        <label>Mobile Number *</label>
+        <div class="mob-wrap" id="mob-wrap">
+          <span class="mob-pre">+27</span>
+          <input type="tel" id="c-mobile" placeholder="81 234 5678" maxlength="9"
+            oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
+        </div>
+        <div class="ferr" id="err-mobile">Please enter a valid 9-digit mobile number</div>
+      </div>
+
+      <div class="form-group">
+        <label>Subject *</label>
+        <select id="c-subject">
+          <option value="">Select a subject...</option>
+          <option>Registration Query</option>
+          <option>Payment Query</option>
+          <option>Eligibility Query</option>
+          <option>Sponsorship Enquiry</option>
+          <option>Technical Support</option>
+          <option>General Enquiry</option>
+        </select>
+        <div class="ferr" id="err-subject">Please select a subject</div>
+      </div>
+
+      <div class="form-group">
+        <label>Message *</label>
+        <textarea id="c-message" placeholder="How can we help you?"></textarea>
+        <div class="ferr" id="err-message">Please enter your message</div>
+      </div>
+
+      <button class="btn-submit" id="btn-contact" onclick="sendMessage()">Send Message</button>
+      <div class="success-box" id="msg-success"></div>
+      <div class="error-box" id="msg-error">Something went wrong. Please try again or email us at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d8b1b6beb798b9b4adb5b6b1bfb7b4bef6b6bdac">[email&#160;protected]</a></strong></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Alumni Schools Golf Challenge | <a href="/cdn-cgi/l/email-protection#d2bbbcb4bd92b3bea7bfbcbbb5bdbeb4fcbcb7a6"><span class="__cf_email__" data-cfemail="a3cacdc5cce3c2cfd6cecdcac4cccfc58dcdc6d7">[email&#160;protected]</span></a></p>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+var SB_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+var FN_URL = 'https://weztrzuxwycypheyiixr.supabase.co/functions/v1/super-function';
+var sb = supabase.createClient(SB_URL, SB_KEY);
+
+function showFerr(id, show) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('show', show);
+}
+
+function sendMessage() {
+  var name    = document.getElementById('c-name').value.trim();
+  var email   = document.getElementById('c-email').value.trim().toLowerCase();
+  var mobile  = document.getElementById('c-mobile').value.replace(/\s/g, '');
+  var subject = document.getElementById('c-subject').value;
+  var message = document.getElementById('c-message').value.trim();
+
+  document.getElementById('msg-success').style.display = 'none';
+  document.getElementById('msg-error').style.display   = 'none';
+
+  var ok = true;
+  if (!name)    { showFerr('err-name',    true);  ok = false; } else { showFerr('err-name',    false); }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFerr('err-email', true); ok = false; } else { showFerr('err-email', false); }
+  if (!/^[0-9]{9}$/.test(mobile)) { showFerr('err-mobile', true); document.getElementById('mob-wrap').classList.add('mob-err'); ok = false; } else { showFerr('err-mobile', false); document.getElementById('mob-wrap').classList.remove('mob-err'); }
+  if (!subject) { showFerr('err-subject', true);  ok = false; } else { showFerr('err-subject', false); }
+  if (!message) { showFerr('err-message', true);  ok = false; } else { showFerr('err-message', false); }
+  if (!ok) return;
+
+  var btn = document.getElementById('btn-contact');
+  btn.disabled    = true;
+  btn.textContent = 'Sending...';
+
+  var fullMobile = '+27' + mobile;
+  var firstName  = name.split(' ')[0];
+
+  sb.from('contact_messages').insert({
+    name: name, email: email, mobile: fullMobile, subject: subject, message: message
+  }).then(function(r) {
+    if (r.error) { console.warn('DB error:', r.error.message); }
+  });
+
+  var html = '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;">'
+    + '<div style="background:#0A1F44;padding:24px 32px;border-bottom:3px solid #C89B3C;text-align:center;">'
+    + '<p style="color:#C89B3C;font-size:12px;letter-spacing:3px;text-transform:uppercase;margin:0;font-weight:600;">Alumni Schools Golf Challenge</p></div>'
+    + '<div style="padding:32px;">'
+    + '<h2 style="color:#0A1F44;margin:0 0 20px;font-size:22px;">New Contact Message</h2>'
+    + '<div style="background:#f8f6f0;border-left:3px solid #C89B3C;padding:16px 20px;margin-bottom:20px;border-radius:0 8px 8px 0;">'
+    + '<p style="margin:6px 0;font-size:14px;"><strong>Name:</strong> ' + name + '</p>'
+    + '<p style="margin:6px 0;font-size:14px;"><strong>Email:</strong> ' + email + '</p>'
+    + '<p style="margin:6px 0;font-size:14px;"><strong>Mobile:</strong> ' + fullMobile + '</p>'
+    + '<p style="margin:6px 0;font-size:14px;"><strong>Subject:</strong> ' + subject + '</p>'
+    + '</div>'
+    + '<div style="background:#f0f4ff;border:1px solid #dde;border-radius:8px;padding:16px 20px;">'
+    + '<p style="font-size:14px;color:#333;line-height:1.7;margin:0;">' + message.replace(/\n/g, '<br>') + '</p>'
+    + '</div>'
+    + '<p style="font-size:11px;color:#aaa;margin-top:20px;">Sent via the contact form on alumnigolf.net</p>'
+    + '</div>'
+    + '<div style="background:#0A1F44;padding:16px 32px;text-align:center;">'
+    + '<p style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;">2026 Alumni Schools Golf Challenge</p>'
+    + '</div></div>';
+
+  fetch(FN_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SB_KEY },
+    body: JSON.stringify({
+      from:    'Alumni Golf <noreply@alumnigolf.net>',
+      to:      'admin@alumnigolf.net',
+      subject: 'New Contact Message: ' + subject + ' from ' + name,
+      html:    html
+    })
+  }).then(function() {
+    var box = document.getElementById('msg-success');
+    box.innerHTML = '<strong>Message Received!</strong><br>Thank you, ' + firstName + '. We\'ve received your message and will get back to you at <strong>' + email + '</strong> within 1 business day.';
+    box.style.display = 'block';
+    document.getElementById('c-name')
