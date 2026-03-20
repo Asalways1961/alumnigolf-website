@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How It Works — Alumni Schools Golf Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1B3A6B;--navy-dark:#1B3A6B;--gold:#C89B3C;--gold-dim:rgba(200,155,60,0.15);--white:#fff;--off-white:#1B3A6B;--text:#ffffff;--text2:#aaaaaa;--border:rgba(255,255,255,0.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#1B3A6B;color:var(--text);}
+nav{background:var(--navy-dark);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:70px;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-logo img{height:50px;width:auto;object-fit:contain;display:block;}
+.nav-logo span{font-family:'Cormorant Garamond',serif;color:var(--white);font-size:20px;font-weight:600;}
+.nav-links{display:none;}
+.nav-links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:500;margin-left:28px;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);}
+.nav-cta{background:var(--gold);color:var(--navy-dark);padding:9px 22px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;}
+.hero{background:linear-gradient(135deg,var(--navy-dark),var(--navy));padding:60px 20px;text-align:center;}
+.hero h1{font-family:'Cormorant Garamond',serif;color:white;font-size:48px;font-weight:700;margin-bottom:12px;}
+.gold-line{width:60px;height:3px;background:var(--gold);margin:16px auto;border-radius:2px;}
+.section{padding:72px 20px;}
+.section-inner{max-width:960px;margin:0 auto;}
+.section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);color:var(--gold);margin-bottom:12px;}
+.section-sub{font-size:15px;color:var(--text2);line-height:1.7;max-width:600px;margin-bottom:40px;}
+.steps{display:flex;flex-direction:column;gap:0;}
+.step-item{display:flex;gap:24px;align-items:flex-start;padding:32px 0;border-bottom:1px solid var(--border);}
+.step-item:last-child{border-bottom:none;}
+.step-number{width:52px;height:52px;border-radius:50%;background:var(--gold);color:#1B3A6B;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;flex-shrink:0;}
+.step-content h3{font-size:18px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+.step-content p{font-size:14px;color:var(--text2);line-height:1.6;}
+.step-content .step-note{display:inline-block;margin-top:10px;background:rgba(200,155,60,0.15);border:1px solid var(--gold);color:var(--gold);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;}
+.bracket-section{background:var(--navy-dark);padding:72px 20px;}
+.bracket-section .section-title{color:white;}
+.bracket-section .section-sub{color:rgba(255,255,255,0.6);}
+.bracket-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:32px;}
+.bracket-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:24px;transition:all 0.2s;}
+.bracket-card:hover{background:rgba(200,155,60,0.1);border-color:var(--gold);}
+.bracket-card .bc-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.bracket-card .bc-badge{background:var(--gold);color:var(--navy-dark);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+.bracket-card h3{color:white;font-size:15px;font-weight:700;}
+.bracket-card p{color:rgba(255,255,255,0.55);font-size:13px;line-height:1.5;}
+.bracket-card .bc-dates{color:var(--gold);font-size:11px;font-weight:600;margin-top:12px;letter-spacing:0.5px;}
+.elig-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:32px;}
+.elig-card{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:14px;padding:24px;transition:border-color 0.2s;}
+.elig-card:hover{border-color:var(--gold);}
+.elig-card .icon{font-size:32px;margin-bottom:12px;}
+.elig-card h3{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px;}
+.elig-card p{font-size:13px;color:var(--text2);line-height:1.5;}
+.faq-item{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;}
+.faq-q{padding:18px 20px;font-weight:600;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--gold);}
+.faq-q:hover{background:rgba(200,155,60,0.1);}
+.faq-q .chevron{font-size:12px;transition:transform 0.2s;color:var(--gold);}
+.faq-a{padding:0 20px 18px;font-size:13px;color:var(--text2);line-height:1.6;display:none;}
+.faq-item.open .faq-a{display:block;}
+.faq-item.open .chevron{transform:rotate(180deg);}
+.cta{background:linear-gradient(135deg,var(--gold),#C89B3C);padding:72px 20px;text-align:center;}
+.cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,4vw,50px);color:#1B3A6B;margin-bottom:14px;}
+.cta p{color:rgba(27,58,107,0.8);font-size:16px;margin-bottom:30px;}
+.btn-navy{background:var(--gold);color:#1B3A6B;padding:16px 48px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;display:inline-block;transition:all 0.2s;}
+.btn-navy:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,155,60,0.4);}
+footer{background:var(--navy-dark);color:rgba(255,255,255,0.5);text-align:center;padding:24px;font-size:12px;border-top:2px solid var(--gold);}
+footer a{color:var(--gold);text-decoration:none;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;}
+.hamburger span{width:25px;height:3px;background:var(--gold);border-radius:2px;transition:all 0.3s;}
+
+/* Desktop */
+@media(min-width:969px){
+  .nav-links{display:flex;align-items:center;gap:28px;}
+}
+
+/* Tablet & Mobile */
+@media(max-width:968px){
+  nav{padding:0 20px;height:64px;}
+  .nav-logo span{font-size:16px;max-width:140px;line-height:1.2;}
+  .nav-links{display:flex !important;position:fixed;top:64px;left:0;right:0;width:100%;background:var(--navy-dark);flex-direction:column;padding:20px;transform:translateX(-100%);transition:transform 0.3s;border-bottom:2px solid var(--gold);z-index:200;}
+  .nav-links.open{transform:translateX(0);}
+  .nav-links a{margin:0;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);display:block;}
+  .nav-cta{display:none;}
+  .hamburger{display:flex;}
+  .hero h1{font-size:36px;}
+  .section{padding:48px 16px;}
+  .step-item{flex-direction:column;gap:16px;}
+  .bracket-grid,.elig-grid{grid-template-columns:1fr;}
+}
+@media(max-width:480px){
+  nav{padding:0 16px;}
+  .nav-logo img{height:36px !important;}
+  .nav-logo span{font-size:14px;max-width:120px;}
+  .hero{padding:40px 16px;}
+  .hero h1{font-size:28px;}
+  .section-title{font-size:24px !important;}
+  .step-number{width:44px;height:44px;font-size:20px;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open');this.classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+  <a href="home.html" class="nav-logo"><img src="https://raw.githubusercontent.com/Asalways1961/alumnigolf-website/main/Alumni_Logo.png" alt="Alumni Schools Golf Challenge"><span>Alumni Schools Golf Challenge</span></a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="how-it-works.html" class="active">How It Works</a>
+    <a href="schools.html">Schools</a>
+    <a href="divisions.html">Divisions</a>
+    <a href="register.html">Register</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div style="display:flex;gap:12px;">
+    <a href="register.html" class="nav-cta">Register Now</a>
+    <a href="portal.html" style="background:transparent;color:var(--gold);border:2px solid var(--gold);padding:7px 18px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;">Login</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>How It Works</h1>
+  <div class="gold-line"></div>
+  <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,26px);color:rgba(255,255,255,0.95);font-style:italic;font-weight:600;letter-spacing:1px;margin-bottom:8px;">Honouring tradition. Celebrating excellence.</p>
+  <div style="width:180px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 14px;"></div>
+  <p style="color:rgba(255,255,255,0.7);">Everything you need to know about the Alumni Schools Golf Challenge</p>
+</div>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label">Getting Started</div>
+    <h2 class="section-title">How to Enter</h2>
+    <p class="section-sub">Registration is simple. Here's how to get your team entered.</p>
+    <div class="steps">
+      <div class="step-item"><div class="step-number">1</div><div class="step-content"><h3>Captain Registers</h3><p>Player 1 (the team captain) registers first. You'll enter your personal details, school, golf club, HNA handicap number and postal code. Your postal code is critical — it's how we group you into a division with nearby teams.</p><span class="step-note">📍 Postal code must be 100% accurate</span></div></div>
+      <div class="step-item"><div class="step-number">2</div><div class="step-content"><h3>Confirm Eligibility</h3><p>You'll confirm that you are a bona fide alumnus of a South African school, hold a valid HNA handicap, are at least 18 years old, and agree to the Tournament Rules and POPIA conditions.</p></div></div>
+      <div class="step-item"><div class="step-number">3</div><div class="step-content"><h3>Invite Your Partner</h3><p>Enter your partner's name, mobile number and email. They'll receive an invitation to complete their own registration. Both players must be alumni of the same school.</p><span class="step-note">🏫 Same school required for both players</span></div></div>
+      <div class="step-item"><div class="step-number">4</div><div class="step-content"><h3>Pay Your Entry Fee</h3><p>Entry is R1,500 per player (R3,000 per team). Pay now by EFT and upload your proof of payment, or pay later within 7 days. If you pay for the team upfront it's only R2,800 — saving R200!</p><span class="step-note">💰 Pay for team — save R200!</span></div></div>
+      <div class="step-item"><div class="step-number">5</div><div class="step-content"><h3>Get Confirmed & Placed in a Division</h3><p>Once your payment is verified, your entry is officially confirmed. Teams are geo-plotted into divisions of 8 by postal code. Divisions are finalised after the registration period closes.</p></div></div>
+      <div class="step-item"><div class="step-number">6</div><div class="step-content"><h3>Play Your Matches!</h3><p>Use the app or player portal to contact your opponents, arrange your match within the round window, and submit your results. Home team books the course.</p><span class="step-note">📱 App launching soon</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="bracket-section">
+  <div class="section-inner">
+    <div class="section-label" style="color:var(--gold)">Tournament Format</div>
+    <h2 class="section-title">The Double-Elimination Bracket</h2>
+    <p class="section-sub">Every division of 8 teams runs a double-elimination bracket. You get two chances before you're out.</p>
+    <div class="bracket-grid">
+      <div class="bracket-card"><div class="bc-header"><div class="bc-badge">R1</div><h3>Round 1 — Winners & 2nd Chance</h3></div><p>All 8 teams play. 4 winners go to the Winners Bracket. 4 losers go to the 2nd Chance Bracket.</p><div class="bc-dates">14 Aug – 20 Sep 2026</div></div>
+      <div class="bracket-card"><div class="bc-header"><div class="bc-badge">R2</div><h3>Round 2 — Two Brackets</h3></div><p>Winners play Winners. 2nd Chance plays 2nd Chance. Losers in 2nd Chance are eliminated.</p><div class="bc-dates">28 Sep – 18 Oct 2026</div></div>
+      <div class="bracket-card"><div class="bc-header"><div class="bc-badge">R3</div><h3>Round 3 — Cross Bracket</h3></div><p>2nd Chance Round 2 winners face Winners Bracket Round 2 losers. 2 undefeated teams get a bye.</p><div class="bc-dates">26 Oct – 22 Nov 2026</div></div>
+      <div class="bracket-card"><div class="bc-header"><div class="bc-badge">R4</div><h3>Semi-Finals</h3></div><p>Round 3 winners face the two bye teams. Only 2 advance to the Division Final.</p><div class="bc-dates">30 Nov 2026 – 15 Jan 2027</div></div>
+      <div class="bracket-card"><div class="bc-header"><div class="bc-badge">R5</div><h3>Division Final</h3></div><p>One match determines your Division Champion. The winner advances to the SA Final Qualifier.</p><div class="bc-dates">1 – 28 Feb 2027</div></div>
+      <div class="bracket-card" style="border-color:rgba(200,155,60,0.4);background:rgba(200,155,60,0.08)"><div class="bc-header"><div class="bc-badge">R6</div><h3>SA Final Qualifier</h3></div><p>• Divisional winners are paired geographically.<br>• Each match winner qualifies for the SA Final.</p><div class="bc-dates">8 Mar – 11 Apr 2027</div></div>
+      <div class="bracket-card" style="border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.08)"><div class="bc-header"><div class="bc-badge" style="background:white;color:var(--navy-dark)">★</div><h3>SA Final</h3></div><p>The national championship. A spectacular multi-day event — accommodation, meals and social evenings included.</p><div class="bc-dates">Mid-May 2027 — Details TBA</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label">Eligibility</div>
+    <h2 class="section-title">Who Can Play?</h2>
+    <p class="section-sub">The tournament is open to all South African school alumni who meet the following requirements.</p>
+    <div class="elig-grid">
+      <div class="elig-card"><div class="icon">🏫</div><h3>School Alumni</h3><p>You must be a former pupil of a South African school — no longer enrolled as a learner in 2026 or later.</p></div>
+      <div class="elig-card"><div class="icon">🎂</div><h3>18 Years or Older</h3><p>All participants must be at least 18 years of age at the time of registration.</p></div>
+      <div class="elig-card"><div class="icon">⛳</div><h3>Valid HNA Handicap</h3><p>You must hold an active Golf RSA Handicapping Network Africa (HNA) handicap and be in good standing at your club.</p></div>
+      <div class="elig-card"><div class="icon">🤝</div><h3>Same School</h3><p>Both players in a team must be alumni of the same school. Mixed, all-male and all-female teams all welcome.</p></div>
+      <div class="elig-card"><div class="icon">📍</div><h3>Any Location</h3><p>Players from anywhere in South Africa can enter. Teams are grouped into local divisions by postal code.</p></div>
+      <div class="elig-card"><div class="icon">♾️</div><h3>Multiple Teams Per School</h3><p>There is no limit on the number of teams from a single school. Get as many alumni involved as possible!</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:rgba(255,255,255,0.02);padding-top:60px;padding-bottom:60px;">
+  <div class="section-inner">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div style="margin-top:28px;">
+      <div class="faq-item open"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What format is the golf played in? <span class="chevron">▼</span></div><div class="faq-a">The tournament is played in Betterball Matchplay format throughout. Each team of two plays their better ball score on each hole against the other team's better ball. Handicaps are applied — 90% of Course Handicap, with the lowest handicap player set to scratch.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What if I can't find a partner from my school? <span class="chevron">▼</span></div><div class="faq-a">You can join the Partner Pool! When registering you can select "I need help finding a partner". We will do our best to match you with another alumnus from the same school.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">When and where do we play our matches? <span class="chevron">▼</span></div><div class="faq-a">Teams contact each other via the app chat and agree on a date, time and venue within the round window. The home team books a GolfRSA-affiliated 18-hole or 9-hole course.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How are divisions assigned? <span class="chevron">▼</span></div><div class="faq-a">Divisions are assigned by geo-plotting using your postal code — teams closest to each other are grouped together where possible. Each division has exactly 8 teams.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Are there refunds? <span class="chevron">▼</span></div><div class="faq-a">Once a team is paid and included in the draw, no refunds are issued. Please ensure you are committed before completing payment.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Ready to Tee Off?</h2>
+  <p>Registration is open until 31 July 2026. Secure your spot today.</p>
+  <a href="register.html" class="btn-navy">⛳ Register Your Team Now</a>
+</section>
+
+<footer><p>© 2026 Alumni Schools Golf Challenge — Legacy Event Ventures (Pty) Ltd</p></footer>
+
+<script>
+// FAQ toggle
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', function() {
+    this.parentElement.classList.toggle('open');
+  });
+});
+
+// Mobile menu toggle
+document.querySelector('.hamburger')?.addEventListener('click', function() {
+  document.querySelector('.nav-links').classList.toggle('open');
+  this.classList.toggle('open');
+});
+</script>
+</body>
+</html>
