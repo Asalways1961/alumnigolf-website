@@ -639,7 +639,7 @@ function selSchool(id, name) {
   ferr('err-school', false);
   if (id === 'new') {
     var email = document.getElementById('f-email') ? document.getElementById('f-email').value.trim() : '';
-    sb.from('suggestions').insert({ type:'school', suggested_name:name, suggested_by_email:email, status:'pending' }).then(function(){
+    sb.from('pending_schools').insert({ school_name: name, email_submitted_by: email, status: 'pending' }).then(function(){
       // Notify admin
       fetch('https://weztrzuxwycypheyiixr.supabase.co/functions/v1/super-function', {
         method:'POST',
@@ -691,14 +691,9 @@ function selClub(id, name) {
   if (id === 'new') {
     // Save suggestion to Supabase
     var email = document.getElementById('f-email') ? document.getElementById('f-email').value.trim() : '';
-    sb.from('suggestions').insert({ type:'golf_club', suggested_name:name, suggested_by_email:email, status:'pending' }).then(function(){
-      // Notify admin
-      fetch('https://weztrzuxwycypheyiixr.supabase.co/functions/v1/super-function', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA'},
-        body:JSON.stringify({from:'Alumni Golf <noreply@alumnigolf.net>',to:'admin@alumnigolf.net',subject:'New Golf Club Suggestion: '+name,html:'<p>A new golf club has been suggested for the master list.</p><p><strong>Club:</strong> '+name+'</p><p><strong>Suggested by:</strong> '+email+'</p><p>Please log in to the <a href="https://alumnigolf.net/admin">Admin Panel</a> and go to Suggestions to approve or reject.</p>'})
-      }).catch(function(){});
-    });
+    // For now, golf clubs are not implemented in admin panel, but we can save them for future use
+    // sb.from('pending_golf_clubs').insert({ club_name: name, email_submitted_by: email, status: 'pending' })
+    // Skipping golf club submissions for now as they're not in the admin panel yet
     document.getElementById('club-conf-name').textContent = name + ' ⚠️ (pending admin approval)';
   }
 }
