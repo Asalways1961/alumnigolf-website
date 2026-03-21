@@ -597,11 +597,16 @@ var selPayOpt = null;
 var selWhenOpt = null;
 var popFile = null;
 var SCHOOLS = [];
+var POSTAL_CODES = [];
 var isInvitee = false;
 var inviteData = null;
 
 sb.from('schools').select('id, name').order('name', {ascending:true}).then(function(res) {
   if (res.data) SCHOOLS = res.data;
+});
+
+sb.from('postal_codes').select('suburb, postal_code').order('suburb', {ascending:true}).then(function(res) {
+  if (res.data) POSTAL_CODES = res.data;
 });
 
 function goStep(n) {
@@ -667,6 +672,35 @@ function changeSchool() {
   document.getElementById('f-school').value='';
   document.getElementById('school-conf').style.display='none';
 }
+
+// ──── CITY / POSTAL CODE AUTO-FILL ────────────────────────────────────────
+function autoFillPostalCode() {
+  var cityInput = document.getElementById('f-city').value.trim();
+  if (!cityInput) return;
+  
+  // Search for city in POSTAL_CODES array
+  var found = POSTAL_CODES.find(function(c) { return c.suburb.toLowerCase() === cityInput.toLowerCase(); });
+  
+  if (found) {
+    // Found in database - auto-fill postal code
+    document.getElementById('f-postal').value = found.postal_code;
+    document.getElementById('f-city').setAttribute('data-confirmed', 'true');
+  } else {
+    // Not found - user will type postal code manually
+    document.getElementById('f-postal').value = '';
+    document.getElementById('f-city').setAttribute('data-confirmed', 'false');
+    // City will be sent to admin for approval like schools
+  }
+  ferr('err-city', false);
+}
+
+// Trigger auto-fill when user leaves city field
+document.addEventListener('DOMContentLoaded', function() {
+  var cityField = document.getElementById('f-city');
+  if (cityField) {
+    cityField.addEventListener('blur', autoFillPostalCode);
+  }
+});
 
 var CLUBS = [];
 sb.from('golf_clubs').select('id, name').order('name', {ascending:true}).then(function(res) {
@@ -891,6 +925,26 @@ async function saveStep3() {
   } catch(e) { console.warn('Geocoding failed:', e); }
   var updateData = { email:reg.email, full_name:reg.full_name, mobile:reg.mobile, school:reg.school, gender:reg.gender, club:selectedClub, handicap_index:hcap, hna_number:fullHNA, city:city, postal_code:postal };
   if (geoCoded) { updateData.latitude = lat; updateData.longitude = lng; updateData.geo_coded = true; }
+  
+  // Check if city exists in postal codes database
+  var cityExists = POSTAL_CODES.find(function(c) { return c.suburb.toLowerCase() === city.toLowerCase(); });
+  if (!cityExists) {
+    // City not in database - submit to admin for approval (like pending schools)
+    var email = reg.email || '';
+    await sb.from('pending_postal_codes').insert({ 
+      suburb: city, 
+      postal_code: postal, 
+      email_submitted_by: email, 
+      status: 'pending' 
+    });
+    // Notify admin
+    fetch('https://weztrzuxwycypheyiixr.supabase.co/functions/v1/super-function', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA'},
+      body:JSON.stringify({from:'Alumni Golf <noreply@alumnigolf.net>',to:'admin@alumnigolf.net',subject:'New Postal Code Suggestion: '+city+' '+postal,html:'<p>A new suburb/city with postal code has been submitted during registration.</p><p><strong>Suburb:</strong> '+city+'</p><p><strong>Postal Code:</strong> '+postal+'</p><p><strong>Submitted by:</strong> '+email+'</p><p>Please log in to the <a href="https://alumnigolf.net/admin">Admin Panel</a> and go to Suggestions to approve or reject.</p>'})
+    }).catch(function(){});
+  }
+  
   var res = await sb.from('players').upsert(updateData, {onConflict:'email'});
   btn.disabled=false; btn.textContent='Save & Continue →';
   if (res.error) { alert('Error: '+res.error.message); return; }
