@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete Payment — Alumni Schools Golf Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --navy: #1B3A6B;
+    --navy-dark: #0f1b35;
+    --gold: #C9A84C;
+    --white: #FFFFFF;
+    --grey: #666666;
+    --border: #e0e0e0;
+    --green: #27ae60;
+  }
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f5f5f5;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+  
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 40px;
+    text-align: center;
+  }
+  
+  .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+  
+  .card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  h1 { font-family: 'Cormorant Garamond', serif; font-size: 36px; color: var(--gold); margin-bottom: 20px; text-align: center; }
+  h2 { font-size: 20px; margin-bottom: 20px; color: var(--navy); }
+  
+  .payment-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  @media (max-width: 600px) {
+    .payment-options { grid-template-columns: 1fr; }
+  }
+  
+  .payment-btn {
+    padding: 20px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+  }
+  
+  .payment-btn:hover {
+    border-color: var(--gold);
+    background: #fafafa;
+  }
+  
+  .payment-btn.selected {
+    border-color: var(--gold);
+    background: rgba(201, 168, 76, 0.1);
+  }
+  
+  .payment-btn h3 {
+    margin-bottom: 10px;
+    color: var(--navy);
+  }
+  
+  .payment-btn p {
+    font-size: 13px;
+    color: var(--grey);
+  }
+  
+  .amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gold);
+    margin: 10px 0;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+  }
+  
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+  
+  .eft-details {
+    background: #f0f0f0;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .eft-details h3 {
+    margin-bottom: 15px;
+    color: var(--navy);
+  }
+  
+  .eft-details p {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  
+  .eft-details strong {
+    color: var(--gold);
+  }
+  
+  .proof-upload {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .proof-upload:hover {
+    border-color: var(--gold);
+    background: #fafafa;
+  }
+  
+  .proof-upload input {
+    display: none;
+  }
+  
+  #success-card {
+    text-align: center;
+    color: var(--green);
+  }
+  
+  #success-card h2 {
+    color: var(--green);
+    margin-bottom: 10px;
+  }
+  
+  footer {
+    background: var(--navy);
+    color: var(--white);
+    text-align: center;
+    padding: 30px 40px;
+    margin-top: 60px;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 style="margin:0;color:var(--gold);">Complete Payment</h1>
+</header>
+
+<div class="container">
+  <div class="card" id="payment-card">
+    <h2>Payment Options</h2>
+    <p style="margin-bottom:30px;color:var(--grey);">Select your payment amount below.</p>
+    
+    <div class="payment-options">
+      <div class="payment-btn" onclick="selectPayment('team')">
+        <h3>Team Registration</h3>
+        <p>For both players</p>
+        <div class="amount">R2,800</div>
+      </div>
+      
+      <div class="payment-btn" onclick="selectPayment('single')">
+        <h3>Single Player</h3>
+        <p>Individual entry</p>
+        <div class="amount">R1,500</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card" id="eft-card" style="display:none;">
+    <h2>Bank Transfer (EFT)</h2>
+    
+    <div class="eft-details">
+      <h3>Transfer Details</h3>
+      <p><strong>Bank:</strong> Standard Bank</p>
+      <p><strong>Account Name:</strong> Alumni Golf Tournament</p>
+      <p><strong>Account Number:</strong> 071592629</p>
+      <p><strong>Branch Code:</strong> 051001</p>
+      <p><strong>Reference:</strong> <span id="eft-ref" style="color:var(--gold);font-weight:700;">LOAD YOUR EMAIL</span></p>
+      <p style="margin-top:15px;font-size:13px;color:var(--grey);">Use your email address as the payment reference so we can match your payment to your registration.</p>
+    </div>
+    
+    <div class="form-group">
+      <label>Your Email</label>
+      <input type="email" id="pay-email" placeholder="your@email.com" required>
+    </div>
+    
+    <h3 style="margin-top:30px;margin-bottom:20px;font-size:16px;">Upload Proof of Payment</h3>
+    <div class="proof-upload" onclick="document.getElementById('proof-file').click()">
+      <input type="file" id="proof-file" accept="image/*,application/pdf">
+      <p style="margin:0;color:var(--grey);">Click to upload proof of payment (screenshot, PDF receipt)</p>
+    </div>
+    
+    <button class="btn-primary" onclick="submitPayment()" style="margin-top:30px;">Submit Payment Proof</button>
+  </div>
+  
+  <div class="card" id="success-card" style="display:none;">
+    <h2>✓ Payment Received</h2>
+    <p>Thank you! Your payment has been received and is under verification. You'll receive a confirmation email shortly.</p>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; 2026 Alumni Schools Golf Challenge</p>
+  <p style="margin-top:12px;color:rgba(255,255,255,0.6);">Celebrating excellence. Competing exclusively. Honouring tradition.</p>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let selectedAmount = null;
+
+function selectPayment(amt) {
+  selectedAmount = amt;
+  document.querySelectorAll('.payment-btn').forEach(btn => btn.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  document.getElementById('eft-card').style.display = 'block';
+  
+  const email = document.getElementById('pay-email').value.trim();
+  if (email) {
+    updateEFTRef(email);
+  }
+}
+
+function updateEFTRef(email) {
+  if (email && selectedAmount) {
+    const ref = email.substring(0, 10).toUpperCase().replace(/[^A-Z0-9]/g, '');
+    document.getElementById('eft-ref').textContent = ref || email;
+  }
+}
+
+document.getElementById('pay-email').addEventListener('change', function() {
+  updateEFTRef(this.value);
+});
+
+document.getElementById('proof-file').addEventListener('change', function() {
+  if (this.files.length > 0) {
+    console.log('File selected:', this.files[0].name);
+  }
+});
+
+async function submitPayment() {
+  const email = document.getElementById('pay-email').value.trim();
+  const file = document.getElementById('proof-file').files[0];
+  
+  if (!email || !file || !selectedAmount) {
+    alert('Please fill in all fields');
+    return;
+  }
+  
+  if (!selectedAmount) {
+    alert('Please select a payment amount');
+    return;
+  }
+  
+  const btn = event.currentTarget;
+  btn.disabled = true;
+  btn.textContent = 'Uploading...';
+  
+  try {
+    const ext = file.name.split('.').pop();
+    const fileName = 'pop/' + email + '-' + Date.now() + '.' + ext;
+    await sb.storage.from('proofs').upload(fileName, file, {upsert: true});
+    const popUrl = SUPABASE_URL + '/storage/v1/object/public/proofs/' + fileName;
+    
+    await sb.from('players').update({
+      payment_status: 'pending_verification',
+      payment_proof_url: popUrl,
+      payment_amount: selectedAmount === 'team' ? 2800 : 1500,
+    }).eq('email', email);
+    
+    document.querySelectorAll('.card:not(#success-card)').forEach(c => c.style.display = 'none');
+    document.getElementById('success-card').style.display = 'block';
+  } catch (err) {
+    alert('Error: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = 'Submit Payment Proof';
+  }
+}
+</script>
+
+</body>
+</html>
