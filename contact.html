@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Alumni Schools Golf Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --navy: #1B3A6B;
+    --navy-dark: #0f1b35;
+    --gold: #C9A84C;
+    --white: #FFFFFF;
+    --offwhite: #f5f5f5;
+    --grey: #666666;
+    --text: #333333;
+    --border: #e0e0e0;
+    --error: #c0392b;
+  }
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--gold); font-weight: 700; }
+  
+  .nav-links { display: flex; gap: 30px; }
+  .nav-links a { color: var(--white); text-decoration: none; font-size: 14px; transition: color 0.3s; }
+  .nav-links a:hover { color: var(--gold); }
+  
+  .container { max-width: 1000px; margin: 0 auto; padding: 60px 40px; }
+  
+  h1 { font-family: 'Cormorant Garamond', serif; font-size: 44px; color: var(--navy); margin-bottom: 20px; }
+  .subtitle { color: var(--grey); font-size: 16px; margin-bottom: 40px; }
+  
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
+  @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+  
+  .form-group { display: flex; flex-direction: column; }
+  .form-group label { font-weight: 600; margin-bottom: 8px; color: var(--navy); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+  
+  .form-group input,
+  .form-group textarea {
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    transition: border-color 0.3s;
+  }
+  
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  
+  .form-group textarea { resize: vertical; min-height: 140px; grid-column: 1 / -1; }
+  
+  .form-full { grid-column: 1 / -1; }
+  
+  .btn-submit {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+  }
+  
+  .btn-submit:hover { opacity: 0.9; }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+  
+  #msg-success {
+    display: none;
+    background: #d4edda;
+    color: #155724;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #c3e6cb;
+  }
+  
+  #msg-error {
+    display: none;
+    background: #f8d7da;
+    color: #721c24;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+  }
+  
+  footer {
+    background: var(--navy);
+    color: var(--white);
+    text-align: center;
+    padding: 30px 40px;
+    margin-top: 60px;
+    font-size: 13px;
+  }
+  
+  footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Alumni Golf</div>
+  <nav class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="schools.html">Schools</a>
+    <a href="divisions.html">Divisions</a>
+    <a href="register.html">Register</a>
+    <a href="contact.html" style="color: var(--gold);">Contact</a>
+  </nav>
+</header>
+
+<div class="container">
+  <h1>Get In Touch</h1>
+  <p class="subtitle">Have questions? We'd love to hear from you.</p>
+  
+  <div id="msg-success"></div>
+  <div id="msg-error"></div>
+  
+  <form id="contact-form" onsubmit="return sendMessage(event)">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>First Name *</label>
+        <input type="text" id="c-name" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Last Name *</label>
+        <input type="text" id="c-surname" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" id="c-email" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Phone (Optional)</label>
+        <input type="tel" id="c-phone">
+      </div>
+      
+      <div class="form-group form-full">
+        <label>Subject *</label>
+        <input type="text" id="c-subject" required>
+      </div>
+      
+      <div class="form-group form-full">
+        <label>Message *</label>
+        <textarea id="c-message" required></textarea>
+      </div>
+      
+      <button type="submit" class="btn-submit" id="submit-btn">Send Message</button>
+    </div>
+  </form>
+</div>
+
+<footer>
+  <p>&copy; 2026 Alumni Schools Golf Challenge · <a href="home.html">Home</a> · <a href="divisions.html">Divisions</a></p>
+  <p style="margin-top: 12px; color: rgba(255,255,255,0.6);">Celebrating excellence. Competing exclusively. Honouring tradition.</p>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+const FN_URL = 'https://weztrzuxwycypheyiixr.supabase.co/functions/v1/super-function';
+
+function sendMessage(event) {
+  event.preventDefault();
+  
+  const name = document.getElementById('c-name').value.trim();
+  const surname = document.getElementById('c-surname').value.trim();
+  const email = document.getElementById('c-email').value.trim();
+  const phone = document.getElementById('c-phone').value.trim();
+  const subject = document.getElementById('c-subject').value.trim();
+  const message = document.getElementById('c-message').value.trim();
+  
+  if (!name || !surname || !email || !subject || !message) {
+    showError('Please fill in all required fields');
+    return false;
+  }
+  
+  const firstName = name.split(' ')[0];
+  
+  const html = '<div style="background:#ffffff;font-family:DM Sans,sans-serif;color:#333;">'
+    + '<div style="background:#1B3A6B;padding:32px;text-align:center;">'
+    + '<h1 style="color:#C9A84C;margin:0;font-size:28px;">Message From: ' + name + ' ' + surname + '</h1>'
+    + '</div>'
+    + '<div style="padding:32px;">'
+    + '<p style="margin:0 0 16px;"><strong>Email:</strong> ' + email + '</p>'
+    + (phone ? '<p style="margin:0 0 16px;"><strong>Phone:</strong> ' + phone + '</p>' : '')
+    + '<p style="margin:0 0 16px;"><strong>Subject:</strong> ' + subject + '</p>'
+    + '<hr style="border:none;border-top:1px solid #e0e0e0;margin:20px 0;">'
+    + '<p style="color:#555;font-size:14px;line-height:1.6;white-space:pre-wrap;">' + message + '</p>'
+    + '<p style="font-size:11px;color:#aaa;margin-top:20px;">Sent via the contact form on alumnigolf.net</p>'
+    + '</div>'
+    + '<div style="background:#0A1F44;padding:16px 32px;text-align:center;">'
+    + '<p style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;">2026 Alumni Schools Golf Challenge</p>'
+    + '</div></div>';
+  
+  fetch(FN_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + SUPABASE_KEY
+    },
+    body: JSON.stringify({
+      from: 'Alumni Golf <noreply@alumnigolf.net>',
+      to: 'admin@alumnigolf.net',
+      subject: 'New Contact Message: ' + subject + ' from ' + name,
+      html: html
+    })
+  }).then(function() {
+    const box = document.getElementById('msg-success');
+    box.innerHTML = '<strong>Message Received!</strong><br>Thank you, ' + firstName + '. We\'ve received your message and will get back to you at <strong>' + email + '</strong> within 1 business day.';
+    box.style.display = 'block';
+    document.getElementById('contact-form').reset();
+  }).catch(function(err) {
+    showError('Error sending message: ' + err.message);
+  });
+  
+  return false;
+}
+
+function showError(msg) {
+  const box = document.getElementById('msg-error');
+  box.innerHTML = '<strong>Error:</strong> ' + msg;
+  box.style.display = 'block';
+}
+</script>
+
+</body>
+</html>
