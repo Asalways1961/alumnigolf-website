@@ -36,7 +36,7 @@ nav {
 .nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; }
 .nav-logo span { font-family:'Cormorant Garamond',serif; color:#ffffff; font-size:20px; font-weight:600; white-space:nowrap; }
 .nav-links { display:flex; align-items:center; }
-.nav-links a { color:rgba(255,255,255,0.75); text-decoration:none; font-size:13px; font-weight:500; margin-left:28px; transition:color 0.2s; }
+.nav-links a { color:rgba(255,255,255,0.75); text-decoration:none; font-size:13px; font-weight:500; margin-left:28px; transition:color 0.2s; white-space:nowrap; }
 .nav-links a:hover, .nav-links a.active { color:var(--gold); }
 .nav-cta { background:var(--gold); color:var(--navy-dark); padding:9px 22px; border-radius:6px; font-size:13px; font-weight:700; text-decoration:none; transition:background 0.2s; }
 .nav-cta:hover { background:var(--gold-light); }
@@ -183,12 +183,10 @@ footer { background:var(--navy-dark); color:rgba(255,255,255,0.5); text-align:ce
     <a href="schools.html">Schools</a>
     <a href="divisions.html">Divisions</a>
     <a href="register.html">Register</a>
-    <a href="supporter.html" class="active">Follow a School</a>
+    <a href="supporter.html" class="active">Supporters</a>
     <a href="contact.html">Contact</a>
-    <a href="portal.html">Login</a>
   </div>
   </div>
-  <a href="register.html" class="nav-cta">Register Now</a>
   <div class="hamburger" onclick="document.getElementById('mobile-menu').style.display=document.getElementById('mobile-menu').style.display==='block'?'none':'block'">
     <span></span><span></span><span></span>
   </div>
@@ -200,7 +198,7 @@ footer { background:var(--navy-dark); color:rgba(255,255,255,0.5); text-align:ce
   <a href="schools.html">Schools</a>
   <a href="divisions.html">Divisions</a>
   <a href="register.html">Register to Play</a>
-  <a href="supporter.html">Follow a School</a>
+  <a href="supporter.html">Supporters</a>
   <a href="contact.html">Contact</a>
   <a href="portal.html">Player Portal</a>
 </div>
