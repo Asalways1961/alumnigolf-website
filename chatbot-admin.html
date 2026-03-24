@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher - Chatbot Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --primary: #1B3A6B;
+      --secondary: #C89B3C;
+      --bg: #f4f1eb;
+      --card: #ffffff;
+      --border: #e0ddd5;
+      --text: #1a1a2e;
+      --text-light: #666;
+      --success: #4CAF50;
+      --error: #E53935;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .admin-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .admin-sidebar {
+      width: 260px;
+      background: var(--primary);
+      color: white;
+      padding: 24px 20px;
+      border-right: 1px solid var(--border);
+    }
+
+    .admin-header {
+      margin-bottom: 32px;
+    }
+
+    .admin-logo {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .admin-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .admin-subtitle {
+      font-size: 11px;
+      opacity: 0.8;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .admin-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .admin-nav-item {
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+
+    .admin-nav-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .admin-nav-item.active {
+      background: var(--secondary);
+      color: var(--primary);
+      border-left-color: white;
+    }
+
+    .admin-main {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
+
+    .admin-page-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .admin-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .admin-section-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      background: var(--bg);
+      padding: 12px;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:hover {
+      background: var(--bg);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-escalated {
+      background: rgba(229, 57, 53, 0.15);
+      color: var(--error);
+    }
+
+    .status-resolved {
+      background: rgba(76, 175, 80, 0.15);
+      color: var(--success);
+    }
+
+    .rating-badge {
+      background: var(--secondary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--secondary);
+    }
+
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--primary);
+    }
+
+    .btn-small {
+      padding: 6px 10px;
+      font-size: 11px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    input, textarea, select {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .filter-input {
+      max-width: 200px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-light);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-light);
+    }
+
+    @media (max-width: 768px) {
+      .admin-container {
+        flex-direction: column;
+      }
+
+      .admin-sidebar {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .admin-nav {
+        flex-direction: row;
+        gap: 4px;
+      }
+
+      .admin-nav-item {
+        padding: 8px 12px;
+        font-size: 11px;
+      }
+
+      .admin-main {
+        padding: 16px;
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <!-- SIDEBAR -->
+    <div class="admin-sidebar">
+      <div class="admin-header">
+        <div class="admin-logo">👨‍🏫</div>
+        <div class="admin-title">Teacher</div>
+        <div class="admin-subtitle">Admin Dashboard</div>
+      </div>
+      <nav class="admin-nav">
+        <div class="admin-nav-item active" onclick="showTab('dashboard')">📊 Dashboard</div>
+        <div class="admin-nav-item" onclick="showTab('logs')">📋 Conversation Logs</div>
+        <div class="admin-nav-item" onclick="showTab('escalations')">⬆️ Escalations</div>
+        <div class="admin-nav-item" onclick="showTab('faqs')">❓ Manage FAQs</div>
+        <div class="admin-nav-item" onclick="showTab('reports')">📈 Reports</div>
+      </nav>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="admin-main">
+      <!-- DASHBOARD TAB -->
+      <div id="dashboard-tab" class="admin-page-title">
+        📊 Dashboard
+      </div>
+      <div id="dashboard-content" style="display: block;">
+        <div class="stat-grid" id="stats-container"></div>
+        <div class="admin-section">
+          <div class="admin-section-title">Recent Conversations</div>
+          <table id="recent-conversations-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Questions</th>
+                <th>Rating</th>
+                <th>Escalated</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="recent-conversations-body">
+              <tr><td colspan="6" class="empty-state">No conversations yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CONVERSATION LOGS TAB -->
+      <div id="logs-tab" style="display: none;">
+        <div class="admin-page-title">📋 Conversation Logs</div>
+        <div class="admin-section">
+          <div class="filter-group">
+            <input type="text" id="search-logs" class="filter-input" placeholder="Search conversations..." onkeyup="filterLogs()" />
+            <select id="filter-escalation" class="filter-input" onchange="filterLogs()">
+              <option value="">All Conversations</option>
+              <option value="true">Escalated Only</option>
+              <option value="false">Not Escalated</option>
+            </select>
+          </div>
+          <table id="logs-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Questions Asked</th>
+                <th>Satisfaction</th>
+                <th>Escalated</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="logs-body">
+              <tr><td colspan="6" class="loading">Loading conversations...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ESCALATIONS TAB -->
+      <div id="escalations-tab" style="display: none;">
+        <div class="admin-page-title">⬆️ Escalations</div>
+        <div class="admin-section">
+          <div class="filter-group">
+            <select id="filter-resolved" class="filter-input" onchange="filterEscalations()">
+              <option value="">All Escalations</option>
+              <option value="false">Unresolved</option>
+              <option value="true">Resolved</option>
+            </select>
+          </div>
+          <table id="escalations-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Question</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="escalations-body">
+              <tr><td colspan="6" class="loading">Loading escalations...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FAQs MANAGEMENT TAB -->
+      <div id="faqs-tab" style="display: none;">
+        <div class="admin-page-title">❓ Manage FAQs</div>
+        
+        <div class="admin-section">
+          <div class="admin-section-title">Add New FAQ</div>
+          <form onsubmit="addFAQ(event)">
+            <input type="text" id="new-question" placeholder="Question" required />
+            <textarea id="new-answer" placeholder="Answer" required></textarea>
+            <select id="new-category" required>
+              <option value="">Select Category</option>
+              <option value="Registration">Registration & Divisions</option>
+              <option value="Eligibility">Eligibility</option>
+              <option value="Portal Support">Portal Support</option>
+              <option value="Entry Fees">Entry Fees</option>
+              <option value="General Info">General Info</option>
+              <option value="Tournament Rules">Tournament Rules</option>
+              <option value="Partner Pool">Partner Pool</option>
+              <option value="Refunds">Refunds & Appeals</option>
+            </select>
+            <input type="number" id="new-confidence" placeholder="Confidence Level (0-100)" min="0" max="100" value="95" required />
+            <input type="text" id="new-links" placeholder="Links (comma-separated)" />
+            <button type="submit" class="btn btn-primary">Add FAQ</button>
+          </form>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-section-title">Existing FAQs</div>
+          <table id="faqs-table">
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th>Category</th>
+                <th>Confidence</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="faqs-body">
+              <tr><td colspan="4" class="loading">Loading FAQs...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- REPORTS TAB -->
+      <div id="reports-tab" style="display: none;">
+        <div class="admin-page-title">📈 Reports</div>
+        
+        <div class="admin-section">
+          <div class="admin-section-title">Most Asked Questions</div>
+          <table id="most-asked-table">
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th>Times Asked</th>
+                <th>Satisfaction</th>
+              </tr>
+            </thead>
+            <tbody id="most-asked-body">
+              <tr><td colspan="3" class="loading">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-section-title">Export Reports</div>
+          <div class="filter-group">
+            <select id="export-type">
+              <option value="conversations">All Conversations (CSV)</option>
+              <option value="escalations">Escalations (CSV)</option>
+              <option value="faqs">FAQs (CSV)</option>
+            </select>
+            <button class="btn btn-primary" onclick="exportReport()">Download CSV</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
+    const { createClient } = window.supabase;
+    const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let allConversations = [];
+    let allEscalations = [];
+    let allFAQs = [];
+
+    // Initialize dashboard
+    function initDashboard() {
+      loadDashboardStats();
+      loadConversationLogs();
+      loadEscalations();
+      loadFAQs();
+    }
+
+    async function loadDashboardStats() {
+      const { data: conversations } = await sb.from('chatbot_conversations').select('*');
+      const { data: escalations } = await sb.from('chatbot_escalations').select('*');
+      const { data: faqs } = await sb.from('chatbot_faqs').select('*');
+
+      const statsHTML = `
+        <div class="stat-card">
+          <div class="stat-value">${conversations?.length || 0}</div>
+          <div class="stat-label">Total Conversations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${escalations?.filter(e => !e.is_resolved).length || 0}</div>
+          <div class="stat-label">Pending Escalations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${faqs?.length || 0}</div>
+          <div class="stat-label">FAQs in Database</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${conversations?.filter(c => c.was_escalated).length || 0}</div>
+          <div class="stat-label">Total Escalations</div>
+        </div>
+      `;
+      document.getElementById('stats-container').innerHTML = statsHTML;
+
+      // Load recent conversations
+      const recent = (conversations || []).slice(-5).reverse();
+      const recentHTML = recent.length > 0 
+        ? recent.map(c => `
+            <tr>
+              <td>${c.user_name} ${c.user_surname || ''}</td>
+              <td>${c.user_email || '-'}</td>
+              <td>${c.questions_asked || 0}</td>
+              <td>${c.satisfaction_rating ? '⭐ ' + c.satisfaction_rating : '-'}</td>
+              <td><span class="status-badge ${c.was_escalated ? 'status-escalated' : ''}">${c.was_escalated ? 'Yes' : 'No'}</span></td>
+              <td>${new Date(c.created_at).toLocaleDateString()}</td>
+            </tr>
+          `).join('')
+        : '<tr><td colspan="6" class="empty-state">No conversations yet</td></tr>';
+      
+      document.getElementById('recent-conversations-body').innerHTML = recentHTML;
+    }
+
+    async function loadConversationLogs() {
+      const { data } = await sb.from('chatbot_conversations').select('*').order('created_at', { ascending: false });
+      allConversations = data || [];
+      displayConversationLogs();
+    }
+
+    function displayConversationLogs() {
+      const html = allConversations.length > 0
+        ? allConversations.map(c => `
+            <tr>
+              <td>${c.user_name} ${c.user_surname || ''}</td>
+              <td>${c.questions_asked || 0}</td>
+              <td>${c.satisfaction_rating || '-'}</td>
+              <td><span class="status-badge ${c.was_escalated ? 'status-escalated' : ''}">${c.was_escalated ? 'Yes' : 'No'}</span></td>
+              <td>${new Date(c.created_at).toLocaleDateString()}</td>
+              <td><button class="btn btn-secondary btn-small" onclick="viewConversation('${c.conversation_id}')">View</button></td>
+            </tr>
+          `).join('')
+        : '<tr><td colspan="6" class="empty-state">No conversations</td></tr>';
+      
+      document.getElementById('logs-body').innerHTML = html;
+    }
+
+    async function loadEscalations() {
+      const { data } = await sb.from('chatbot_escalations').select('*').order('created_at', { ascending: false });
+      allEscalations = data || [];
+      displayEscalations();
+    }
+
+    function displayEscalations() {
+      const html = allEscalations.length > 0
+        ? allEscalations.map(e => `
+            <tr>
+              <td>${e.user_name} ${e.user_surname || ''}</td>
+              <td>${e.user_email}</td>
+              <td>${e.original_question.substring(0, 50)}...</td>
+              <td><span class="status-badge ${e.is_resolved ? 'status-resolved' : 'status-escalated'}">${e.is_resolved ? 'Resolved' : 'Open'}</span></td>
+              <td>${new Date(e.created_at).toLocaleDateString()}</td>
+              <td>
+                <button class="btn btn-secondary btn-small" onclick="respondToEscalation('${e.escalation_id}')">Respond</button>
+                ${!e.is_resolved ? `<button class="btn btn-secondary btn-small" onclick="markResolved('${e.escalation_id}')">Resolve</button>` : ''}
+              </td>
+            </tr>
+          `).join('')
+        : '<tr><td colspan="6" class="empty-state">No escalations</td></tr>';
+      
+      document.getElementById('escalations-body').innerHTML = html;
+    }
+
+    async function loadFAQs() {
+      const { data } = await sb.from('chatbot_faqs').select('*').order('faq_id');
+      allFAQs = data || [];
+      displayFAQs();
+    }
+
+    function displayFAQs() {
+      const html = allFAQs.length > 0
+        ? allFAQs.map(f => `
+            <tr>
+              <td>${f.question.substring(0, 60)}...</td>
+              <td>${f.category}</td>
+              <td>${f.confidence_level}%</td>
+              <td>
+                <button class="btn btn-secondary btn-small" onclick="editFAQ('${f.faq_id}')">Edit</button>
+                <button class="btn btn-secondary btn-small" onclick="deleteFAQ('${f.faq_id}')">Delete</button>
+              </td>
+            </tr>
+          `).join('')
+        : '<tr><td colspan="4" class="empty-state">No FAQs</td></tr>';
+      
+      document.getElementById('faqs-body').innerHTML = html;
+    }
+
+    function showTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('[id$="-tab"]').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('[id$="-content"]').forEach(el => el.style.display = 'none');
+      
+      // Show selected tab
+      const tabElement = document.getElementById(tabName + '-tab');
+      const contentElement = document.getElementById(tabName + '-content');
+      if (tabElement) tabElement.style.display = 'block';
+      if (contentElement) contentElement.style.display = 'block';
+      
+      // Update active nav
+      document.querySelectorAll('.admin-nav-item').forEach(item => item.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Load data for tab
+      if (tabName === 'logs') loadConversationLogs();
+      if (tabName === 'escalations') loadEscalations();
+      if (tabName === 'faqs') loadFAQs();
+      if (tabName === 'dashboard') loadDashboardStats();
+    }
+
+    async function addFAQ(event) {
+      event.preventDefault();
+      
+      const { error } = await sb.from('chatbot_faqs').insert({
+        question: document.getElementById('new-question').value,
+        answer: document.getElementById('new-answer').value,
+        category: document.getElementById('new-category').value,
+        confidence_level: parseInt(document.getElementById('new-confidence').value),
+        referenced_links: document.getElementById('new-links').value || null
+      });
+      
+      if (error) {
+        alert('Error adding FAQ: ' + error.message);
+        return;
+      }
+      
+      alert('FAQ added successfully!');
+      event.target.reset();
+      loadFAQs();
+    }
+
+    async function deleteFAQ(faqId) {
+      if (!confirm('Delete this FAQ?')) return;
+      
+      const { error } = await sb.from('chatbot_faqs').delete().eq('faq_id', faqId);
+      if (error) {
+        alert('Error: ' + error.message);
+        return;
+      }
+      
+      loadFAQs();
+    }
+
+    async function markResolved(escalationId) {
+      const { error } = await sb.from('chatbot_escalations').update({ is_resolved: true, resolved_at: new Date() }).eq('escalation_id', escalationId);
+      if (error) {
+        alert('Error: ' + error.message);
+        return;
+      }
+      loadEscalations();
+    }
+
+    function filterLogs() {
+      const search = document.getElementById('search-logs').value.toLowerCase();
+      const escalationFilter = document.getElementById('filter-escalation').value;
+      
+      const filtered = allConversations.filter(c => {
+        const matchesSearch = !search || c.user_name.toLowerCase().includes(search) || c.user_email?.toLowerCase().includes(search);
+        const matchesEscalation = escalationFilter === '' || (c.was_escalated == (escalationFilter === 'true'));
+        return matchesSearch && matchesEscalation;
+      });
+      
+      const html = filtered.length > 0
+        ? filtered.map(c => `
+            <tr>
+              <td>${c.user_name} ${c.user_surname || ''}</td>
+              <td>${c.questions_asked || 0}</td>
+              <td>${c.satisfaction_rating || '-'}</td>
+              <td><span class="status-badge ${c.was_escalated ? 'status-escalated' : ''}">${c.was_escalated ? 'Yes' : 'No'}</span></td>
+              <td>${new Date(c.created_at).toLocaleDateString()}</td>
+              <td><button class="btn btn-secondary btn-small">View</button></td>
+            </tr>
+          `).join('')
+        : '<tr><td colspan="6" class="empty-state">No results</td></tr>';
+      
+      document.getElementById('logs-body').innerHTML = html;
+    }
+
+    function filterEscalations() {
+      const resolvedFilter = document.getElementById('filter-resolved').value;
+      
+      const filtered = resolvedFilter === ''
+        ? allEscalations
+        : allEscalations.filter(e => e.is_resolved == (resolvedFilter === 'true'));
+      
+      const html = filtered.length > 0
+        ? filtered.map(e => `
+            <tr>
+              <td>${e.user_name}</td>
+              <td>${e.user_email}</td>
+              <td>${e.original_question.substring(0, 50)}...</td>
+              <td><span class="status-badge ${e.is_resolved ? 'status-resolved' : 'status-escalated'}">${e.is_resolved ? 'Resolved' : 'Open'}</span></td>
+              <td>${new Date(e.created_at).toLocaleDateString()}</td>
+              <td><button class="btn btn-secondary btn-small">Respond</button></td>
+            </tr>
+          `).join('')
+        : '<tr><td colspan="6" class="empty-state">No results</td></tr>';
+      
+      document.getElementById('escalations-body').innerHTML = html;
+    }
+
+    function exportReport() {
+      const type = document.getElementById('export-type').value;
+      alert('Export feature will be implemented. For now, download from Supabase directly.');
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', initDashboard);
+  </script>
+</body>
+</html>
