@@ -1594,11 +1594,41 @@ async function loadPartnerPool() {
 }
 
 function initiatePartnerRequest(email, name) {
-  // Show confirm dialog
-  if (confirm(`Request ${name} as your partner?`)) {
-    // This would transition to the partner invitation form with pre-filled data
-    showSection('partner');
-    toast(`Ready to invite ${name} — fill in the form below`, 'success');
+  // Check if both players are from the same school
+  if (currentPlayer.school !== email.split('@')[0] && name) {
+    // Fetch the player to get their school
+    sb.from('players')
+      .select('school')
+      .eq('email', email)
+      .maybeSingle()
+      .then(({data: partnerData}) => {
+        if (partnerData && partnerData.school !== currentPlayer.school) {
+          toast('Cannot be partners as both players must be from the same school.', 'error');
+          return;
+        }
+        // Same school - proceed with request
+        if (confirm(`Request ${name} as your partner?`)) {
+          showSection('partner');
+          toast(`Ready to invite ${name} — fill in the form below`, 'success');
+        }
+      });
+  } else {
+    // Fallback: just check by email lookup
+    sb.from('players')
+      .select('school')
+      .eq('email', email)
+      .maybeSingle()
+      .then(({data: partnerData}) => {
+        if (!partnerData || partnerData.school !== currentPlayer.school) {
+          toast('Cannot be partners as both players must be from the same school.', 'error');
+          return;
+        }
+        // Same school - proceed with request
+        if (confirm(`Request ${name} as your partner?`)) {
+          showSection('partner');
+          toast(`Ready to invite ${name} — fill in the form below`, 'success');
+        }
+      });
   }
 }
 
