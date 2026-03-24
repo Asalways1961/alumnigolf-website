@@ -697,6 +697,23 @@
       loadFAQs();
     }
 
+    async function respondToEscalation(escalationId) {
+  // Get the escalation data to find user email and question
+  const escalation = allEscalations.find(e => e.escalation_id === escalationId);
+  
+  if (!escalation) {
+    alert('Escalation not found');
+    return;
+  }
+  
+  // Create mailto link with pre-filled email
+  const subject = encodeURIComponent(`RE: Your Alumni Golf Support Request`);
+  const body = encodeURIComponent(`Hello ${escalation.user_name},\n\nThank you for your inquiry regarding: "${escalation.original_question}"\n\nHere is our response:\n\n[Please type your response here]\n\nBest regards,\nAlumni Golf Admin Team`);
+  
+  // Open default email client
+  window.location.href = `mailto:${escalation.user_email}?subject=${subject}&body=${body}`;
+}
+
     async function markResolved(escalationId) {
       const { error } = await sb.from('chatbot_escalations').update({ is_resolved: true, resolved_at: new Date() }).eq('escalation_id', escalationId);
       if (error) {
