@@ -326,11 +326,11 @@
         <div class="nav-item" onclick="showSection('divisions')"><span class="icon">🏆</span>Divisions</div>
         <div class="nav-item" onclick="showSection('matches')"><span class="icon">🎯</span>Matches</div>
         <div class="nav-item" onclick="showSection('payments')"><span class="icon">💳</span>Payments</div>
+        <div class="nav-item" onclick="showSection('partner-pool')"><span class="icon">🤝</span>Partner Pool</div>
         <div class="nav-item" onclick="showSection('community')"><span class="icon">📢</span>Community</div>
         <div class="nav-item" onclick="showSection('reports')"><span class="icon">📈</span>Reports</div>
         <div class="nav-item" onclick="showSection('statistics')"><span class="icon">📉</span>Statistics</div>
         <div class="nav-item" onclick="showSection('sponsors')"><span class="icon">🤝</span>Sponsors</div>
-        <div class="nav-item" onclick="showSection('suggestions')"><span class="icon">💡</span>Suggestions</div>
       </nav>
       <div class="sidebar-footer">
         <div class="theme-toggle" onclick="toggleTheme()">
@@ -479,6 +479,54 @@
           </div>
         </section>
 
+        <!-- ── PARTNER POOL ── -->
+        <section class="section" id="sec-partner-pool">
+          <div class="toolbar">
+            <button class="btn-sm btn-gold" onclick="loadPartnerPool()">🔄 Refresh</button>
+            <button class="btn-sm btn-outline" onclick="showPartnerStats()">📊 Statistics</button>
+          </div>
+          
+          <div class="two-col">
+            <!-- UNPAIRED PLAYERS -->
+            <div class="card">
+              <div class="card-title">🔍 Unpaired Players (Looking for Partner)</div>
+              <div style="max-height:600px;overflow-y:auto;">
+                <div id="unpaired-list" style="display:flex;flex-direction:column;gap:12px;">
+                  <div class="loading"><div class="spinner"></div></div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- MATCHED PAIRS -->
+            <div class="card">
+              <div class="card-title">✅ Matched Pairs</div>
+              <div style="max-height:600px;overflow-y:auto;">
+                <div id="matched-list" style="display:flex;flex-direction:column;gap:12px;">
+                  <div class="loading"><div class="spinner"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- MATCHING INTERFACE -->
+          <div class="card" style="margin-top:20px;">
+            <div class="card-title">🤝 Create New Match</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:16px;align-items:flex-end;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Player 1 (Email)</label>
+                <input type="text" id="partner-p1" placeholder="email@school.com" list="unpaired-emails-1" />
+                <datalist id="unpaired-emails-1"></datalist>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Player 2 (Email)</label>
+                <input type="text" id="partner-p2" placeholder="email@school.com" list="unpaired-emails-2" />
+                <datalist id="unpaired-emails-2"></datalist>
+              </div>
+              <button class="btn-sm btn-gold" onclick="matchPlayers()">Match Players</button>
+            </div>
+          </div>
+        </section>
+
         <!-- ── COMMUNITY ── -->
         <section class="section" id="sec-community">
           <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
@@ -532,29 +580,29 @@
         <!-- ── REPORTS ── -->
         <section class="section" id="sec-reports">
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;">
-            <div class="card" style="cursor:pointer;transition:border-color 0.2s;" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)'" onclick="exportPlayers()">
+            <div class="card" style="cursor:pointer;transition:border-color 0.2s;" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)'" onclick="previewPlayers()">
               <div style="font-size:32px;margin-bottom:12px;">👥</div>
               <div style="font-weight:700;margin-bottom:6px;">Player List</div>
               <div style="font-size:12px;color:var(--text2);">Name, email, school, team, payment status</div>
-              <div style="margin-top:16px;"><span class="badge badge-gold">Export CSV</span></div>
+              <div style="margin-top:16px;"><span class="badge badge-gold">Preview & Export</span></div>
             </div>
-            <div class="card" style="cursor:pointer;transition:border-color 0.2s;" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)'" onclick="exportMatches()">
+            <div class="card" style="cursor:pointer;transition:border-color 0.2s;" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)'" onclick="previewMatches()">
               <div style="font-size:32px;margin-bottom:12px;">🎯</div>
               <div style="font-weight:700;margin-bottom:6px;">Match Results</div>
               <div style="font-size:12px;color:var(--text2);">All match results with scores and rounds</div>
-              <div style="margin-top:16px;"><span class="badge badge-gold">Export CSV</span></div>
+              <div style="margin-top:16px;"><span class="badge badge-gold">Preview & Export</span></div>
             </div>
-            <div class="card" style="cursor:pointer;transition:border-color 0.2s;" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)'" onclick="exportPayments()">
+            <div class="card" style="cursor:pointer;transition:border-color 0.2s;" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)'" onclick="previewPayments()">
               <div style="font-size:32px;margin-bottom:12px;">💳</div>
               <div style="font-weight:700;margin-bottom:6px;">Payment Report</div>
               <div style="font-size:12px;color:var(--text2);">Full payment status for all players</div>
-              <div style="margin-top:16px;"><span class="badge badge-gold">Export CSV</span></div>
+              <div style="margin-top:16px;"><span class="badge badge-gold">Preview & Export</span></div>
             </div>
-            <div class="card" style="cursor:pointer;transition:border-color 0.2s;" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)'" onclick="exportDivisions()">
+            <div class="card" style="cursor:pointer;transition:border-color 0.2s;" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)'" onclick="previewDivisions()">
               <div style="font-size:32px;margin-bottom:12px;">🏆</div>
               <div style="font-weight:700;margin-bottom:6px;">Division Standings</div>
               <div style="font-size:12px;color:var(--text2);">All divisions, teams and current standings</div>
-              <div style="margin-top:16px;"><span class="badge badge-gold">Export CSV</span></div>
+              <div style="margin-top:16px;"><span class="badge badge-gold">Preview & Export</span></div>
             </div>
           </div>
         </section>
@@ -580,48 +628,6 @@
         <!-- ── STATISTICS ── -->
         <section class="section" id="sec-statistics">
           <div id="stats-content"><div class="loading"><div class="spinner"></div></div></div>
-        </section>
-
-        <!-- ── SUGGESTIONS ── -->
-        <section class="section" id="sec-suggestions">
-          <div style="margin-bottom:24px;">
-            <button class="btn-secondary" onclick="loadPendingSchools(); loadPendingGolfClubs(); loadPendingPostalCodes(); loadPastSuggestions();" style="background:var(--gold);color:#1B3A6B;border:none;padding:12px 24px;border-radius:8px;font-weight:600;cursor:pointer;">🔄 Refresh Suggestions</button>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-            <!-- PENDING SCHOOLS -->
-            <div class="card">
-              <div class="card-title">🏫 PENDING SCHOOLS (ADD TO MASTER LIST)</div>
-              <div id="pending-schools-list" style="max-height:400px;overflow-y:auto;">
-                <div class="loading"><div class="spinner"></div></div>
-              </div>
-            </div>
-            <!-- PENDING GOLF CLUBS -->
-            <div class="card">
-              <div class="card-title">⛳ PENDING GOLF CLUBS (ADD TO MASTER LIST)</div>
-              <div id="pending-clubs-list" style="max-height:400px;overflow-y:auto;">
-                <p style="color:var(--text2);text-align:center;padding:24px;">No pending suggestions</p>
-              </div>
-            </div>
-          </div>
-          <!-- PENDING POSTAL CODES - FULL WIDTH -->
-          <div class="card" style="margin-top:20px;">
-            <div class="card-title">🏘️ PENDING POSTAL CODES (ADD TO MASTER LIST)</div>
-            <div id="pending-postal-codes-list" style="max-height:400px;overflow-y:auto;">
-              <div class="loading"><div class="spinner"></div></div>
-            </div>
-          </div>
-          <!-- PAST SUGGESTIONS TABLE -->
-          <div class="card" style="margin-top:24px;">
-            <div class="card-title">📋 PAST SUGGESTIONS</div>
-            <div class="table-wrap">
-              <table>
-                <thead><tr>
-                  <th>TYPE</th><th>ORIGINAL NAME</th><th>FINAL NAME</th><th>SUGGESTED BY</th><th>STATUS</th><th>DATE</th>
-                </tr></thead>
-                <tbody id="past-suggestions-tbody"><tr><td colspan="6" class="loading"><div class="spinner"></div></td></tr></tbody>
-              </table>
-            </div>
-          </div>
         </section>
 
       </div><!-- /content -->
@@ -745,24 +751,22 @@
       <button class="btn-sm btn-outline" onclick="closeModal('modal-sponsor')">Cancel</button>
       <button class="btn-sm btn-gold" onclick="saveSponsor()">Save Sponsor</button>
     </div>
-  </div>
+</div>
 </div>
 
-<!-- APPROVE SUGGESTION MODAL -->
-<div class="modal-overlay" id="modal-approve-suggestion">
-  <div class="modal">
+<!-- PREVIEW MODAL FOR REPORTS -->
+<div class="modal-overlay" id="modal-preview">
+  <div class="modal" style="max-width:900px;max-height:80vh;overflow-y:auto;">
     <div class="modal-header">
-      <span class="modal-title" id="approve-modal-title">Approve Suggestion</span>
-      <span class="modal-close" onclick="closeModal('modal-approve-suggestion')">✕</span>
+      <span class="modal-title" id="preview-title">Report Preview</span>
+      <span class="modal-close" onclick="closeModal('modal-preview')">✕</span>
     </div>
-    <div class="modal-group">
-      <label id="approve-input-label">School Name (edit if needed for spelling fixes):</label>
-      <input type="text" id="approve-name" placeholder="School/Club name" style="width:100%;padding:12px;background:rgba(255,255,255,0.08);border:1px solid var(--gold);border-radius:8px;color:white;font-size:14px;font-family:inherit;" />
-      <p style="color:var(--gold);font-size:12px;margin-top:12px;font-weight:600;">✏️ Click in the field above to edit the name. Fix any spelling mistakes, then click "Approve".</p>
+    <div id="preview-content" style="padding:20px;overflow-y:auto;max-height:60vh;">
+      <div class="loading"><div class="spinner"></div></div>
     </div>
     <div class="modal-actions">
-      <button class="btn-sm btn-outline" onclick="closeModal('modal-approve-suggestion')">Cancel</button>
-      <button class="btn-sm btn-green" onclick="confirmApprove()">✅ Approve & Add to Master List</button>
+      <button class="btn-sm btn-outline" onclick="closeModal('modal-preview')">Cancel</button>
+      <button class="btn-sm btn-gold" id="preview-export-btn" onclick="executeExport()">📥 Export CSV</button>
     </div>
   </div>
 </div>
@@ -838,8 +842,8 @@ async function doLogout() {
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
 const sectionTitles = {
   dashboard:'Dashboard', players:'Players', divisions:'Divisions',
-  matches:'Matches', payments:'Payments', community:'Community',
-  reports:'Reports', statistics:'Statistics', sponsors:'Sponsors', suggestions:'Suggestions'
+  matches:'Matches', payments:'Payments', 'partner-pool':'Partner Pool', community:'Community',
+  reports:'Reports', statistics:'Statistics'
 };
 function showSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -858,7 +862,6 @@ function showSection(name) {
   if (name==='community') loadCommunity();
   if (name==='statistics') loadStatistics();
   if (name==='sponsors') loadSponsors();
-  if (name==='suggestions') { loadPendingSchools(); loadPendingPostalCodes(); loadPendingGolfClubs(); loadPastSuggestions(); }
 }
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
@@ -1277,6 +1280,257 @@ async function loadStatistics() {
   `;
 }
 
+// ── REPORT PREVIEWS ────────────────────────────────────────────────────────────
+let currentReportData = [];
+let currentReportFilename = '';
+
+function createPreviewTable(data) {
+  if (!data || data.length === 0) {
+    return '<div style="padding:20px;text-align:center;color:var(--text2);">No data to display</div>';
+  }
+  
+  const headers = Object.keys(data[0]);
+  return `
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr style="background:rgba(212,175,55,0.1);border-bottom:2px solid var(--gold);">
+          ${headers.map(h => `<th style="padding:12px;text-align:left;color:var(--gold);font-weight:700;">${h}</th>`).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        ${data.map(row => `
+          <tr style="border-bottom:1px solid var(--border);">
+            ${headers.map(h => `<td style="padding:10px;color:var(--text2);">${row[h] || '—'}</td>`).join('')}
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+async function previewPlayers() {
+  openModal('modal-preview');
+  document.getElementById('preview-title').textContent = '👥 Player List Preview';
+  document.getElementById('preview-content').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  
+  const { data } = await sb.from('players').select('full_name,email,school_name,team_number,payment_status,eligibility_status,year_of_matriculation').order('full_name');
+  currentReportData = data || [];
+  currentReportFilename = 'AlumniGolf_Players.xlsx';
+  document.getElementById('preview-content').innerHTML = createPreviewTable(currentReportData);
+}
+
+async function previewMatches() {
+  openModal('modal-preview');
+  document.getElementById('preview-title').textContent = '🎯 Match Results Preview';
+  document.getElementById('preview-content').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  
+  const { data } = await sb.from('matches').select('round_number,home_team,away_team,match_status,winner,score_display,bracket_type').order('round_number',{ascending:false});
+  currentReportData = data || [];
+  currentReportFilename = 'AlumniGolf_Matches.xlsx';
+  document.getElementById('preview-content').innerHTML = createPreviewTable(currentReportData);
+}
+
+async function previewPayments() {
+  openModal('modal-preview');
+  document.getElementById('preview-title').textContent = '💳 Payment Report Preview';
+  document.getElementById('preview-content').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  
+  const { data } = await sb.from('players').select('full_name,email,team_number,payment_status,payment_method').order('full_name');
+  currentReportData = data || [];
+  currentReportFilename = 'AlumniGolf_Payments.xlsx';
+  document.getElementById('preview-content').innerHTML = createPreviewTable(currentReportData);
+}
+
+async function previewDivisions() {
+  openModal('modal-preview');
+  document.getElementById('preview-title').textContent = '🏆 Division Standings Preview';
+  document.getElementById('preview-content').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  
+  const { data: divTeams } = await sb.from('division_teams').select('team_number,division_id');
+  const { data: divs } = await sb.from('divisions').select('id,name');
+  const rows = (divTeams||[]).map(t=>{
+    const d = (divs||[]).find(x=>x.id===t.division_id);
+    return {division:d?.name||'—', team_number:t.team_number};
+  });
+  currentReportData = rows;
+  currentReportFilename = 'AlumniGolf_Divisions.xlsx';
+  document.getElementById('preview-content').innerHTML = createPreviewTable(currentReportData);
+}
+
+function executeExport() {
+  if (currentReportData.length === 0) {
+    toast('No data to export', 'error');
+    return;
+  }
+  exportToCSV(currentReportData, currentReportFilename);
+  closeModal('modal-preview');
+}
+
+// ── PARTNER POOL ───────────────────────────────────────────────────────────────
+let allUnpairedPlayers = [];
+let allMatchedPairs = [];
+
+async function loadPartnerPool() {
+  try {
+    // Fetch all players who want a partner (looking_for_partner = true)
+    const { data: unpaired } = await sb
+      .from('players')
+      .select('email,full_name,school_name,team_number,phone,payment_status')
+      .eq('looking_for_partner', true)
+      .is('partner_email', null)
+      .order('full_name');
+    
+    allUnpairedPlayers = unpaired || [];
+    renderUnpairedPlayers();
+    
+    // Fetch all matched pairs
+    const { data: matched } = await sb
+      .from('player_partnerships')
+      .select('id,player1_email,player2_email,player1_name,player2_name,match_date,status')
+      .order('match_date', { ascending: false });
+    
+    allMatchedPairs = matched || [];
+    renderMatchedPairs();
+    
+    // Populate datalists for matching interface
+    updatePartnerDataLists();
+    
+    toast('Partner pool loaded', 'success');
+  } catch (err) {
+    console.error('Load partner pool error:', err);
+    toast('Error loading partner pool', 'error');
+  }
+}
+
+function renderUnpairedPlayers() {
+  const html = allUnpairedPlayers.map(p => `
+    <div style="padding:16px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;border-left:4px solid var(--gold);">
+      <div style="font-weight:700;color:var(--text);margin-bottom:4px;">${p.full_name}</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">
+        📧 ${p.email} | 🏫 ${p.school_name} | 👥 Team ${p.team_number}
+      </div>
+      <div style="display:flex;gap:8px;">
+        <span class="badge ${p.payment_status === 'paid' ? 'badge-green' : 'badge-red'}">${p.payment_status}</span>
+        ${p.phone ? `<span class="badge badge-grey">📱 ${p.phone}</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('unpaired-list').innerHTML = html || '<div style="text-align:center;color:var(--text2);padding:20px;">No unpaired players</div>';
+}
+
+function renderMatchedPairs() {
+  const html = allMatchedPairs.map(m => `
+    <div style="padding:16px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;border-left:4px solid var(--green);">
+      <div style="font-weight:700;color:var(--text);margin-bottom:8px;">✅ ${m.player1_name} ↔ ${m.player2_name}</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">
+        ${m.player1_email} | ${m.player2_email}
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="badge ${m.status === 'confirmed' ? 'badge-green' : 'badge-gold'}">${m.status}</span>
+        <span style="font-size:11px;color:var(--text3);">Matched: ${new Date(m.match_date).toLocaleDateString('en-ZA')}</span>
+        <button class="btn-sm btn-danger" onclick="unmatchPartners('${m.id}')" style="margin-left:auto;padding:4px 8px;font-size:11px;">Unmatch</button>
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('matched-list').innerHTML = html || '<div style="text-align:center;color:var(--text2);padding:20px;">No matched pairs yet</div>';
+}
+
+function updatePartnerDataLists() {
+  const emails = allUnpairedPlayers.map(p => `<option value="${p.email}">${p.full_name} (${p.email})</option>`).join('');
+  document.getElementById('unpaired-emails-1').innerHTML = emails;
+  document.getElementById('unpaired-emails-2').innerHTML = emails;
+}
+
+async function matchPlayers() {
+  const email1 = document.getElementById('partner-p1').value.trim();
+  const email2 = document.getElementById('partner-p2').value.trim();
+  
+  if (!email1 || !email2) {
+    toast('Please select both players', 'error');
+    return;
+  }
+  
+  if (email1 === email2) {
+    toast('Cannot match a player with themselves', 'error');
+    return;
+  }
+  
+  const p1 = allUnpairedPlayers.find(p => p.email === email1);
+  const p2 = allUnpairedPlayers.find(p => p.email === email2);
+  
+  if (!p1 || !p2) {
+    toast('One or both players not found in unpaired list', 'error');
+    return;
+  }
+  
+  try {
+    // Create partnership record
+    const { error } = await sb.from('player_partnerships').insert({
+      player1_email: email1,
+      player2_email: email2,
+      player1_name: p1.full_name,
+      player2_name: p2.full_name,
+      match_date: new Date().toISOString(),
+      status: 'confirmed'
+    });
+    
+    if (error) throw error;
+    
+    // Update both players to mark as partnered
+    await sb.from('players')
+      .update({ partner_email: email2, looking_for_partner: false })
+      .eq('email', email1);
+    
+    await sb.from('players')
+      .update({ partner_email: email1, looking_for_partner: false })
+      .eq('email', email2);
+    
+    // Clear inputs and reload
+    document.getElementById('partner-p1').value = '';
+    document.getElementById('partner-p2').value = '';
+    
+    toast('Players matched successfully!', 'success');
+    await loadPartnerPool();
+  } catch (err) {
+    console.error('Match players error:', err);
+    toast('Error creating match: ' + err.message, 'error');
+  }
+}
+
+async function unmatchPartners(partnershipId) {
+  if (!confirm('Are you sure you want to unmatch this partnership?')) return;
+  
+  try {
+    const partnership = allMatchedPairs.find(m => m.id === partnershipId);
+    if (!partnership) return;
+    
+    // Delete partnership
+    await sb.from('player_partnerships').delete().eq('id', partnershipId);
+    
+    // Reset both players
+    await sb.from('players')
+      .update({ partner_email: null, looking_for_partner: true })
+      .in('email', [partnership.player1_email, partnership.player2_email]);
+    
+    toast('Partnership removed', 'success');
+    await loadPartnerPool();
+  } catch (err) {
+    console.error('Unmatch error:', err);
+    toast('Error removing partnership: ' + err.message, 'error');
+  }
+}
+
+function showPartnerStats() {
+  const total = allUnpairedPlayers.length + allMatchedPairs.length * 2;
+  const paired = allMatchedPairs.length * 2;
+  const unpaired = allUnpairedPlayers.length;
+  const pct = total > 0 ? Math.round((paired / total) * 100) : 0;
+  
+  alert(`Partner Pool Statistics\n\nTotal Players Seeking Partners: ${total}\nSuccessfully Paired: ${paired}\nStill Looking: ${unpaired}\nCompletion: ${pct}%`);
+}
+
 // ── EXPORTS ───────────────────────────────────────────────────────────────────
 function exportToCSV(data, filename) {
   const ws = XLSX.utils.json_to_sheet(data);
@@ -1442,305 +1696,6 @@ async function toggleSponsor(id, active) {
   if (error) { toast('Error', 'error'); return; }
   toast(active ? 'Sponsor activated ✅' : 'Sponsor deactivated');
   await loadSponsors();
-}
-
-// ── SUGGESTIONS / PENDING SCHOOLS & CLUBS ──
-let pendingSchools = [];
-let pendingClubs = [];
-let editingPendingId = null;
-let editingPendingType = null;
-
-async function loadPendingSchools() {
-  const { data } = await sb.from('pending_schools').select('*').eq('status', 'pending').order('created_at', { ascending: false });
-  pendingSchools = data || [];
-  renderPendingSchools();
-}
-
-function renderPendingSchools() {
-  const html = pendingSchools.length === 0
-    ? '<p style="color:var(--text2);text-align:center;padding:24px;">No pending suggestions</p>'
-    : pendingSchools.map(s => `
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
-          <div>
-            <h4 style="color:white;margin-bottom:4px;font-size:14px;font-weight:600;">${s.school_name}</h4>
-            <p style="color:var(--text2);font-size:12px;">Suggested: ${new Date(s.created_at).toLocaleDateString('en-ZA')}</p>
-            ${s.email_submitted_by ? `<p style="color:var(--text3);font-size:11px;">By: ${s.email_submitted_by}</p>` : ''}
-          </div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn-sm btn-gold" onclick="openApproveModal('${s.id}', '${s.school_name}', '', 'school')">✅ Approve</button>
-            <button class="btn-sm btn-red" onclick="rejectPendingSchool('${s.id}')">❌ Reject</button>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  document.getElementById('pending-schools-list').innerHTML = html;
-}
-
-async function openApproveModal(id, originalName, originalPostalOrType, type) {
-  editingPendingId = id;
-  editingPendingType = type;
-  
-  if (type === 'postal_code') {
-    // For postal codes: originalName = suburb, originalPostalOrType = postal_code
-    document.getElementById('approve-modal-title').textContent = `Approve Postal Code: ${originalName} ${originalPostalOrType}`;
-    document.getElementById('approve-input-label').textContent = `Suburb (edit if needed for spelling fixes):`;
-    document.getElementById('approve-name').value = originalName;
-    // Add postal code field if it doesn't exist
-    let postalField = document.getElementById('approve-postal-code');
-    if (!postalField) {
-      const label = document.createElement('label');
-      label.textContent = 'Postal Code (edit if needed):';
-      label.style.marginTop = '12px';
-      const field = document.createElement('input');
-      field.type = 'text';
-      field.id = 'approve-postal-code';
-      field.placeholder = 'Postal code';
-      field.style.cssText = 'width:100%;padding:12px;background:rgba(255,255,255,0.08);border:1px solid var(--gold);border-radius:8px;color:white;font-size:14px;font-family:inherit;';
-      document.querySelector('.modal-group').appendChild(label);
-      document.querySelector('.modal-group').appendChild(field);
-    }
-    document.getElementById('approve-postal-code').value = originalPostalOrType;
-  } else {
-    // For schools/clubs
-    document.getElementById('approve-modal-title').textContent = `Approve ${type === 'school' ? 'School' : 'Club'}: ${originalName}`;
-    document.getElementById('approve-input-label').textContent = `${type === 'school' ? 'School' : 'Club'} Name (edit if needed for spelling fixes):`;
-    document.getElementById('approve-name').value = originalName;
-    // Hide postal code field if it exists
-    let postalField = document.getElementById('approve-postal-code');
-    if (postalField) postalField.parentElement.style.display = 'none';
-  }
-  
-  openModal('modal-approve-suggestion');
-}
-
-async function confirmApprove() {
-  const finalName = document.getElementById('approve-name').value.trim();
-  if (!finalName) { toast('Name required', 'error'); return; }
-  
-  try {
-    if (editingPendingType === 'school') {
-      // Check if school already exists
-      const { data: existing } = await sb.from('schools').select('id').ilike('name', finalName).single();
-      if (existing) {
-        toast('School already in master list', 'error');
-        return;
-      }
-      
-      // Insert into schools master table
-      const { error: insertError } = await sb.from('schools').insert([
-        { name: finalName }
-      ]);
-      if (insertError) { toast('Error adding school: ' + insertError.message, 'error'); return; }
-      
-      // Mark as approved in pending_schools table
-      const { error: updateError } = await sb.from('pending_schools')
-        .update({ status: 'approved', final_name: finalName, approved_at: new Date().toISOString() })
-        .eq('id', editingPendingId);
-      
-      if (updateError) { toast('Error approving: ' + updateError.message, 'error'); return; }
-      
-      toast('School approved and added to master list ✅');
-      closeModal('modal-approve-suggestion');
-      await loadPendingSchools();
-      await loadPastSuggestions();
-    } 
-    else if (editingPendingType === 'postal_code') {
-      const finalSuburb = document.getElementById('approve-name').value.trim();
-      const finalPostalCode = document.getElementById('approve-postal-code').value.trim();
-      
-      if (!finalSuburb || !finalPostalCode) { 
-        toast('Both suburb and postal code are required', 'error'); 
-        return; 
-      }
-      
-      if (!/^[0-9]{4}$/.test(finalPostalCode)) {
-        toast('Postal code must be 4 digits', 'error');
-        return;
-      }
-      
-      // Check if postal code already exists (case-insensitive suburb match)
-      const { data: existing } = await sb.from('postal_codes').select('id').ilike('suburb', finalSuburb).single();
-      if (existing) {
-        toast('Postal code already in master list', 'error');
-        return;
-      }
-      
-      // Insert into postal_codes master table
-      const { error: insertError } = await sb.from('postal_codes').insert([
-        { suburb: finalSuburb, postal_code: finalPostalCode }
-      ]);
-      if (insertError) { toast('Error adding postal code: ' + insertError.message, 'error'); return; }
-      
-      // Mark as approved in pending_postal_codes table
-      const { error: updateError } = await sb.from('pending_postal_codes')
-        .update({ status: 'approved', updated_at: new Date().toISOString() })
-        .eq('id', editingPendingId);
-      
-      if (updateError) { toast('Error approving: ' + updateError.message, 'error'); return; }
-      
-      toast('Postal code approved and added to master list ✅');
-      closeModal('modal-approve-suggestion');
-      await loadPendingPostalCodes();
-      await loadPastSuggestions();
-    }
-    else if (editingPendingType === 'club') {
-      // Check if club already exists
-      const { data: existing } = await sb.from('golf_clubs').select('id').ilike('name', finalName).single();
-      if (existing) {
-        toast('Club already in master list', 'error');
-        return;
-      }
-      
-      // Insert into golf_clubs master table
-      const { error: insertError } = await sb.from('golf_clubs').insert([
-        { name: finalName }
-      ]);
-      if (insertError) { toast('Error adding club: ' + insertError.message, 'error'); return; }
-      
-      // Mark as approved in pending_golf_clubs table
-      const { error: updateError } = await sb.from('pending_golf_clubs')
-        .update({ status: 'approved', final_name: finalName, approved_at: new Date().toISOString() })
-        .eq('id', editingPendingId);
-      
-      if (updateError) { toast('Error approving: ' + updateError.message, 'error'); return; }
-      
-      toast('Club approved and added to master list ✅');
-      closeModal('modal-approve-suggestion');
-      await loadPendingGolfClubs();
-      await loadPastSuggestions();
-    }
-  } catch (err) {
-    console.error(err);
-    toast('Error: ' + err.message, 'error');
-  }
-}
-
-async function rejectPendingSchool(id) {
-  if (!confirm('Are you sure you want to reject this suggestion?')) return;
-  
-  const { error } = await sb.from('pending_schools').update({ status: 'rejected' }).eq('id', id);
-  if (error) { toast('Error rejecting', 'error'); return; }
-  toast('Suggestion rejected');
-  await loadPendingSchools();
-  await loadPastSuggestions();
-}
-
-// ── POSTAL CODES ───────────────────────────────────────────────────────────────
-let pendingPostalCodes = [];
-
-async function loadPendingPostalCodes() {
-  const { data } = await sb.from('pending_postal_codes').select('*').eq('status', 'pending').order('created_at', { ascending: false });
-  pendingPostalCodes = data || [];
-  renderPendingPostalCodes();
-}
-
-function renderPendingPostalCodes() {
-  const html = pendingPostalCodes.length === 0
-    ? '<p style="color:var(--text2);text-align:center;padding:24px;">No pending suggestions</p>'
-    : pendingPostalCodes.map(p => `
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
-          <div>
-            <h4 style="color:white;margin-bottom:4px;font-size:14px;font-weight:600;">${p.suburb} <span style="color:var(--gold);font-weight:700;">${p.postal_code}</span></h4>
-            <p style="color:var(--text2);font-size:12px;">Suggested: ${new Date(p.created_at).toLocaleDateString('en-ZA')}</p>
-            ${p.email_submitted_by ? `<p style="color:var(--text3);font-size:11px;">By: ${p.email_submitted_by}</p>` : ''}
-          </div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn-sm btn-gold" onclick="openApproveModal('${p.id}', '${p.suburb.replace(/'/g, "\\'")}', '${p.postal_code}', 'postal_code')">✅ Approve</button>
-            <button class="btn-sm btn-red" onclick="rejectPendingPostalCode('${p.id}')">❌ Reject</button>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  document.getElementById('pending-postal-codes-list').innerHTML = html;
-}
-
-async function rejectPendingPostalCode(id) {
-  if (!confirm('Are you sure you want to reject this suggestion?')) return;
-  
-  const { error } = await sb.from('pending_postal_codes').update({ status: 'rejected' }).eq('id', id);
-  if (error) { toast('Error rejecting', 'error'); return; }
-  toast('Postal code suggestion rejected');
-  await loadPendingPostalCodes();
-  await loadPastSuggestions();
-}
-
-// ── GOLF CLUBS ────────────────────────────────────────────────────────────────
-async function loadPendingGolfClubs() {
-  const { data } = await sb.from('pending_golf_clubs').select('*').eq('status', 'pending').order('created_at', { ascending: false });
-  pendingClubs = data || [];
-  renderPendingGolfClubs();
-}
-
-function renderPendingGolfClubs() {
-  const html = pendingClubs.length === 0
-    ? '<p style="color:var(--text2);text-align:center;padding:24px;">No pending suggestions</p>'
-    : pendingClubs.map(c => `
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
-          <div>
-            <h4 style="color:white;margin-bottom:4px;font-size:14px;font-weight:600;">${c.club_name}</h4>
-            <p style="color:var(--text2);font-size:12px;">Suggested: ${new Date(c.created_at).toLocaleDateString('en-ZA')}</p>
-            ${c.email_submitted_by ? `<p style="color:var(--text3);font-size:11px;">By: ${c.email_submitted_by}</p>` : ''}
-          </div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn-sm btn-gold" onclick="openApproveModal('${c.id}', '${c.club_name}', '', 'club')">✅ Approve</button>
-            <button class="btn-sm btn-red" onclick="rejectPendingClub('${c.id}')">❌ Reject</button>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  document.getElementById('pending-clubs-list').innerHTML = html;
-}
-
-async function rejectPendingClub(id) {
-  if (!confirm('Are you sure you want to reject this suggestion?')) return;
-  
-  const { error } = await sb.from('pending_golf_clubs').update({ status: 'rejected' }).eq('id', id);
-  if (error) { toast('Error rejecting', 'error'); return; }
-  toast('Suggestion rejected');
-  await loadPendingGolfClubs();
-  await loadPastSuggestions();
-}
-
-async function loadPastSuggestions() {
-  // Load schools, golf clubs, and postal codes
-  const { data: schools } = await sb.from('pending_schools')
-    .select('*')
-    .in('status', ['approved', 'rejected'])
-    .order('created_at', { ascending: false })
-    .limit(50);
-  
-  const { data: clubs } = await sb.from('pending_golf_clubs')
-    .select('*')
-    .in('status', ['approved', 'rejected'])
-    .order('created_at', { ascending: false })
-    .limit(50);
-  
-  const { data: postalCodes } = await sb.from('pending_postal_codes')
-    .select('*')
-    .in('status', ['approved', 'rejected'])
-    .order('created_at', { ascending: false })
-    .limit(50);
-  
-  const allSuggestions = [
-    ...(schools || []).map(s => ({ ...s, type: 'School', school_name: s.school_name })),
-    ...(clubs || []).map(c => ({ ...c, type: 'Club', school_name: c.club_name, final_name: c.final_name })),
-    ...(postalCodes || []).map(p => ({ ...p, type: 'Postal Code', school_name: `${p.suburb} ${p.postal_code}`, final_name: `${p.suburb} ${p.postal_code}` }))
-  ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  
-  const tbody = document.getElementById('past-suggestions-tbody');
-  tbody.innerHTML = allSuggestions.length === 0
-    ? '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px;">No past suggestions</td></tr>'
-    : allSuggestions.map(s => `<tr>
-        <td style="font-weight:600;">${s.type}</td>
-        <td>${s.school_name}</td>
-        <td>${s.final_name || '—'}</td>
-        <td style="color:var(--text2)">${s.email_submitted_by || '—'}</td>
-        <td><span class="badge ${s.status === 'approved' ? 'badge-green' : 'badge-red'}">${s.status === 'approved' ? 'Approved' : 'Rejected'}</span></td>
-        <td style="color:var(--text2);font-size:12px;">${new Date(s.created_at).toLocaleDateString('en-ZA')}</td>
-      </tr>`).join('');
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
