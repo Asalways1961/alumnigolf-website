@@ -200,6 +200,7 @@
         <div class="nav-item" onclick="showSection('overview')"><span class="icon">🏠</span>Overview</div>
         <div class="nav-item" onclick="showSection('matches')"><span class="icon">🎯</span>Match Centre</div>
         <div class="nav-item" onclick="showSection('partner')"><span class="icon">🤝</span>My Partner</div>
+        <div class="nav-item" onclick="showSection('partner-pool')" id="nav-partner-pool"><span class="icon">🤝</span>Partner Pool</div>
         <div class="nav-item" onclick="showSection('payment')"><span class="icon">💳</span>Payment</div>
         <div class="nav-item" onclick="showSection('standings')"><span class="icon">🏆</span>Standings</div>
         <div class="nav-item" onclick="showSection('profile')"><span class="icon">👤</span>My Profile</div>
@@ -244,6 +245,20 @@
             <div id="partner-page-content"><div class="loading"><div class="spinner"></div></div></div>
           </div>
         </section>
+        
+        <!-- ── PARTNER POOL ── -->
+        <section class="section" id="sec-partner-pool">
+          <div class="card">
+            <div class="card-title">🤝 Partner Pool</div>
+            <div id="partner-pool-message" style="padding:20px;text-align:center;color:var(--text2);">
+              <p>Loading available partners...</p>
+            </div>
+            <div id="partner-pool-list" style="display:none;">
+              <div id="pool-players-container"></div>
+            </div>
+          </div>
+        </section>
+
         <section class="section" id="sec-payment">
           <div id="payment-content"><div class="loading"><div class="spinner"></div></div></div>
         </section>
@@ -570,7 +585,7 @@ function showPaymentPrompt() {
   document.getElementById('pay-later-btn').addEventListener('click', function(){ modal.remove(); });
 }
 
-const titles = { overview:'Overview', matches:'Match Centre', partner:'My Partner', payment:'Payment', standings:'Standings', profile:'My Profile', supporter:'Follow a School' };
+const titles = { overview:'Overview', matches:'Match Centre', partner:'My Partner', 'partner-pool':'Partner Pool', payment:'Payment', standings:'Standings', profile:'My Profile', supporter:'Follow a School' };
 function showSection(name) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -580,6 +595,7 @@ function showSection(name) {
   document.getElementById('sidebar').classList.remove('open');
   if (name==='matches') loadMyMatches();
   if (name==='partner') loadPartnerPage();
+  if (name==='partner-pool') loadPartnerPool();
   if (name==='payment') loadPaymentSection();
   if (name==='standings') loadStandings();
   if (name==='profile') loadProfileForm();
@@ -1516,6 +1532,74 @@ function renderInviteForm(mode) {
     + '<div class="form-group"><label>School</label><input type="text" id="inv2-school" value="'+(currentPlayer.school||'')+'" readonly style="opacity:0.6;cursor:not-allowed;" /></div>'
     + '<div id="inv2-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;"></div>'
     + inviteButtons;
+}
+
+async function loadPartnerPool() {
+  if (!currentPlayer) return;
+  
+  // Check if player is in partner_pool status
+  if (currentPlayer.partner_status !== 'partner_pool') {
+    const msgEl = document.getElementById('partner-pool-message');
+    msgEl.innerHTML = '<div style="padding:20px;text-align:center;"><div style="font-size:18px;font-weight:700;margin-bottom:10px;">🔒 Not Available</div><div style="color:var(--text2);font-size:13px;">You are not currently registered for the Partner Pool. Contact an admin if you would like to join.</div></div>';
+    document.getElementById('partner-pool-list').style.display = 'none';
+    return;
+  }
+  
+  try {
+    // Fetch all players in partner_pool (except current player)
+    const { data: poolPlayers, error } = await sb
+      .from('players')
+      .select('email,full_name,school,city,postal_code')
+      .eq('partner_status', 'partner_pool')
+      .neq('email', currentPlayer.email)
+      .order('full_name');
+    
+    if (error) {
+      console.error('Error loading partner pool:', error);
+      throw error;
+    }
+    
+    const players = poolPlayers || [];
+    
+    if (players.length === 0) {
+      document.getElementById('partner-pool-message').innerHTML = '<div style="padding:20px;text-align:center;color:var(--text2);"><p>No other players in the Partner Pool yet.</p></div>';
+      document.getElementById('partner-pool-list').style.display = 'none';
+      return;
+    }
+    
+    // Display players
+    document.getElementById('partner-pool-message').style.display = 'none';
+    document.getElementById('partner-pool-list').style.display = 'block';
+    
+    const html = players.map(p => `
+      <div style="padding:16px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;border-left:4px solid var(--gold);">
+        <div style="font-weight:700;color:var(--text);margin-bottom:8px;">${p.full_name}</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:6px;">
+          🏫 ${p.school}
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">
+          📍 ${p.city}, ${p.postal_code}
+        </div>
+        <button class="btn-sm btn-gold" onclick="initiatePartnerRequest('${p.email}', '${p.full_name}')">Request as Partner</button>
+      </div>
+    `).join('');
+    
+    document.getElementById('pool-players-container').innerHTML = html;
+    
+  } catch (err) {
+    console.error('Partner Pool error:', err);
+    document.getElementById('partner-pool-message').innerHTML = '<div style="padding:20px;text-align:center;color:var(--red);">Error loading Partner Pool</div>';
+    document.getElementById('partner-pool-list').style.display = 'none';
+  }
+}
+
+function initiatePartnerRequest(email, name) {
+  // Show confirm dialog
+  if (confirm(`Request ${name} as your partner?`)) {
+    // This would transition to the partner invitation form with pre-filled data
+    showSection('partner');
+    toast(`Ready to invite ${name} — fill in the form below`, 'success');
+  }
 }
 
 async function submitPartnerInvite(mode, inviteMethod, fromPage) {
