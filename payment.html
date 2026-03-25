@@ -126,18 +126,17 @@ function selectAmount(amt, el) {
 // Step 4: MD5 hash the whole string
 // =====================================================
 function buildSignature(data) {
-  // Build the parameter string in the exact order provided
+  // Build the parameter string — skip any empty fields
   let paramString = '';
   for (const key in data) {
     if (data[key] !== '' && data[key] !== null && data[key] !== undefined) {
-      // URL-encode the value exactly as PayFast expects
-      paramString += key + '=' + encodeURIComponent(data[key]).replace(/%20/g, '+') + '&';
+      paramString += key + '=' + encodeURIComponent(data[key]) + '&';
     }
   }
   // Remove the trailing &
   paramString = paramString.slice(0, -1);
   // Append the passphrase
-  paramString += '&passphrase=' + encodeURIComponent(PASSPHRASE).replace(/%20/g, '+');
+  paramString += '&passphrase=' + encodeURIComponent(PASSPHRASE);
 
   console.log('=== PayFast Signature Debug ===');
   console.log('Parameter string:', paramString);
@@ -162,7 +161,7 @@ function submitPayFast() {
 
   const nameParts = name.trim().split(' ');
   const firstName = nameParts[0];
-  const lastName  = nameParts.slice(1).join(' ') || '-';
+  const lastName  = nameParts.slice(1).join(' ') || '';
 
   // =====================================================
   // PAYFAST FIELD ORDER — Must be in this exact order
