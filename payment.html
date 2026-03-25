@@ -281,13 +281,11 @@ function submitPayFast() {
     m_payment_id: paymentId
   };
   
-  // Build signature string - EXACT PayFast order
+  // Build signature string - PayFast specific order
+  // IMPORTANT: DO NOT include return_url, cancel_url, notify_url in signature!
   let signatureString =
     'merchant_id=' + data.merchant_id +
     '&merchant_key=' + data.merchant_key +
-    '&return_url=' + data.return_url +
-    '&cancel_url=' + data.cancel_url +
-    '&notify_url=' + data.notify_url +
     '&name_first=' + data.name_first +
     '&name_last=' + data.name_last +
     '&email_address=' + data.email_address +
