@@ -369,6 +369,7 @@ const PAYFAST_MERCHANT_ID = '10047067';
 const PAYFAST_MERCHANT_KEY = 'wg5kkq77yo2m1';
 const PAYFAST_SANDBOX_URL = 'https://sandbox.payfast.co.za/eng/process';
 const PAYFAST_PASSPHRASE = 'Soosalways1961';
+const PAYFAST_HANDLER_URL = window.location.origin + '/api/payfast-handler'; // Vercel serverless function
 
 let selectedAmount = null;
 let selectedMethod = null;
@@ -450,7 +451,7 @@ function submitPayFast() {
   formData.append('merchant_key', PAYFAST_MERCHANT_KEY);
   formData.append('return_url', window.location.origin + '/payment-success.html');
   formData.append('cancel_url', window.location.origin + '/payment.html');
-  formData.append('notify_url', window.location.origin + '/payfast-handler.php');
+  formData.append('notify_url', PAYFAST_HANDLER_URL);
   
   // Payment details
   formData.append('amount', amount.toFixed(2));
