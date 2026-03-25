@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Complete Payment — Alumni Schools Golf Challenge</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <style>
   :root {
@@ -14,150 +13,30 @@
     --white: #FFFFFF;
     --grey: #666666;
     --border: #e0e0e0;
-    --green: #27ae60;
-    --blue: #2980b9;
   }
   
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: #f5f5f5;
-    color: var(--navy);
-    line-height: 1.6;
-  }
-  
-  header {
-    background: var(--navy);
-    color: var(--white);
-    padding: 20px 40px;
-    text-align: center;
-  }
-  
+  body { font-family: 'DM Sans', sans-serif; background: #f5f5f5; color: var(--navy); line-height: 1.6; }
+  header { background: var(--navy); color: var(--white); padding: 20px 40px; text-align: center; }
   .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
-  
-  .card {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 40px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  
+  .card { background: var(--white); border-radius: 12px; padding: 40px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
   h1 { font-family: 'Cormorant Garamond', serif; font-size: 36px; color: var(--gold); margin-bottom: 20px; text-align: center; }
   h2 { font-size: 20px; margin-bottom: 20px; color: var(--navy); }
-  
-  .amount-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 30px;
-  }
-  
-  @media (max-width: 600px) {
-    .amount-options { grid-template-columns: 1fr; }
-  }
-  
-  .amount-btn {
-    padding: 20px;
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    background: var(--white);
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
-  }
-  
-  .amount-btn:hover {
-    border-color: var(--gold);
-    background: #fafafa;
-  }
-  
-  .amount-btn.selected {
-    border-color: var(--gold);
-    background: rgba(201, 168, 76, 0.1);
-  }
-  
-  .amount-btn h4 {
-    margin-bottom: 8px;
-    color: var(--navy);
-    font-size: 14px;
-  }
-  
-  .amount {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--gold);
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: var(--navy);
-    font-size: 13px;
-    text-transform: uppercase;
-  }
-  
-  .form-group input {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-  }
-  
-  .form-group input:focus {
-    outline: none;
-    border-color: var(--gold);
-  }
-  
-  .btn-primary {
-    width: 100%;
-    padding: 14px;
-    background: var(--gold);
-    color: var(--navy);
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: opacity 0.3s;
-  }
-  
+  .amount-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+  @media (max-width: 600px) { .amount-options { grid-template-columns: 1fr; } }
+  .amount-btn { padding: 20px; border: 2px solid var(--border); border-radius: 8px; background: var(--white); cursor: pointer; transition: all 0.3s; text-align: center; }
+  .amount-btn:hover { border-color: var(--gold); background: #fafafa; }
+  .amount-btn.selected { border-color: var(--gold); background: rgba(201, 168, 76, 0.1); }
+  .amount-btn h4 { margin-bottom: 8px; color: var(--navy); font-size: 14px; }
+  .amount { font-size: 22px; font-weight: 700; color: var(--gold); }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--navy); font-size: 13px; text-transform: uppercase; }
+  .form-group input { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: 'DM Sans', sans-serif; }
+  .form-group input:focus { outline: none; border-color: var(--gold); }
+  .btn-primary { width: 100%; padding: 14px; background: var(--gold); color: var(--navy); border: none; border-radius: 8px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: opacity 0.3s; }
   .btn-primary:hover { opacity: 0.9; }
-  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-  
-  .btn-payfast {
-    background: var(--blue);
-    color: var(--white);
-  }
-  
-  .sandbox-notice {
-    background: #fff3cd;
-    border-left: 4px solid #ffc107;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    color: #856404;
-    font-size: 13px;
-  }
-  
-  footer {
-    background: var(--navy);
-    color: var(--white);
-    text-align: center;
-    padding: 30px 40px;
-    margin-top: 60px;
-    font-size: 13px;
-  }
+  .sandbox-notice { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin-bottom: 20px; border-radius: 4px; color: #856404; font-size: 13px; }
+  footer { background: var(--navy); color: var(--white); text-align: center; padding: 30px 40px; margin-top: 60px; font-size: 13px; }
 </style>
 </head>
 
@@ -169,7 +48,6 @@
 
 <div class="container">
   
-  <!-- AMOUNT SELECTION -->
   <div class="card" id="amount-card">
     <h2>Payment Amount</h2>
     <p style="margin-bottom:30px;color:var(--grey);">Select your payment amount below.</p>
@@ -191,11 +69,10 @@
     </div>
 
     <div class="sandbox-notice">
-      ℹ️ SANDBOX MODE: Testing with R5 (single) and R10 (team). Real amounts will be R1,500 and R2,800.
+      ℹ️ SANDBOX MODE: Testing with R5 (single) and R10 (team)
     </div>
   </div>
   
-  <!-- PAYFAST PAYMENT -->
   <div class="card" id="payfast-card" style="display:none;">
     <h2>PayFast Payment</h2>
     
@@ -211,19 +88,17 @@
     
     <p style="color:var(--grey);font-size:13px;margin-bottom:20px;">You will be redirected to PayFast to complete your payment securely.</p>
     
-    <button class="btn-primary btn-payfast" onclick="submitPayFast()">Proceed to PayFast →</button>
+    <button class="btn-primary" style="background:#2980b9;color:white;" onclick="submitPayFast()">Proceed to PayFast →</button>
   </div>
 </div>
 
 <footer>
   <p>&copy; 2026 Alumni Schools Golf Challenge</p>
-  <p style="margin-top:12px;color:rgba(255,255,255,0.6);">Celebrating excellence. Competing exclusively. Honouring tradition.</p>
 </footer>
 
 <script>
-// PayFast Configuration
-const MERCHANT_ID = '10047067';
-const MERCHANT_KEY = 'wg5kkq77yo2m1';
+const MERCHANT_ID = '10047080';
+const MERCHANT_KEY = 'khufuehqguy6k';
 const PASSPHRASE = 'Soosalways1961';
 const SANDBOX_URL = 'https://sandbox.payfast.co.za/eng/process';
 
@@ -233,7 +108,6 @@ function selectAmount(amt) {
   selectedAmount = amt;
   document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
-  
   setTimeout(() => {
     document.getElementById('payfast-card').style.display = 'block';
     document.getElementById('payfast-card').scrollIntoView({ behavior: 'smooth' });
@@ -255,22 +129,40 @@ function submitPayFast() {
   const nameParts = name.split(' ');
   const firstName = nameParts[0];
   const lastName = nameParts.slice(1).join(' ') || '';
-  const returnUrl = window.location.origin + '/payment-success.html';
-  const cancelUrl = window.location.origin + '/payment.html';
-  const notifyUrl = window.location.origin + '/api/payfast-handler';
   
-  console.log('=== PayFast Payment Debug ===');
-  console.log('Amount:', amount);
-  console.log('Email:', email);
-  console.log('Name:', name);
+  // Build signature string - EXACTLY as PayFast expects
+  // Only these fields, in this order, NO URLs
+  let signatureString =
+    'merchant_id=' + MERCHANT_ID +
+    '&merchant_key=' + MERCHANT_KEY +
+    '&name_first=' + firstName +
+    '&name_last=' + lastName +
+    '&email_address=' + email +
+    '&amount=' + amount +
+    '&item_name=' + itemName +
+    '&item_description=Alumni Golf Tournament Entry' +
+    '&custom_str1=' + email + '|' + selectedAmount +
+    '&m_payment_id=' + paymentId +
+    '&passphrase=' + PASSPHRASE;
   
-  // Build data object
-  const data = {
+  console.log('=== PayFast Signature Debug ===');
+  console.log('Signature String:', signatureString);
+  
+  const signature = CryptoJS.MD5(signatureString).toString();
+  console.log('MD5 Signature:', signature);
+  console.log('Signature Length:', signature.length);
+  
+  // Create form with ALL fields
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SANDBOX_URL;
+  
+  const fields = {
     merchant_id: MERCHANT_ID,
     merchant_key: MERCHANT_KEY,
-    return_url: returnUrl,
-    cancel_url: cancelUrl,
-    notify_url: notifyUrl,
+    return_url: window.location.origin + '/payment-success.html',
+    cancel_url: window.location.origin + '/payment.html',
+    notify_url: window.location.origin + '/api/payfast-handler',
     name_first: firstName,
     name_last: lastName,
     email_address: email,
@@ -278,53 +170,19 @@ function submitPayFast() {
     item_name: itemName,
     item_description: 'Alumni Golf Tournament Entry',
     custom_str1: email + '|' + selectedAmount,
-    m_payment_id: paymentId
+    m_payment_id: paymentId,
+    signature: signature
   };
   
-  // Build signature string - PayFast specific order
-  // IMPORTANT: DO NOT include return_url, cancel_url, notify_url in signature!
-  let signatureString =
-    'merchant_id=' + data.merchant_id +
-    '&merchant_key=' + data.merchant_key +
-    '&name_first=' + data.name_first +
-    '&name_last=' + data.name_last +
-    '&email_address=' + data.email_address +
-    '&amount=' + data.amount +
-    '&item_name=' + data.item_name +
-    '&item_description=' + data.item_description +
-    '&custom_str1=' + data.custom_str1 +
-    '&m_payment_id=' + data.m_payment_id +
-    '&passphrase=' + PASSPHRASE;
-  
-  console.log('Signature String:', signatureString);
-  
-  // Generate MD5 hash using CryptoJS
-  const signature = CryptoJS.MD5(signatureString).toString();
-  console.log('MD5 Signature:', signature);
-  console.log('Signature Length:', signature.length);
-  
-  // Create hidden form
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = SANDBOX_URL;
-  
-  // Add all fields
-  for (const key in data) {
+  for (const key in fields) {
     const input = document.createElement('input');
     input.type = 'hidden';
     input.name = key;
-    input.value = data[key];
+    input.value = fields[key];
     form.appendChild(input);
   }
   
-  // Add signature
-  const sigInput = document.createElement('input');
-  sigInput.type = 'hidden';
-  sigInput.name = 'signature';
-  sigInput.value = signature;
-  form.appendChild(sigInput);
-  
-  console.log('Submitting form to PayFast');
+  console.log('Submitting to PayFast with fields:', fields);
   
   document.body.appendChild(form);
   form.submit();
