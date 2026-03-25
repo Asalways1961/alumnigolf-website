@@ -222,13 +222,10 @@
 
 <script>
 // PayFast Configuration
-const PAYFAST_MERCHANT_ID = '10047067';
-const PAYFAST_MERCHANT_KEY = 'wg5kkq77yo2m1';
-const PAYFAST_PASSPHRASE = 'Soosalways1961';
-const PAYFAST_URL = 'https://sandbox.payfast.co.za/eng/process';
-const RETURN_URL = window.location.origin + '/payment-success.html';
-const CANCEL_URL = window.location.origin + '/payment.html';
-const NOTIFY_URL = window.location.origin + '/api/payfast-handler';
+const MERCHANT_ID = '10047067';
+const MERCHANT_KEY = 'wg5kkq77yo2m1';
+const PASSPHRASE = 'Soosalways1961';
+const SANDBOX_URL = 'https://sandbox.payfast.co.za/eng/process';
 
 let selectedAmount = null;
 
@@ -248,7 +245,7 @@ function submitPayFast() {
   const name = document.getElementById('payfast-name').value.trim();
   
   if (!email || !name || !selectedAmount) {
-    alert('Please fill in all fields and select an amount');
+    alert('Please fill in all fields');
     return;
   }
   
@@ -257,63 +254,63 @@ function submitPayFast() {
   const paymentId = Date.now().toString();
   const nameParts = name.split(' ');
   const firstName = nameParts[0];
-  const lastName = nameParts.slice(1).join(' ') || nameParts[0];
+  const lastName = nameParts.slice(1).join(' ') || '';
+  const returnUrl = window.location.origin + '/payment-success.html';
+  const cancelUrl = window.location.origin + '/payment.html';
+  const notifyUrl = window.location.origin + '/api/payfast-handler';
   
-  // Create object with data in ALPHABETICAL ORDER (CRITICAL!)
+  console.log('=== PayFast Payment Debug ===');
+  console.log('Amount:', amount);
+  console.log('Email:', email);
+  console.log('Name:', name);
+  
+  // Build data object
   const data = {
-    amount: amount,
-    cancel_url: CANCEL_URL,
-    custom_str1: email + '|' + selectedAmount,
-    email_address: email,
-    item_description: 'Alumni Golf Tournament Entry',
-    item_name: itemName,
-    merchant_id: PAYFAST_MERCHANT_ID,
-    merchant_key: PAYFAST_MERCHANT_KEY,
-    m_payment_id: paymentId,
+    merchant_id: MERCHANT_ID,
+    merchant_key: MERCHANT_KEY,
+    return_url: returnUrl,
+    cancel_url: cancelUrl,
+    notify_url: notifyUrl,
     name_first: firstName,
     name_last: lastName,
-    notify_url: NOTIFY_URL,
-    return_url: RETURN_URL
+    email_address: email,
+    amount: amount,
+    item_name: itemName,
+    item_description: 'Alumni Golf Tournament Entry',
+    custom_str1: email + '|' + selectedAmount,
+    m_payment_id: paymentId
   };
   
-  // CRITICAL: Build signature string with keys in ALPHABETICAL order
-  let signatureString = '';
-  const sortedKeys = Object.keys(data).sort();
+  // Build signature string - EXACT PayFast order
+  let signatureString =
+    'merchant_id=' + data.merchant_id +
+    '&merchant_key=' + data.merchant_key +
+    '&return_url=' + data.return_url +
+    '&cancel_url=' + data.cancel_url +
+    '&notify_url=' + data.notify_url +
+    '&name_first=' + data.name_first +
+    '&name_last=' + data.name_last +
+    '&email_address=' + data.email_address +
+    '&amount=' + data.amount +
+    '&item_name=' + data.item_name +
+    '&item_description=' + data.item_description +
+    '&custom_str1=' + data.custom_str1 +
+    '&m_payment_id=' + data.m_payment_id +
+    '&passphrase=' + PASSPHRASE;
   
-  for (let i = 0; i < sortedKeys.length; i++) {
-    const key = sortedKeys[i];
-    const value = data[key];
-    signatureString += key + '=' + encodeURIComponent(value);
-    if (i < sortedKeys.length - 1) {
-      signatureString += '&';
-    }
-  }
-  
-  // Add passphrase
-  signatureString += '&passphrase=' + encodeURIComponent(PAYFAST_PASSPHRASE);
-  
-  console.log('=== PayFast Debug Info ===');
   console.log('Signature String:', signatureString);
   
-  // Generate MD5 hash
+  // Generate MD5 hash using CryptoJS
   const signature = CryptoJS.MD5(signatureString).toString();
-  
   console.log('MD5 Signature:', signature);
   console.log('Signature Length:', signature.length);
-  console.log('Data:', data);
-  
-  if (signature.length !== 32) {
-    console.error('ERROR: Signature length is ' + signature.length + ', should be 32');
-    alert('Error generating signature. Check console for details.');
-    return;
-  }
   
   // Create hidden form
   const form = document.createElement('form');
   form.method = 'POST';
-  form.action = PAYFAST_URL;
+  form.action = SANDBOX_URL;
   
-  // Add all data fields
+  // Add all fields
   for (const key in data) {
     const input = document.createElement('input');
     input.type = 'hidden';
@@ -323,13 +320,13 @@ function submitPayFast() {
   }
   
   // Add signature
-  const signatureInput = document.createElement('input');
-  signatureInput.type = 'hidden';
-  signatureInput.name = 'signature';
-  signatureInput.value = signature;
-  form.appendChild(signatureInput);
+  const sigInput = document.createElement('input');
+  sigInput.type = 'hidden';
+  sigInput.name = 'signature';
+  sigInput.value = signature;
+  form.appendChild(sigInput);
   
-  console.log('Form data ready. Submitting...');
+  console.log('Submitting form to PayFast');
   
   document.body.appendChild(form);
   form.submit();
