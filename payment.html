@@ -15,6 +15,7 @@
     --grey: #666666;
     --border: #e0e0e0;
     --green: #27ae60;
+    --blue: #2980b9;
   }
   
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -46,7 +47,7 @@
   h1 { font-family: 'Cormorant Garamond', serif; font-size: 36px; color: var(--gold); margin-bottom: 20px; text-align: center; }
   h2 { font-size: 20px; margin-bottom: 20px; color: var(--navy); }
   
-  .payment-options {
+  .payment-methods {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
@@ -54,10 +55,10 @@
   }
   
   @media (max-width: 600px) {
-    .payment-options { grid-template-columns: 1fr; }
+    .payment-methods { grid-template-columns: 1fr; }
   }
   
-  .payment-btn {
+  .payment-method-btn {
     padding: 20px;
     border: 2px solid var(--border);
     border-radius: 8px;
@@ -67,31 +68,63 @@
     text-align: center;
   }
   
-  .payment-btn:hover {
+  .payment-method-btn:hover {
     border-color: var(--gold);
     background: #fafafa;
   }
   
-  .payment-btn.selected {
+  .payment-method-btn.selected {
     border-color: var(--gold);
     background: rgba(201, 168, 76, 0.1);
   }
   
-  .payment-btn h3 {
+  .payment-method-btn h3 {
     margin-bottom: 10px;
     color: var(--navy);
   }
   
-  .payment-btn p {
+  .payment-method-btn p {
     font-size: 13px;
     color: var(--grey);
   }
   
+  .amount-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .amount-btn {
+    padding: 15px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+  }
+  
+  .amount-btn:hover {
+    border-color: var(--gold);
+    background: #fafafa;
+  }
+  
+  .amount-btn.selected {
+    border-color: var(--gold);
+    background: rgba(201, 168, 76, 0.1);
+  }
+  
+  .amount-btn h4 {
+    margin-bottom: 8px;
+    color: var(--navy);
+    font-size: 14px;
+  }
+  
   .amount {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--gold);
-    margin: 10px 0;
   }
   
   .form-group {
@@ -138,6 +171,11 @@
   
   .btn-primary:hover { opacity: 0.9; }
   .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+  
+  .btn-payfast {
+    background: var(--blue);
+    color: var(--white);
+  }
   
   .eft-details {
     background: #f0f0f0;
@@ -188,6 +226,16 @@
     margin-bottom: 10px;
   }
   
+  .sandbox-notice {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    color: #856404;
+    font-size: 13px;
+  }
+  
   footer {
     background: var(--navy);
     color: var(--white);
@@ -207,25 +255,71 @@
 </header>
 
 <div class="container">
-  <div class="card" id="payment-card">
-    <h2>Payment Options</h2>
+  
+  <!-- AMOUNT SELECTION -->
+  <div class="card" id="amount-card">
+    <h2>Payment Amount</h2>
     <p style="margin-bottom:30px;color:var(--grey);">Select your payment amount below.</p>
     
-    <div class="payment-options">
-      <div class="payment-btn" onclick="selectPayment('team')">
-        <h3>Team Registration</h3>
-        <p>For both players</p>
-        <div class="amount">R2,800</div>
+    <div class="amount-options">
+      <div class="amount-btn" onclick="selectAmount('team')">
+        <h4>Team Registration</h4>
+        <p style="font-size:12px;color:var(--grey);margin-bottom:8px;">For both players</p>
+        <div class="amount">R10.00</div>
+        <p style="font-size:11px;color:var(--grey);margin-top:4px;">(TEST MODE)</p>
       </div>
       
-      <div class="payment-btn" onclick="selectPayment('single')">
-        <h3>Single Player</h3>
-        <p>Individual entry</p>
-        <div class="amount">R1,500</div>
+      <div class="amount-btn" onclick="selectAmount('single')">
+        <h4>Single Player</h4>
+        <p style="font-size:12px;color:var(--grey);margin-bottom:8px;">Individual entry</p>
+        <div class="amount">R5.00</div>
+        <p style="font-size:11px;color:var(--grey);margin-top:4px;">(TEST MODE)</p>
+      </div>
+    </div>
+
+    <div class="sandbox-notice">
+      ℹ️ SANDBOX MODE: Testing with R5 (single) and R10 (team). Real amounts will be R1,500 and R2,800 respectively.
+    </div>
+  </div>
+  
+  <!-- METHOD SELECTION -->
+  <div class="card" id="method-card" style="display:none;">
+    <h2>Payment Method</h2>
+    <p style="margin-bottom:30px;color:var(--grey);">Choose how you'd like to pay.</p>
+    
+    <div class="payment-methods">
+      <div class="payment-method-btn" onclick="selectMethod('payfast')">
+        <h3>💳 Card / EFT</h3>
+        <p>Pay via PayFast (cards, instant EFT, SnapScan, etc.)</p>
+      </div>
+      
+      <div class="payment-method-btn" onclick="selectMethod('eft')">
+        <h3>🏦 Bank Transfer</h3>
+        <p>Direct bank transfer with proof upload</p>
       </div>
     </div>
   </div>
   
+  <!-- PAYFAST PAYMENT -->
+  <div class="card" id="payfast-card" style="display:none;">
+    <h2>PayFast Payment</h2>
+    
+    <div class="form-group">
+      <label>Your Email</label>
+      <input type="email" id="payfast-email" placeholder="your@email.com" required>
+    </div>
+    
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="payfast-name" placeholder="John Doe" required>
+    </div>
+    
+    <p style="color:var(--grey);font-size:13px;margin-bottom:20px;">You will be redirected to PayFast to complete your payment securely.</p>
+    
+    <button class="btn-primary btn-payfast" onclick="submitPayFast()">Proceed to PayFast →</button>
+  </div>
+  
+  <!-- EFT PAYMENT -->
   <div class="card" id="eft-card" style="display:none;">
     <h2>Bank Transfer (EFT)</h2>
     
@@ -241,7 +335,7 @@
     
     <div class="form-group">
       <label>Your Email</label>
-      <input type="email" id="pay-email" placeholder="your@email.com" required>
+      <input type="email" id="eft-email" placeholder="your@email.com" required>
     </div>
     
     <h3 style="margin-top:30px;margin-bottom:20px;font-size:16px;">Upload Proof of Payment</h3>
@@ -250,9 +344,10 @@
       <p style="margin:0;color:var(--grey);">Click to upload proof of payment (screenshot, PDF receipt)</p>
     </div>
     
-    <button class="btn-primary" onclick="submitPayment()" style="margin-top:30px;">Submit Payment Proof</button>
+    <button class="btn-primary" onclick="submitEFT()" style="margin-top:30px;">Submit Payment Proof</button>
   </div>
   
+  <!-- SUCCESS CARD -->
   <div class="card" id="success-card" style="display:none;">
     <h2>✓ Payment Received</h2>
     <p>Thank you! Your payment has been received and is under verification. You'll receive a confirmation email shortly.</p>
@@ -269,48 +364,154 @@ const SUPABASE_URL = 'https://weztrzuxwycypheyiixr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlenRyenV4d3ljeXBoZXlpaXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzYzMTYsImV4cCI6MjA4NzAxMjMxNn0.t6P20qa8QZAMxxi1K0HLRaVJtH7XOmBeL851-ewaAWA';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let selectedAmount = null;
+// PayFast Sandbox Credentials
+const PAYFAST_MERCHANT_ID = '10047067';
+const PAYFAST_MERCHANT_KEY = 'wg5kkq77yo2m1';
+const PAYFAST_SANDBOX_URL = 'https://sandbox.payfast.co.za/eng/process';
+const PAYFAST_PASSPHRASE = 'Soosalways1961';
 
-function selectPayment(amt) {
+let selectedAmount = null;
+let selectedMethod = null;
+
+function selectAmount(amt) {
   selectedAmount = amt;
-  document.querySelectorAll('.payment-btn').forEach(btn => btn.classList.remove('selected'));
+  document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
-  document.getElementById('eft-card').style.display = 'block';
   
-  const email = document.getElementById('pay-email').value.trim();
-  if (email) {
-    updateEFTRef(email);
-  }
+  // Show method selection
+  setTimeout(() => {
+    document.getElementById('amount-card').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('method-card').style.display = 'block';
+  }, 200);
 }
 
+function selectMethod(method) {
+  selectedMethod = method;
+  document.querySelectorAll('.payment-method-btn').forEach(btn => btn.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  
+  // Hide both cards first
+  document.getElementById('payfast-card').style.display = 'none';
+  document.getElementById('eft-card').style.display = 'none';
+  
+  setTimeout(() => {
+    if (method === 'payfast') {
+      document.getElementById('payfast-card').style.display = 'block';
+    } else {
+      document.getElementById('eft-card').style.display = 'block';
+    }
+    document.getElementById('method-card').scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 200);
+}
+
+// EFT Email sync
+document.addEventListener('DOMContentLoaded', function() {
+  const eftEmail = document.getElementById('eft-email');
+  if (eftEmail) {
+    eftEmail.addEventListener('change', function() {
+      updateEFTRef(this.value);
+    });
+  }
+  
+  const proofFile = document.getElementById('proof-file');
+  if (proofFile) {
+    proofFile.addEventListener('change', function() {
+      if (this.files.length > 0) {
+        console.log('File selected:', this.files[0].name);
+      }
+    });
+  }
+});
+
 function updateEFTRef(email) {
-  if (email && selectedAmount) {
+  if (email) {
     const ref = email.substring(0, 10).toUpperCase().replace(/[^A-Z0-9]/g, '');
     document.getElementById('eft-ref').textContent = ref || email;
   }
 }
 
-document.getElementById('pay-email').addEventListener('change', function() {
-  updateEFTRef(this.value);
-});
-
-document.getElementById('proof-file').addEventListener('change', function() {
-  if (this.files.length > 0) {
-    console.log('File selected:', this.files[0].name);
-  }
-});
-
-async function submitPayment() {
-  const email = document.getElementById('pay-email').value.trim();
-  const file = document.getElementById('proof-file').files[0];
+// PayFast Form Submission
+function submitPayFast() {
+  const email = document.getElementById('payfast-email').value.trim();
+  const name = document.getElementById('payfast-name').value.trim();
   
-  if (!email || !file || !selectedAmount) {
+  if (!email || !name || !selectedAmount) {
     alert('Please fill in all fields');
     return;
   }
   
-  if (!selectedAmount) {
-    alert('Please select a payment amount');
+  const amount = selectedAmount === 'team' ? 10.00 : 5.00; // TEST AMOUNTS
+  
+  // Build PayFast form data
+  const formData = new FormData();
+  
+  // Required fields
+  formData.append('merchant_id', PAYFAST_MERCHANT_ID);
+  formData.append('merchant_key', PAYFAST_MERCHANT_KEY);
+  formData.append('return_url', window.location.origin + '/payment-success.html');
+  formData.append('cancel_url', window.location.origin + '/payment.html');
+  formData.append('notify_url', window.location.origin + '/payfast-handler.php');
+  
+  // Payment details
+  formData.append('amount', amount.toFixed(2));
+  formData.append('item_name', 'Alumni Golf Tournament - ' + (selectedAmount === 'team' ? 'Team Registration' : 'Single Player'));
+  formData.append('item_description', 'Entry fee for Alumni Golf Tournament');
+  formData.append('custom_str1', email + '|' + selectedAmount); // Custom data
+  formData.append('m_payment_id', Date.now()); // Unique payment ID
+  
+  // Customer details
+  formData.append('name_first', name.split(' ')[0]);
+  formData.append('name_last', name.split(' ').slice(1).join(' ') || name);
+  formData.append('email_address', email);
+  
+  // Build signature string
+  let signatureString = 
+    'merchant_id=' + PAYFAST_MERCHANT_ID +
+    '&merchant_key=' + PAYFAST_MERCHANT_KEY +
+    '&return_url=' + encodeURIComponent(formData.get('return_url')) +
+    '&cancel_url=' + encodeURIComponent(formData.get('cancel_url')) +
+    '&notify_url=' + encodeURIComponent(formData.get('notify_url')) +
+    '&name_first=' + encodeURIComponent(formData.get('name_first')) +
+    '&name_last=' + encodeURIComponent(formData.get('name_last')) +
+    '&email_address=' + encodeURIComponent(formData.get('email_address')) +
+    '&amount=' + amount.toFixed(2) +
+    '&item_name=' + encodeURIComponent(formData.get('item_name')) +
+    '&item_description=' + encodeURIComponent(formData.get('item_description')) +
+    '&custom_str1=' + encodeURIComponent(email + '|' + selectedAmount) +
+    '&m_payment_id=' + formData.get('m_payment_id');
+  
+  // Add passphrase if set
+  if (PAYFAST_PASSPHRASE) {
+    signatureString += '&passphrase=' + PAYFAST_PASSPHRASE;
+  }
+  
+  // Create MD5 signature
+  formData.append('signature', md5(signatureString));
+  
+  // Create and submit hidden form
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = PAYFAST_SANDBOX_URL;
+  
+  for (const [key, value] of formData) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = value;
+    form.appendChild(input);
+  }
+  
+  document.body.appendChild(form);
+  form.submit();
+}
+
+// EFT Form Submission
+async function submitEFT() {
+  const email = document.getElementById('eft-email').value.trim();
+  const file = document.getElementById('proof-file').files[0];
+  
+  if (!email || !file || !selectedAmount) {
+    alert('Please fill in all fields');
     return;
   }
   
@@ -321,13 +522,18 @@ async function submitPayment() {
   try {
     const ext = file.name.split('.').pop();
     const fileName = 'pop/' + email + '-' + Date.now() + '.' + ext;
-    await sb.storage.from('proofs').upload(fileName, file, {upsert: true});
+    await sb.storage.from('proofs').upload(fileName, file, { upsert: true });
+    
     const popUrl = SUPABASE_URL + '/storage/v1/object/public/proofs/' + fileName;
+    
+    const amount = selectedAmount === 'team' ? 10.00 : 5.00; // TEST AMOUNTS
     
     await sb.from('players').update({
       payment_status: 'pending_verification',
+      payment_method: 'eft',
       payment_proof_url: popUrl,
-      payment_amount: selectedAmount === 'team' ? 2800 : 1500,
+      payment_amount: amount,
+      payment_date: new Date().toISOString()
     }).eq('email', email);
     
     document.querySelectorAll('.card:not(#success-card)').forEach(c => c.style.display = 'none');
@@ -337,6 +543,134 @@ async function submitPayment() {
     btn.disabled = false;
     btn.textContent = 'Submit Payment Proof';
   }
+}
+
+// MD5 Hash Function (for signature generation)
+function md5(str) {
+  let hash = 0, i, chr;
+  if (str.length === 0) return hash;
+  for (i = 0; i < str.length; i++) {
+    chr = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(16);
+}
+
+// Simple MD5 implementation (use a proper library in production)
+function md5(message) {
+  function md5cycle(x, k) {
+    let a = x[0], b = x[1], c = x[2], d = x[3];
+    a = ff(a, b, c, d, k[0], 7, -680876936);
+    d = ff(d, a, b, c, k[1], 12, -389564586);
+    c = ff(c, d, a, b, k[2], 17, 606105819);
+    b = ff(b, c, d, a, k[3], 22, -1044525550);
+    a = ff(a, b, c, d, k[4], 7, -176418897);
+    d = ff(d, a, b, c, k[5], 12, 1200080426);
+    c = ff(c, d, a, b, k[6], 17, -1473231341);
+    b = ff(b, c, d, a, k[7], 22, -45705983);
+    a = ff(a, b, c, d, k[8], 7, 1770035416);
+    d = ff(d, a, b, c, k[9], 12, -1958414417);
+    c = ff(c, d, a, b, k[10], 17, -42063);
+    b = ff(b, c, d, a, k[11], 22, -1990404162);
+    a = ff(a, b, c, d, k[12], 7, 1804603682);
+    d = ff(d, a, b, c, k[13], 12, -40341101);
+    c = ff(c, d, a, b, k[14], 17, -1502002290);
+    b = ff(b, c, d, a, k[15], 22, 1236535329);
+    a = gg(a, b, c, d, k[1], 5, -165796510);
+    d = gg(d, a, b, c, k[6], 9, -1069501632);
+    c = gg(c, d, a, b, k[11], 14, 643717713);
+    b = gg(b, c, d, a, k[0], 20, -373897302);
+    a = gg(a, b, c, d, k[5], 5, -701558691);
+    d = gg(d, a, b, c, k[10], 9, 38016083);
+    c = gg(c, d, a, b, k[15], 14, -660478335);
+    b = gg(b, c, d, a, k[4], 20, -405537848);
+    a = gg(a, b, c, d, k[9], 5, 568446438);
+    d = gg(d, a, b, c, k[14], 9, -1019803690);
+    c = gg(c, d, a, b, k[3], 14, -187363961);
+    b = gg(b, c, d, a, k[8], 20, 1163531501);
+    a = gg(a, b, c, d, k[13], 5, -1444681467);
+    d = gg(d, a, b, c, k[2], 9, -51403784);
+    c = gg(c, d, a, b, k[7], 14, 1735328661);
+    b = gg(b, c, d, a, k[12], 20, -1926607734);
+    a = hh(a, b, c, d, k[5], 4, -378558);
+    d = hh(d, a, b, c, k[8], 11, -2022574632);
+    c = hh(c, d, a, b, k[11], 16, 1839030562);
+    b = hh(b, c, d, a, k[14], 23, -35309556);
+    a = hh(a, b, c, d, k[1], 4, -1530992060);
+    d = hh(d, a, b, c, k[4], 11, 1272893353);
+    c = hh(c, d, a, b, k[7], 16, -155497632);
+    b = hh(b, c, d, a, k[10], 23, -1094730640);
+    a = hh(a, b, c, d, k[13], 4, 681279174);
+    d = hh(d, a, b, c, k[0], 11, -358537795);
+    c = hh(c, d, a, b, k[3], 16, -722521979);
+    b = hh(b, c, d, a, k[6], 23, 76029189);
+    a = hh(a, b, c, d, k[9], 4, -640364487);
+    d = hh(d, a, b, c, k[12], 11, -421815835);
+    c = hh(c, d, a, b, k[15], 16, 530742520);
+    b = hh(b, c, d, a, k[2], 23, -995338651);
+    a = ii(a, b, c, d, k[0], 6, -198630844);
+    d = ii(d, a, b, c, k[7], 10, 1126891415);
+    c = ii(c, d, a, b, k[14], 15, -1416354905);
+    b = ii(b, c, d, a, k[5], 21, -57434055);
+    a = ii(a, b, c, d, k[12], 6, 1700485571);
+    d = ii(d, a, b, c, k[3], 10, -1894986606);
+    c = ii(c, d, a, b, k[10], 15, -1051523);
+    b = ii(b, c, d, a, k[1], 21, -2054922799);
+    a = ii(a, b, c, d, k[8], 6, 1873313359);
+    d = ii(d, a, b, c, k[15], 10, -30611744);
+    c = ii(c, d, a, b, k[6], 15, -1560198380);
+    b = ii(b, c, d, a, k[13], 21, 1309151649);
+    a = ii(a, b, c, d, k[4], 6, -145523070);
+    d = ii(d, a, b, c, k[11], 10, -1120210379);
+    c = ii(c, d, a, b, k[2], 15, 718787259);
+    b = ii(b, c, d, a, k[9], 21, -343487606);
+    x[0] = add32(a, x[0]);
+    x[1] = add32(b, x[1]);
+    x[2] = add32(c, x[2]);
+    x[3] = add32(d, x[3]);
+  }
+  function cmn(q, a, b, x, s, t) {
+    a = add32(add32(a, q), add32(x, t));
+    return add32((a << s) | (a >>> (32 - s)), b);
+  }
+  function ff(a, b, c, d, x, s, t) {
+    return cmn((b & c) | ((~b) & d), a, b, x, s, t);
+  }
+  function gg(a, b, c, d, x, s, t) {
+    return cmn((b & d) | (c & (~d)), a, b, x, s, t);
+  }
+  function hh(a, b, c, d, x, s, t) {
+    return cmn(b ^ c ^ d, a, b, x, s, t);
+  }
+  function ii(a, b, c, d, x, s, t) {
+    return cmn(c ^ (b | (~d)), a, b, x, s, t);
+  }
+  function add32(a, b) {
+    return (a + b) & 0xffffffff;
+  }
+  function md5blk(s) {
+    let md5blks = [], i;
+    for (i = 0; i < 64; i += 4) {
+      md5blks[i >> 2] = s.charCodeAt(i) + (s.charCodeAt(i + 1) << 8) + (s.charCodeAt(i + 2) << 16) + (s.charCodeAt(i + 3) << 24);
+    }
+    return md5blks;
+  }
+  let xl = message.length, d = 1732584193, _ = -271733879, v = -1732584194, k = 271733878, S;
+  for (S = 64; S <= message.length; S += 64) {
+    md5cycle([d, _, v, k], md5blk(message.substring(S - 64, S)));
+  }
+  message = message.substring(S - 64);
+  let p = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], t;
+  for (t = 0; t < message.length; t++) p[t >> 2] |= message.charCodeAt(t) << ((t % 4) << 3);
+  p[t >> 2] |= 0x80 << ((t % 4) << 3);
+  if (t > 55) {
+    md5cycle(p, [d, _, v, k]);
+    for (t = 0; t < 16; t++) p[t] = 0;
+  }
+  p[14] = xl * 8;
+  md5cycle(p, [d, _, v, k]);
+  return [d, _, v, k];
 }
 </script>
 

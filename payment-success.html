@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Successful — Alumni Schools Golf Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1B3A6B;
+    --gold: #C9A84C;
+    --white: #FFFFFF;
+    --green: #27ae60;
+  }
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f5f5f5;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+  
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 40px;
+    text-align: center;
+  }
+  
+  .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+  
+  .card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 60px 40px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  
+  .success-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+  }
+  
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    color: var(--green);
+    margin-bottom: 20px;
+  }
+  
+  .success-message {
+    font-size: 18px;
+    color: var(--navy);
+    margin-bottom: 30px;
+  }
+  
+  .details {
+    background: #f0f0f0;
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+  
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+  
+  .detail-label {
+    font-weight: 600;
+    color: var(--navy);
+  }
+  
+  .detail-value {
+    color: var(--gold);
+    font-weight: 700;
+  }
+  
+  .next-steps {
+    background: #e8f4f8;
+    padding: 20px;
+    border-left: 4px solid var(--navy);
+    margin-bottom: 30px;
+    text-align: left;
+  }
+  
+  .next-steps h3 {
+    color: var(--navy);
+    margin-bottom: 15px;
+  }
+  
+  .next-steps ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .next-steps li {
+    padding: 8px 0;
+    padding-left: 25px;
+    position: relative;
+    color: var(--navy);
+  }
+  
+  .next-steps li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-weight: 700;
+  }
+  
+  .btn-home {
+    display: inline-block;
+    padding: 14px 40px;
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.3s;
+  }
+  
+  .btn-home:hover { opacity: 0.9; }
+  
+  footer {
+    background: var(--navy);
+    color: var(--white);
+    text-align: center;
+    padding: 30px 40px;
+    margin-top: 60px;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 style="margin:0;color:var(--gold);">Payment Successful</h1>
+</header>
+
+<div class="container">
+  <div class="card">
+    <div class="success-icon">✅</div>
+    <h1>Payment Received</h1>
+    <p class="success-message">Your payment has been successfully processed. Thank you!</p>
+    
+    <div class="details">
+      <div class="detail-row">
+        <span class="detail-label">Transaction Status</span>
+        <span class="detail-value">COMPLETED</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Payment Method</span>
+        <span class="detail-value">PayFast</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Transaction Time</span>
+        <span class="detail-value"><span id="trans-time">Just now</span></span>
+      </div>
+    </div>
+    
+    <div class="next-steps">
+      <h3>What Happens Next?</h3>
+      <ul>
+        <li>You'll receive a confirmation email shortly</li>
+        <li>Your payment will be verified within 24 hours</li>
+        <li>You'll receive another email once verification is complete</li>
+        <li>Access your portal to confirm registration details</li>
+      </ul>
+    </div>
+    
+    <a href="/" class="btn-home">Return to Home</a>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; 2026 Alumni Schools Golf Challenge</p>
+  <p style="margin-top:12px;color:rgba(255,255,255,0.6);">Celebrating excellence. Competing exclusively. Honouring tradition.</p>
+</footer>
+
+<script>
+// Set transaction time
+document.getElementById('trans-time').textContent = new Date().toLocaleTimeString('en-ZA', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit'
+});
+</script>
+
+</body>
+</html>
