@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alumni Schools Golf Challenge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(135deg, #1B3A6B 0%, #0a0a14 50%, #1a1a2e 100%);
+      color: #f0f0f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Animated background elements */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -20%;
+      left: -5%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(27, 58, 107, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float-reverse 25s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) translateX(0px); }
+      50% { transform: translateY(-30px) translateX(20px); }
+    }
+
+    @keyframes float-reverse {
+      0%, 100% { transform: translateY(0px) translateX(0px); }
+      50% { transform: translateY(30px) translateX(-20px); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 40px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .logo {
+      margin-bottom: 32px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .logo-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: #C9A84C;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .logo-tagline {
+      font-size: 12px;
+      color: #aaaaaa;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+      margin: 32px 0;
+      animation: fadeIn 1s ease-out 0.3s backwards;
+    }
+
+    .message {
+      animation: fadeInUp 1s ease-out 0.6s backwards;
+    }
+
+    .message-text {
+      font-size: 24px;
+      font-weight: 600;
+      color: #f0f0f0;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    .message-subtext {
+      font-size: 14px;
+      color: #aaaaaa;
+      margin-top: 24px;
+      line-height: 1.8;
+    }
+
+    .status-badge {
+      display: inline-block;
+      margin-top: 24px;
+      padding: 12px 24px;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid #C9A84C;
+      border-radius: 20px;
+      color: #C9A84C;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .pulse {
+      animation: pulse-animation 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-animation {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      .logo-text {
+        font-size: 36px;
+      }
+
+      .message-text {
+        font-size: 20px;
+      }
+
+      body::before {
+        width: 400px;
+        height: 400px;
+        right: -20%;
+        top: -30%;
+      }
+
+      body::after {
+        width: 350px;
+        height: 350px;
+        left: -15%;
+        bottom: -15%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+      }
+
+      .logo-text {
+        font-size: 28px;
+      }
+
+      .message-text {
+        font-size: 18px;
+      }
+
+      .logo-icon {
+        font-size: 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <span class="logo-icon">⛳</span>
+      <h1 class="logo-text">Alumni Schools Golf Challenge</h1>
+      <p class="logo-tagline">Celebrating Excellence • Competing Exclusively • Honouring Tradition</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="message">
+      <p class="message-text">By popular demand, a new competition to launch soon.</p>
+      <p class="message-subtext">Communications to follow</p>
+      <div class="status-badge pulse">Site Archived</div>
+    </div>
+  </div>
+</body>
+</html>
